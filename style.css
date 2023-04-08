@@ -1,0 +1,58 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap');
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css');
+
+/* Main background color */
+body.dark {
+  background-color: #1e1e1e;
+}
+
+/* Text color */
+body.dark, 
+body.dark h1, 
+body.dark p {
+  color: #bebdbd;
+}
+
+/* Navigation bar */
+nav {
+  background-color: #a10000;
+}
+
+nav .brand-logo, 
+nav a {
+  color: #ffffff;
+}
+
+/* Mobile navigation bar */
+.sidenav {
+  background-color: #2e2e2e;
+}
+
+.sidenav a {
+  color: #ffffff;
+}
+
+.sidenav li a {
+    color:#c2c2c2
+}
+
+.sidenav li:hover {
+    background-color:#1e1d1d
+}
+
+/* Button styles */
+.btn {
+  background-color: #424242;
+  color: #ffffff;
+}
+
+/* Link styles */
+a {
+  color: #ffffff;
+}
+
+table tr:hover {
+    background-color: #373737; /* change to the color you want */
+  }
+  
