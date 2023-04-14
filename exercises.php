@@ -27,58 +27,75 @@
       <table>
         <tbody>
         <?php
-require_once('db.php');
-
-// check if a filter has been selected
-$filter = isset($_GET['filter']) ? $_GET['filter'] : 'all';
-// get all distinct muscle names that are used in the query
-$query_muscles = "SELECT DISTINCT muscles.name FROM exercises 
-INNER JOIN exercise_muscles ON exercises.id = exercise_muscles.exercise_id 
-INNER JOIN muscles ON exercise_muscles.muscle_id = muscles.id";
-$result_muscles = query($query_muscles);
-$muscles = array();
-while ($row_muscles = mysqli_fetch_assoc($result_muscles)) {
-  $muscles[] = $row_muscles['name'];
-}
-// build the query for exercise and muscle data
-$query = "SELECT exercises.id, exercises.name, exercises.difficulty, ";
-foreach ($muscles as $muscle) {
-  $query .= "MAX(CASE WHEN muscles.name = '$muscle' THEN exercise_muscles.intensity ELSE NULL END) AS $muscle, ";
-}
-$query = rtrim($query, ", "); // remove the trailing comma and space
-$query .= " FROM exercises 
-INNER JOIN exercise_muscles ON exercises.id = exercise_muscles.exercise_id 
-INNER JOIN muscles ON exercise_muscles.muscle_id = muscles.id";
-// apply the filter if one has been selected
-if ($filter !== 'all') {
-  $query .= " WHERE exercises.type = '$filter'";
-}
-$query .= " GROUP BY exercises.id";
-// execute the query and output the results
-$result = query($query);
-echo "<div>
-  <button onclick=\"location.href='?filter=all'\">All Exercises</button>
-  <button onclick=\"location.href='?filter=push'\">Push Exercises</button>
-  <button onclick=\"location.href='?filter=pull'\">Pull Exercises</button>
-  <button onclick=\"location.href='?filter=legs'\">Legs Exercises</button>
-</div>";
-echo "<table>";
-echo "<tr><th>Name</th><th>Difficulty</th>";
-foreach ($muscles as $muscle) {
-  echo "<th>$muscle</th>";
-}
-echo "</tr>";
-while ($row = mysqli_fetch_assoc($result)) {
-  echo "<tr>";
-  echo "<td>" . $row['name'] . "</td>";
-  echo "<td>" . $row['difficulty'] . "</td>";
-  foreach ($muscles as $muscle) {
-    echo "<td>" . $row[$muscle] . "</td>";
-  }
-  echo "</tr>";
-}
-echo "</table>";
-?>
+          require_once('db.php');
+          // Set filter variable
+          $filter = isset($_GET['filter']) && $_GET['filter'] !== 'all' ? $_GET['filter'] : "push' OR exercises.type = 'pull' OR exercises.type = 'legs";
+          // Get all distinct muscle names that are used in the query
+          $query_muscles = "SELECT DISTINCT muscles.name FROM exercises 
+                            INNER JOIN exercise_muscles ON exercises.id = exercise_muscles.exercise_id 
+                            INNER JOIN muscles ON exercise_muscles.muscle_id = muscles.id";
+          $result_muscles = query($query_muscles);
+          $muscles = array_column(mysqli_fetch_all($result_muscles, MYSQLI_ASSOC), 'name');
+          // Build the query for exercise and muscle data
+          $query = "SELECT exercises.id, exercises.name, exercises.difficulty, ";
+          foreach ($muscles as $muscle) {
+            $query .= "MAX(CASE WHEN muscles.name = '$muscle' THEN exercise_muscles.intensity ELSE NULL END) AS $muscle, ";
+          }
+          $query = rtrim($query, ", ");
+          $query .= " FROM exercises 
+                      LEFT JOIN exercise_muscles ON exercises.id = exercise_muscles.exercise_id 
+                      LEFT JOIN muscles ON exercise_muscles.muscle_id = muscles.id";
+          $query .= $filter !== 'all' ? " WHERE exercises.type = '$filter'" : "";
+          $query .= " GROUP BY exercises.id";
+          // Execute the query and output the results
+          $result = query($query);
+          // Get the number of exercises for the selected filter
+          $query_count = "SELECT COUNT(*) AS count FROM exercises" . ($filter === 'all' ? "" : " WHERE type = '$filter'");
+          $count = mysqli_fetch_assoc(query($query_count))['count'];
+          // Display the buttons and table headers
+          echo "<div>
+                  <button onclick=\"location.href='?filter=all'\">All Exercises</button>
+                  <button onclick=\"location.href='?filter=push'\">Push Exercises</button>
+                  <button onclick=\"location.href='?filter=pull'\">Pull Exercises</button>
+                  <button onclick=\"location.href='?filter=legs'\">Legs Exercises</button>
+                </div>
+                <table>
+                  <tr>
+                    <th>Name</th>
+                    <th style='background-color: #292929; text-align: center'>Difficulty</th>";
+          foreach ($muscles as $muscle) {
+            $query_check = "SELECT COUNT(*) AS count FROM exercises 
+                            INNER JOIN exercise_muscles ON exercises.id = exercise_muscles.exercise_id 
+                            INNER JOIN muscles ON exercise_muscles.muscle_id = muscles.id 
+                            WHERE exercises.type = '$filter' AND muscles.name = '$muscle'";
+            $count_check = mysqli_fetch_assoc(query($query_check))['count'];
+            if ($count_check > 0) {
+              echo "<th style='text-align: center'>$muscle</th>";
+            }
+          }
+          echo "</tr>";
+          // display the table data
+          while ($row = mysqli_fetch_assoc($result)) {
+            echo "<tr>";
+            echo "<td>" . $row['name'] . "</td>";
+            echo "<td style='font-weight:bold; text-align: center'>" . $row['difficulty'] . "</td>";
+            foreach ($muscles as $muscle) {
+              // check if the column should be displayed
+              $query_check = "SELECT COUNT(*) AS count FROM exercises 
+                INNER JOIN exercise_muscles ON exercises.id = exercise_muscles.exercise_id
+                INNER JOIN muscles ON exercise_muscles.muscle_id = muscles.id
+                WHERE exercises.type = '$filter' AND muscles.name = '$muscle'";
+              $result_check = query($query_check);
+              $count_check = mysqli_fetch_assoc($result_check)['count'];
+              if ($count_check > 0) {
+                echo "<td style='text-align: center'>" . $row[$muscle] . "</td>";
+              }
+            }
+            echo "</tr>";
+          }
+          // display the number of exercises for the selected filter
+          echo "<p>Total exercises: $count</p>";
+        ?>
         </tbody>
       </table>
     </div>
