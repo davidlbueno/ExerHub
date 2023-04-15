@@ -1,16 +1,19 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <link rel="stylesheet" href="style.css">
   <title>BWE - Exercises</title>
-  <!-- Import Material UI scripts -->
+  <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
+  <script type="text/javascript" src="//code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script type="text/javascript" src="//cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <link rel="stylesheet" href="style.css">
+  <?php
+    require_once 'db.php';
+  ?>
 </head>
 <body class="dark">
-  <!-- Navigation bar -->
   <nav>
     <div class="nav-wrapper">
       <a href="index.html" class="brand-logo">BWE</a>
@@ -18,88 +21,55 @@
       <ul class="right hide-on-med-and-down" id="desktop-nav"></ul>
     </div>
   </nav>
-  <!-- Mobile navigation bar -->
   <ul class="sidenav" id="mobile-nav"></ul>
-  <!-- Main content -->
   <main>
     <div class="container">
       <h2>Exercises</h2>
-      <table>
-        <tbody>
-        <?php
-          require_once('db.php');
-          // Set filter variable
-          $filter = isset($_GET['filter']) && $_GET['filter'] !== 'all' ? $_GET['filter'] : "push' OR exercises.type = 'pull' OR exercises.type = 'legs";
-          // Get all distinct muscle names that are used in the query
-          $query_muscles = "SELECT DISTINCT muscles.name FROM exercises 
-                            INNER JOIN exercise_muscles ON exercises.id = exercise_muscles.exercise_id 
-                            INNER JOIN muscles ON exercise_muscles.muscle_id = muscles.id";
-          $result_muscles = query($query_muscles);
-          $muscles = array_column(mysqli_fetch_all($result_muscles, MYSQLI_ASSOC), 'name');
-          // Build the query for exercise and muscle data
-          $query = "SELECT exercises.id, exercises.name, exercises.difficulty, ";
-          foreach ($muscles as $muscle) {
-            $query .= "MAX(CASE WHEN muscles.name = '$muscle' THEN exercise_muscles.intensity ELSE NULL END) AS $muscle, ";
-          }
-          $query = rtrim($query, ", ");
-          $query .= " FROM exercises 
-                      LEFT JOIN exercise_muscles ON exercises.id = exercise_muscles.exercise_id 
-                      LEFT JOIN muscles ON exercise_muscles.muscle_id = muscles.id";
-          $query .= $filter !== 'all' ? " WHERE exercises.type = '$filter'" : "";
-          $query .= " GROUP BY exercises.id";
-          // Execute the query and output the results
-          $result = query($query);
-          // Get the number of exercises for the selected filter
-          $query_count = "SELECT COUNT(*) AS count FROM exercises" . ($filter === 'all' ? "" : " WHERE type = '$filter'");
-          $count = mysqli_fetch_assoc(query($query_count))['count'];
-          // Display the buttons and table headers
-          echo "<div>
-                  <button onclick=\"location.href='?filter=all'\">All Exercises</button>
-                  <button onclick=\"location.href='?filter=push'\">Push Exercises</button>
-                  <button onclick=\"location.href='?filter=pull'\">Pull Exercises</button>
-                  <button onclick=\"location.href='?filter=legs'\">Legs Exercises</button>
-                </div>
-                <table>
-                  <tr>
-                    <th>Name</th>
-                    <th style='background-color: #292929; text-align: center'>Difficulty</th>";
-          foreach ($muscles as $muscle) {
-            $query_check = "SELECT COUNT(*) AS count FROM exercises 
-                            INNER JOIN exercise_muscles ON exercises.id = exercise_muscles.exercise_id 
-                            INNER JOIN muscles ON exercise_muscles.muscle_id = muscles.id 
-                            WHERE exercises.type = '$filter' AND muscles.name = '$muscle'";
-            $count_check = mysqli_fetch_assoc(query($query_check))['count'];
-            if ($count_check > 0) {
-              echo "<th style='text-align: center'>$muscle</th>";
-            }
-          }
-          echo "</tr>";
-          // display the table data
-          while ($row = mysqli_fetch_assoc($result)) {
-            echo "<tr>";
-            echo "<td>" . $row['name'] . "</td>";
-            echo "<td style='font-weight:bold; text-align: center'>" . $row['difficulty'] . "</td>";
-            foreach ($muscles as $muscle) {
-              // check if the column should be displayed
-              $query_check = "SELECT COUNT(*) AS count FROM exercises 
-                INNER JOIN exercise_muscles ON exercises.id = exercise_muscles.exercise_id
-                INNER JOIN muscles ON exercise_muscles.muscle_id = muscles.id
-                WHERE exercises.type = '$filter' AND muscles.name = '$muscle'";
-              $result_check = query($query_check);
-              $count_check = mysqli_fetch_assoc($result_check)['count'];
-              if ($count_check > 0) {
-                echo "<td style='text-align: center'>" . $row[$muscle] . "</td>";
-              }
-            }
-            echo "</tr>";
-          }
-          // display the number of exercises for the selected filter
-          echo "<p>Total exercises: $count</p>";
-        ?>
-        </tbody>
-      </table>
+      <table id="exercise-table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Difficulty</th>
+      <th>Muscles (Intensity)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <?php foreach ($exercises as $exerciseName => $exerciseData) { ?>
+      <tr>
+        <td><?= $exerciseName ?></td>
+        <td><?= $exerciseData['type'] ?></td>
+        <td><?= $exerciseData['difficulty'] ?></td>
+        <td>
+          <?php foreach ($exerciseData['muscles'] as $muscleName => $intensity) { ?>
+            <span><?= $muscleName ?></span> (<?= $intensity ?>)<br>
+          <?php } ?>
+        </td>
+      </tr>
+    <?php } ?>
+  </tbody>
+</table>
     </div>
   </main>
   <script src="nav.js"></script>
+  <script>
+    $(document).ready(function () {
+    var table = $('#exercise-table').DataTable({
+      "paging": false,
+      "searching": false
+    });
+    table.column(1).every(function () {
+      var column = this;
+      var select = $('<select><option value="">All Exercises</option></select>')
+        .appendTo($(column.header()).empty())
+        .on('change', function () {
+          column.search($(this).val()).draw();
+        });
+      column.data().unique().sort().each(function (d) {
+        select.append('<option value="' + d + '">' + d + '</option>')
+      });
+    });
+  });
+  </script>
 </body>
 </html>
