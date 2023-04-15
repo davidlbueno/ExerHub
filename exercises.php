@@ -26,7 +26,7 @@
       <thead>
         <tr>
           <th>Name</th>
-          <th class="type">Type</th>
+          <th class="type">Type:&nbsp;<select title="Filter by Type"><option value="">All Types</option></select></th>
           <th>Difficulty</th>
           <th>Muscles (Intensity)</th>
         </tr>
@@ -58,8 +58,7 @@
         ]
       }).column(1).every(function() {
         var column = this;
-        var typeFilter = $('<select title="Filter by Type"><option value="">All Types</option></select>')
-          .appendTo($('#exercise-table').find('thead tr:eq(0) th.type'));
+        var typeFilter = $(this.header()).find('select')
         $(document).on('change', '#exercise-table thead select', function() {
           column.search($(this).val()).draw();
         });
