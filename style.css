@@ -47,6 +47,14 @@ nav a {
   color: #ffffff;
 }
 
+.btn:hover {
+    background-color: #a30e0e;
+}
+
+.btn-active {
+    background-color: #a30e0e;
+}
+
 /* Link styles */
 a {
   color: #ffffff;
@@ -54,4 +62,17 @@ a {
 
 table tr:hover {
     background-color: #373737; /* change to the color you want */
-  }
+}
+
+/* Show select elements in DataTables headers */
+.dataTables_wrapper select {
+    display: block !important;
+}
+
+#exercise-table thead th select {
+    height: 20px;
+    padding: 0;
+    margin: 0;
+}
+  
+  
