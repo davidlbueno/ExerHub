@@ -9,9 +9,7 @@
   <script type="text/javascript" src="//cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <link rel="stylesheet" href="style.css">
-  <?php
-    require_once 'db.php';
-  ?>
+  <?php require_once 'db.php'; ?>
 </head>
 <body class="dark">
   <nav>
@@ -22,54 +20,55 @@
     </div>
   </nav>
   <ul class="sidenav" id="mobile-nav"></ul>
-  <main>
-    <div class="container">
-      <h2>Exercises</h2>
-      <table id="exercise-table">
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Difficulty</th>
-      <th>Muscles (Intensity)</th>
-    </tr>
-  </thead>
-  <tbody>
-    <?php foreach ($exercises as $exerciseName => $exerciseData) { ?>
-      <tr>
-        <td><?= $exerciseName ?></td>
-        <td><?= $exerciseData['type'] ?></td>
-        <td><?= $exerciseData['difficulty'] ?></td>
-        <td>
-          <?php foreach ($exerciseData['muscles'] as $muscleName => $intensity) { ?>
-            <span><?= $muscleName ?></span> (<?= $intensity ?>)<br>
-          <?php } ?>
-        </td>
-      </tr>
-    <?php } ?>
-  </tbody>
-</table>
-    </div>
+  <main class="container">
+    <h2>Exercises</h2>
+    <table id="exercise-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th class="type">Type</th>
+          <th>Difficulty</th>
+          <th>Muscles (Intensity)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php foreach ($exercises as $exerciseName => $exerciseData): ?>
+          <tr>
+            <td><?= $exerciseName ?></td>
+            <td><?= $exerciseData['type'] ?></td>
+            <td><?= $exerciseData['difficulty'] ?></td>
+            <td>
+              <?php foreach ($exerciseData['muscles'] as $muscleName => $intensity): ?>
+                <span><?= $muscleName ?></span> (<?= $intensity ?>)<br>
+              <?php endforeach; ?>
+            </td>
+          </tr>
+        <?php endforeach; ?>
+      </tbody>
+    </table>
   </main>
   <script src="nav.js"></script>
   <script>
-    $(document).ready(function () {
-    var table = $('#exercise-table').DataTable({
-      "paging": false,
-      "searching": false
-    });
-    table.column(1).every(function () {
-      var column = this;
-      var select = $('<select><option value="">All Exercises</option></select>')
-        .appendTo($(column.header()).empty())
-        .on('change', function () {
+    $(document).ready(function() {
+      $('#exercise-table').DataTable({
+        paging: false,
+        searching: true,
+        columnDefs: [
+          {orderable: false, targets: [1]}
+        ]
+      }).column(1).every(function() {
+        var column = this;
+        var typeFilter = $('<select title="Filter by Type"><option value="">All Types</option></select>')
+          .appendTo($('#exercise-table').find('thead tr:eq(0) th.type'));
+        $(document).on('change', '#exercise-table thead select', function() {
           column.search($(this).val()).draw();
         });
-      column.data().unique().sort().each(function (d) {
-        select.append('<option value="' + d + '">' + d + '</option>')
+        column.data().unique().sort().each(function(d) {
+          typeFilter.append('<option value="' + d + '">' + d + '</option>')
+        });
       });
+      $('.dataTables_filter').hide();
     });
-  });
   </script>
 </body>
 </html>

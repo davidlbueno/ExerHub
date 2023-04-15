@@ -61,7 +61,7 @@ a {
 }
 
 table tr:hover {
-    background-color: #373737; /* change to the color you want */
+    background-color: #373737;
 }
 
 /* Show select elements in DataTables headers */
@@ -73,6 +73,6 @@ table tr:hover {
     height: 20px;
     padding: 0;
     margin: 0;
-}
+  }
   
   
