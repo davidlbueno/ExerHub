@@ -23,6 +23,7 @@ nav {
 nav .brand-logo, 
 nav a {
   color: #ffffff;
+  margin-left: 60px;
 }
 
 /* Mobile navigation bar */

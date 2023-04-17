@@ -15,11 +15,11 @@
   <nav>
     <div class="nav-wrapper">
       <a href="index.html" class="brand-logo">BWE</a>
-      <a href="index.html" data-target="mobile-nav" class="sidenav-trigger"><i class="material-icons">menu</i></a>
-      <ul class="right hide-on-med-and-down" id="desktop-nav"></ul>
+      <a href="index.html" data-target="side-nav" class="show-on-large sidenav-trigger"><i class="material-icons">menu</i></a>
+      <ul class="right" id="top-nav"></ul>
     </div>
   </nav>
-  <ul class="sidenav" id="mobile-nav"></ul>
+  <ul class="sidenav" id="side-nav"></ul>
   <main class="container">
     <h2>Exercises</h2>
     <table id="exercise-table">

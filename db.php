@@ -36,7 +36,6 @@ while ($row = mysqli_fetch_assoc($result)) {
   $intensity = $row['intensity'];
   $exerciseType = $row['exercise_type'];
   $exerciseDifficulty = $row['difficulty'];
-
   if (!isset($exercises[$exerciseName])) {
     $exercises[$exerciseName] = array(
       'muscles' => array(),
@@ -46,5 +45,4 @@ while ($row = mysqli_fetch_assoc($result)) {
   }
   $exercises[$exerciseName]['muscles'][$muscleName] = $intensity;
 }
-
 ?>
