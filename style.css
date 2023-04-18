@@ -24,8 +24,9 @@ nav a {
   color: #ffffff;
 }
 
-.brand-logo {
+.brand-logo a {
   text-align: left;
+  display: inline;
 }
 
 nav .brand-logo {
@@ -33,6 +34,9 @@ nav .brand-logo {
   transform: none !important;
 }
 
+.sub-page-name {
+  color: rgb(185, 183, 183);
+}
 
 /* Mobile navigation bar */
 .sidenav {
@@ -71,6 +75,30 @@ a {
   display: flex;
   align-items: center;
 
-}  
+}
 
+select {
+  display: block !important;
+}
+
+.row {
+  margin-bottom: 5px;
+  height: 20px;
+}
+
+.input-field {
+  margin-top: 8px !important;
+  margin-bottom: 0px !important;
+}
+
+.input-field input[type="number"], 
+.input-field select {
+  height: 32px;
+
+}
+
+#add-selection-btn {
+  margin-left: 10px;
+  margin-top: 10px;
+}
   
