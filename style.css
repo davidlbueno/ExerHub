@@ -20,11 +20,19 @@ nav {
   background-color: #a10000;
 }
 
-nav .brand-logo, 
 nav a {
   color: #ffffff;
-  margin-left: 60px;
 }
+
+.brand-logo {
+  text-align: left;
+}
+
+nav .brand-logo {
+  left: auto !important;
+  transform: none !important;
+}
+
 
 /* Mobile navigation bar */
 .sidenav {
@@ -60,5 +68,9 @@ nav a {
 /* Link styles */
 a {
   color: #ffffff;
+  display: flex;
+  align-items: center;
+
 }  
+
   
