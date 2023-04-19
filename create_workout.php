@@ -142,7 +142,11 @@ $(document).on('click', "#items-list li", function(event) {
   const itemText = this.innerText;
   const itemValue = itemText.split(' ')[0];
   const exerciseValue = itemText.split(' - ')[1].split(' (')[0];
+  const secondsValue = itemText.split(' (')[1].split('s, ')[0];
+  const setsValue = itemText.split(' (')[1].split('s, ')[1].split(' sets)')[0];
   const itemSelect = document.getElementById("item-select");
+  const secondsInput = document.querySelector('input[name="seconds"]');
+  const setsInput = document.querySelector('input[name="sets"]');
   const $addItemBtn = $('#add-item-btn');
   $('.selected').removeClass('selected');
   this.classList.add('selected');
@@ -164,10 +168,10 @@ $(document).on('click', "#items-list li", function(event) {
     }
   };
   xhr.send();
-  console.log(exerciseValue);
+  secondsInput.value = secondsValue;
+  setsInput.value = setsValue;
+  console.log(secondsValue, setsValue);
 });
-
-
 $(document).on('click', "#items-list li.selected", function(event) {
   const $addItemBtn = $('#add-item-btn');
   $(this).removeClass('selected');
