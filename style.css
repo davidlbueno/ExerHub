@@ -87,18 +87,64 @@ select {
 }
 
 .input-field {
-  margin-top: 8px !important;
-  margin-bottom: 0px !important;
+  margin: 0 0 0 0 !important;
+  align-items: left;
+}
+
+.input-field input[type="number"] {
+  border: 1px solid #bebdbd;
 }
 
 .input-field input[type="number"], 
 .input-field select {
   height: 32px;
+  color: #bebebe !important;
+  background-color: #222222;
+  padding-left: 10px;
+}
 
+.input-field select:disabled {
+  background-color: #3d3d3d;
+}
+
+.input-field input:disabled{
+  background-color: #3d3d3d;
+  border: 1px solid #bebdbd !important;
+}
+
+.input-field {
+  display: flex;
+  justify-content: space-between;
 }
 
 #add-selection-btn {
   margin-left: 10px;
   margin-top: 10px;
 }
-  
+
+ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+li {
+  padding: 5px;
+  margin-bottom: 5px;
+  background-color: #3d3d3d;
+  border: 1px solid #3d3d3d;
+}
+
+li:nth-child(even) {
+  background-color: #5c5b5b;
+  border: 1px solid #5c5b5b;
+}
+
+li:hover {
+  border: 1px solid #c2c2c2;
+  cursor: pointer;
+}
+
+h4 {
+  margin-top: 0;
+}

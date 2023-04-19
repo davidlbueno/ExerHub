@@ -5,6 +5,10 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>BWE - Create Workout</title>
   <link rel="stylesheet" href="style.css">
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
   <?php require_once 'db.php'; ?>
 </head>
 <body class="dark">
@@ -19,24 +23,21 @@
   <main class="container">
   <div class="row">
     <div class="col s12">
-      <ol id="items-list"></ol>
+    <ol id="items-list" class="sortable"></ol>
     </div>
   </div>
   <div class="row">
     <div class="input-field col s3">
       <select name="item" id="item-select">
         <option value="" disabled selected>Item</option>
-        <?php
-        $result = query("SELECT DISTINCT type FROM exercises");
-        while ($row = mysqli_fetch_assoc($result)) {
-          $type = $row["type"];
-          echo "<option value='$type'>$type</option>";
-        }
-        ?>
+        <option value="Push">Push</option>
+        <option value="Pull">Pull</option>
+        <option value="Legs">Legs</option>
+        <option value="Rest">Rest</option>
       </select>
     </div>
     <div class="input-field col s5">
-      <select name="exercise" id="exercise-select">
+      <select name="exercise" id="exercise-select" disabled>
         <option value="" disabled selected>Exercise</option>
       </select>
     </div>
@@ -44,7 +45,7 @@
       <input type="number" name="seconds" min="0" max="300" step="15" placeholder="Seconds" style="width:100%;">
     </div>
     <div class="input-field col s2">
-      <input type="number" name="sets" min="0" max="10" step="1" placeholder="Sets" style="width:100%;">
+      <input type="number" name="sets" id="sets-select" min="0" max="10" step="1" placeholder="Sets" style="width:100%;">
     </div>
   </div>
   <div class="row">
@@ -54,39 +55,58 @@
   </div>
 </main>
 <script>
-  const itemSelect = document.getElementById("item-select");
-  const exerciseSelect = document.getElementById("exercise-select");
-  const addItemBtn = document.getElementById("add-item-btn");
-  const itemsList = document.getElementById("items-list");
-  itemSelect.addEventListener("change", () => {
-    const selectedType = itemSelect.value;
-    if (selectedType) {
-      const xhr = new XMLHttpRequest();
-      xhr.open("GET", `get_exercises.php?type=${selectedType}`, true);
-      xhr.onload = () => {
-        if (xhr.status === 200) {
-          const exercises = JSON.parse(xhr.responseText);
-          exerciseSelect.innerHTML = "<option value='' disabled selected>Exercise</option>";
-          exercises.forEach(exercise => {
-            const option = document.createElement("option");
-            option.value = exercise.name;
-            option.textContent = exercise.name;
+const itemSelect = document.getElementById("item-select");
+const exerciseSelect = document.getElementById("exercise-select");
+const setsSelect = document.getElementById("sets-select");
+const addItemBtn = document.getElementById("add-item-btn");
+const itemsList = document.getElementById("items-list");
+itemSelect.addEventListener("change", () => {
+  const selectedType = itemSelect.value;
+  if (selectedType) {
+    const xhr = new XMLHttpRequest();
+    xhr.open("GET", `get_exercises.php?type=${selectedType}`, true);
+    xhr.onload = () => {
+      if (xhr.status === 200) {
+        const exercises = JSON.parse(xhr.responseText);
+        exerciseSelect.innerHTML = "<option value='' disabled selected>Exercise</option>";
+        exercises.forEach(exercise => {
+          const option = document.createElement("option");
+          option.value = exercise.name;
+          option.textContent = exercise.name;
+          if (selectedType === 'Push' || selectedType === 'Pull' || selectedType === 'Legs') {
             exerciseSelect.appendChild(option);
-          });
+            exerciseSelect.disabled = false;
+            setsSelect.disabled = false;
+          } else {
+            exerciseSelect.disabled = true;
+          }
+        });
+        if (selectedType === 'Rest') {
+          exerciseSelect.disabled = true;
+          setsSelect.disabled = true;
         }
-      };
-      xhr.send();
-    } else {
-      exerciseSelect.innerHTML = "<option value='' disabled selected>Exercise</option>";
-    }
-  });
-  addItemBtn.addEventListener("click", () => {
-    const itemValue = itemSelect.value;
-    const exerciseValue = exerciseSelect.value;
-    const secondsInput = document.querySelector('input[name="seconds"]');
-    const setsInput = document.querySelector('input[name="sets"]');
-    const secondsValue = secondsInput.value;
-    const setsValue = setsInput.value;
+      }
+    };
+    xhr.send();
+  } else {
+    exerciseSelect.innerHTML = "<option value='' disabled selected>Exercise</option>";
+  }
+});
+addItemBtn.addEventListener("click", () => {
+  const itemValue = itemSelect.value;
+  const exerciseValue = exerciseSelect.value;
+  const secondsInput = document.querySelector('input[name="seconds"]');
+  const setsInput = document.querySelector('input[name="sets"]');
+  const secondsValue = secondsInput.value;
+  const setsValue = setsInput.value;
+  if (itemValue === "Rest" && secondsValue) {
+    const newItem = document.createElement("li");
+    newItem.innerHTML = "Rest";
+    newItem.style.backgroundColor = "#454500";
+    itemsList.appendChild(newItem);
+    itemSelect.value = "";
+    secondsInput.value = "";
+  } else {
     if (itemValue && exerciseValue && secondsValue && setsValue) {
       const newItem = document.createElement("li");
       newItem.innerHTML = `${itemValue} - ${exerciseValue} (${secondsValue}s, ${setsValue} sets)`;
@@ -97,12 +117,25 @@
       exerciseSelect.value = "";
       secondsInput.value = "";
       setsInput.value = "";
+    } else {
+      alert("Please enter all required information.");
+    }
+  }
+});
+$(function() {
+  $( ".sortable" ).sortable({
+    revert: true,
+    update: function() {
+      const itemsList = $(this);
+      const items = itemsList.children();
+      for (let i = 0; i < items.length; i++) {
+        items[i].setAttribute('value', i + 1);
+      }
     }
   });
+});
 </script>
   <?php require_once 'db.php'; ?>
-  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 </body>
 </body>
 </html>
