@@ -145,7 +145,6 @@ $(document).on('click', "#items-list li", function(event) {
   const option = itemSelect.querySelector(`option[value="${itemValue}"]`);
     itemSelect.value = itemValue;
 });
-
 </script>
   <?php require_once 'db.php'; ?>
 </body>
