@@ -141,14 +141,17 @@ $(function() {
 $(document).on('click', "#items-list li", function(event) {
   const itemText = this.innerText;
   const itemValue = itemText.split(' ')[0];
+  const exerciseValue = itemText.split(' - ')[1].split(' (')[0];
   const itemSelect = document.getElementById("item-select");
+  const exerciseSelect = document.getElementById("exercise-select");
   const $addItemBtn = $('#add-item-btn');
   $('.selected').removeClass('selected');
   this.classList.add('selected');
   $addItemBtn.text('Update Item');
-  const option = itemSelect.querySelector(`option[value="${itemValue}"]`);
   itemSelect.value = itemValue;
+  exerciseSelect.value = exerciseValue;
 });
+
 $(document).on('click', "#items-list li.selected", function(event) {
   const $addItemBtn = $('#add-item-btn');
   $(this).removeClass('selected');
