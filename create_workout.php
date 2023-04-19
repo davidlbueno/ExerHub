@@ -134,6 +134,13 @@ $(function() {
     }
   });
 });
+$(document).on('click', "#items-list li", function(event) {
+    const itemSelect = this.querySelector('#item-select');
+    const itemText = this.innerText;
+    const itemValue = itemText.split('-')[0];
+    console.log(itemValue);
+  });
+
 </script>
   <?php require_once 'db.php'; ?>
 </body>
