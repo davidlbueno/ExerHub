@@ -148,3 +148,8 @@ li:hover {
 h4 {
   margin-top: 0;
 }
+
+li.selected {
+  border-color: red;
+}
+

@@ -92,6 +92,7 @@ itemSelect.addEventListener("change", () => {
     exerciseSelect.innerHTML = "<option value='' disabled selected>Exercise</option>";
   }
 });
+document.getElementById("item-select").focus();
 addItemBtn.addEventListener("click", () => {
   const itemValue = itemSelect.value;
   const exerciseValue = exerciseSelect.value;
@@ -135,14 +136,14 @@ $(function() {
     }
   });
 });
-document.getElementById("item-select").focus();
 $(document).on('click', "#items-list li", function(event) {
-    const itemSelect = this.querySelector('#item-select');
-    const itemText = this.innerText;
-    const itemValue = itemText.split('-')[0];
-    $(this).css('border-color', 'red');
-    console.log(itemValue);
-  });
+  const itemSelect = this.querySelector('#item-select');
+  const itemText = this.innerText;
+  const itemValue = itemText.split('-')[0];
+  $('.selected').removeClass('selected');
+  this.classList.add('selected');
+  console.log(itemValue);
+});
 </script>
   <?php require_once 'db.php'; ?>
 </body>
