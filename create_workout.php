@@ -118,11 +118,11 @@ addItemBtn.addEventListener("click", () => {
       exerciseSelect.value = "";
       secondsInput.value = "";
       setsInput.value = "";
-      document.getElementById("item-select").focus();
     } else {
       alert("Please enter all required information.");
     }
   }
+  document.getElementById("item-select").focus();
 });
 $(function() {
   $( ".sortable" ).sortable({
@@ -137,13 +137,15 @@ $(function() {
   });
 });
 $(document).on('click', "#items-list li", function(event) {
-  const itemSelect = this.querySelector('#item-select');
   const itemText = this.innerText;
-  const itemValue = itemText.split('-')[0];
+  const itemValue = itemText.split(' ')[0];
+  const itemSelect = document.getElementById("item-select");
   $('.selected').removeClass('selected');
   this.classList.add('selected');
-  console.log(itemValue);
+  const option = itemSelect.querySelector(`option[value="${itemValue}"]`);
+    itemSelect.value = itemValue;
 });
+
 </script>
   <?php require_once 'db.php'; ?>
 </body>
