@@ -100,6 +100,7 @@ addItemBtn.addEventListener("click", () => {
   const setsInput = document.querySelector('input[name="sets"]');
   const secondsValue = secondsInput.value;
   const setsValue = setsInput.value;
+  const $addItemBtn = $('#add-item-btn');
   if (itemValue === "Rest" && secondsValue) {
     const newItem = document.createElement("li");
     newItem.innerHTML = "Rest";
@@ -122,6 +123,7 @@ addItemBtn.addEventListener("click", () => {
       alert("Please enter all required information.");
     }
   }
+  $addItemBtn.text('Add Item');
   document.getElementById("item-select").focus();
 });
 $(function() {
@@ -140,10 +142,17 @@ $(document).on('click', "#items-list li", function(event) {
   const itemText = this.innerText;
   const itemValue = itemText.split(' ')[0];
   const itemSelect = document.getElementById("item-select");
+  const $addItemBtn = $('#add-item-btn');
   $('.selected').removeClass('selected');
   this.classList.add('selected');
+  $addItemBtn.text('Update Item');
   const option = itemSelect.querySelector(`option[value="${itemValue}"]`);
-    itemSelect.value = itemValue;
+  itemSelect.value = itemValue;
+});
+$(document).on('click', "#items-list li.selected", function(event) {
+  const $addItemBtn = $('#add-item-btn');
+  $(this).removeClass('selected');
+  $addItemBtn.text('Add Item');
 });
 </script>
   <?php require_once 'db.php'; ?>
