@@ -143,14 +143,30 @@ $(document).on('click', "#items-list li", function(event) {
   const itemValue = itemText.split(' ')[0];
   const exerciseValue = itemText.split(' - ')[1].split(' (')[0];
   const itemSelect = document.getElementById("item-select");
-  const exerciseSelect = document.getElementById("exercise-select");
   const $addItemBtn = $('#add-item-btn');
   $('.selected').removeClass('selected');
   this.classList.add('selected');
   $addItemBtn.text('Update Item');
   itemSelect.value = itemValue;
-  exerciseSelect.value = exerciseValue;
+  exerciseSelect.innerHTML = "<option value='' disabled selected>Exercise</option>";
+  const xhr = new XMLHttpRequest();
+  xhr.open("GET", `get_exercises.php?type=${itemValue}`, true);
+  xhr.onload = () => {
+    if (xhr.status === 200) {
+      const exercises = JSON.parse(xhr.responseText);
+      exercises.forEach(exercise => {
+        const option = document.createElement("option");
+        option.value = exercise.name;
+        option.textContent = exercise.name;
+        exerciseSelect.appendChild(option);
+        exerciseSelect.value = exerciseValue;
+      });
+    }
+  };
+  xhr.send();
+  console.log(exerciseValue);
 });
+
 
 $(document).on('click', "#items-list li.selected", function(event) {
   const $addItemBtn = $('#add-item-btn');
