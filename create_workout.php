@@ -117,6 +117,7 @@ addItemBtn.addEventListener("click", () => {
       exerciseSelect.value = "";
       secondsInput.value = "";
       setsInput.value = "";
+      document.getElementById("item-select").focus();
     } else {
       alert("Please enter all required information.");
     }
@@ -134,13 +135,14 @@ $(function() {
     }
   });
 });
+document.getElementById("item-select").focus();
 $(document).on('click', "#items-list li", function(event) {
     const itemSelect = this.querySelector('#item-select');
     const itemText = this.innerText;
     const itemValue = itemText.split('-')[0];
+    $(this).css('border-color', 'red');
     console.log(itemValue);
   });
-
 </script>
   <?php require_once 'db.php'; ?>
 </body>
