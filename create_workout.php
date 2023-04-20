@@ -73,7 +73,7 @@ itemSelect.addEventListener("change", () => {
           const option = document.createElement("option");
           option.value = exercise.name;
           option.textContent = exercise.name;
-          if (selectedType === 'Push' || selectedType === 'Pull' || selectedType === 'Legs') {
+          if (selectedType !== 'Rest') {
             exerciseSelect.appendChild(option);
             exerciseSelect.disabled = false;
             setsSelect.disabled = false;
@@ -184,6 +184,8 @@ $(document).on('click', "#items-list li", function(event) {
 $(document).on('click', "#items-list li.selected", function(event) {
   const $addItemBtn = $('#add-item-btn');
   $(this).removeClass('selected');
+  exerciseSelect.disabled = false;
+  setsSelect.disabled = false;
   $addItemBtn.text('Add Item');
 });
 </script>
