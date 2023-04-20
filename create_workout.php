@@ -101,15 +101,17 @@ addItemBtn.addEventListener("click", () => {
   const secondsValue = secondsInput.value;
   const setsValue = setsInput.value;
   const $addItemBtn = $('#add-item-btn');
+  const selectedListItem = $(".selected");
   if (itemValue === "Rest" && secondsValue) {
     const newItem = document.createElement("li");
-    newItem.innerHTML = "Rest";
+    newItem.innerHTML = `${itemValue} - (${secondsValue}s)`;
     newItem.style.backgroundColor = "#454500";
     itemsList.appendChild(newItem);
     itemSelect.value = "";
     secondsInput.value = "";
   } else {
     if (itemValue && exerciseValue && secondsValue && setsValue) {
+      if (!$(".selected").length > 0) {
       const newItem = document.createElement("li");
       newItem.innerHTML = `${itemValue} - ${exerciseValue} (${secondsValue}s, ${setsValue} sets)`;
       const newNumber = itemsList.children.length + 1;
@@ -119,6 +121,13 @@ addItemBtn.addEventListener("click", () => {
       exerciseSelect.value = "";
       secondsInput.value = "";
       setsInput.value = "";
+      } else {
+        selectedListItem.html(`${itemValue} - ${exerciseValue} (${secondsValue}s, ${setsValue} sets)`)
+        itemSelect.value = "";
+        exerciseSelect.value = "";
+        secondsInput.value = "";
+        setsInput.value = "";
+        selectedListItem.removeClass('selected');      }
     } else {
       alert("Please enter all required information.");
     }
