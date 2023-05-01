@@ -61,6 +61,20 @@ nav .brand-logo {
   color: #ffffff;
 }
 
+.remove-btn{
+  background-color: #5e5d5d;
+  color: #ffffff;
+  float: right;
+  border: none;
+  height: 24px;
+}
+
+.remove-btn:hover {
+  background-color: #a30e0e;
+  border: none;
+  height: 24px;
+}
+
 .btn:hover {
     background-color: #a30e0e;
 }
