@@ -21,6 +21,13 @@
   <ul class="sidenav" id="side-nav"></ul>
   <main class="container">
   <div class="row">
+
+  <div class="row">
+  <div class="input-field col s12">
+    <input type="text" name="workout-name" id="workout-name" placeholder="Workout Name" style="width:100%;">
+  </div>
+</div>
+
     <div class="col s12">
     <ol id="items-list" class="sortable"></ol>
     </div>
