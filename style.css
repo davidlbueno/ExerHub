@@ -86,6 +86,15 @@ select {
   height: 20px;
 }
 
+::placeholder {
+  color: #bdbdbd !important;
+}
+
+#workout-name {
+  color: #bdbdbd;
+  font-size: 24px;
+}
+
 .input-field {
   margin: 0 0 0 0 !important;
   align-items: left;
