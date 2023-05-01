@@ -94,16 +94,32 @@ $(function() {
   });
 });
 $(document).on('click', "#items-list li", function(event) {
-    const itemText = this.innerText;
-    const itemValue = itemText.split(' ')[0];
-    const exerciseValue = itemText.split(' - ')[1].split(' (')[0];
-    const secondsValue = (itemValue === "Rest") ? itemText.split('(')[1].split('s)')[0] : itemText.split(' (')[1].split('s, ')[0];
-    const setsValue = (itemValue === "Rest") ? 0 : itemText.split(' (')[1].split('s, ')[1].split(' sets)')[0];
-    const secondsInput = document.querySelector('input[name="seconds"]');
-    const setsInput = document.querySelector('input[name="sets"]');
-    const $addItemBtn = $('#add-item-btn');
-    $('.selected').removeClass('selected');
+  const itemText = this.innerText;
+  const itemValue = itemText.split(' ')[0];
+  const exerciseValue = itemText.split(' - ')[1].split(' (')[0];
+  const secondsValue = (itemValue === "Rest") ? itemText.split('(')[1].split('s)')[0] : itemText.split(' (')[1].split('s, ')[0];
+  const setsValue = (itemValue === "Rest") ? 0 : itemText.split(' (')[1].split('s, ')[1].split(' sets)')[0];
+  const secondsInput = document.querySelector('input[name="seconds"]');
+  const setsInput = document.querySelector('input[name="sets"]');
+  const $addItemBtn = $('#add-item-btn');
+  const removeItemBtn = document.createElement('button');
+  removeItemBtn.textContent = 'Remove Item';
+  removeItemBtn.classList.add('remove-btn');
+  removeItemBtn.classList.add('btn-danger');
+  removeItemBtn.addEventListener('click', function() {
+    this.parentElement.remove();
+  });
+  if (event.target.classList.contains('selected')) {
+    $(this).removeClass('selected');
+    exerciseSelect.disabled = false;
+    setsSelect.disabled = false;
+    $addItemBtn.text('Add Item');
+    const removeItemBtn = $(this).find('.remove-btn');
+    removeItemBtn.remove();
+  } else {
+    $('.selected').removeClass('selected').find('.remove-btn').remove();
     this.classList.add('selected');
+    this.appendChild(removeItemBtn);
     $addItemBtn.text('Update Item');
     itemSelect.value = itemValue;
     secondsInput.value = secondsValue;
@@ -113,6 +129,7 @@ $(document).on('click', "#items-list li", function(event) {
     } else {
       exerciseSelect.disabled = false;
       setsSelect.disabled = false;
+      exerciseSelect.value = exerciseValue;
       setsInput.value = setsValue;
     }
     const itemsArray = [];
@@ -122,14 +139,9 @@ $(document).on('click', "#items-list li", function(event) {
       seconds: secondsValue,
       sets: setsValue,
     });
-  });  
-$(document).on('click', "#items-list li.selected", function(event) {
-  const $addItemBtn = $('#add-item-btn');
-  $(this).removeClass('selected');
-  exerciseSelect.disabled = false;
-  setsSelect.disabled = false;
-  $addItemBtn.text('Add Item');
+  }
 });
+  
 const outputListItemsBtn = document.querySelector("#output-list-items-btn");
 outputListItemsBtn.addEventListener("click", () => {
   const workoutName = document.getElementById("workout-name").value;
