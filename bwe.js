@@ -3,31 +3,34 @@ let exerciseSelect = document.getElementById("exercise-select");
 let setsSelect = document.getElementById("sets-select");
 let addItemBtn = document.getElementById("add-item-btn");
 let itemsList = document.getElementById("items-list");
-itemSelect.addEventListener("change", () => {
-  const selectedType = itemSelect.value;
-  if (selectedType) {
-    const xhr = new XMLHttpRequest();
-    xhr.open("GET", `get_exercises.php?type=${selectedType}`, true);
-    xhr.onload = () => {
-      if (xhr.status === 200) {
-        const exercises = JSON.parse(xhr.responseText);
-        exerciseSelect.innerHTML = `
-        <option value="" disabled selected>Exercise</option>
-        ${exercises.map(exercise => `
-            <option value="${exercise.name}">${exercise.name}</option>
-        `).join('')}
-        `;
-        exerciseSelect.disabled = selectedType === 'Rest';
-        setsSelect.disabled = selectedType === 'Rest';
-      }
-    };
-    xhr.send();
-  } 
-});
+let secondsInput = document.querySelector('input[name="seconds"]');
+let setsInput = document.querySelector('input[name="sets"]');
 document.getElementById("workout-name").focus();
+function updateExerciseSelect(selectedType, callback) {
+  const xhr = new XMLHttpRequest();
+  xhr.open("GET", `get_exercises.php?type=${selectedType}`, true);
+  xhr.onload = () => {
+    if (xhr.status === 200) {
+      const exercises = JSON.parse(xhr.responseText);
+      exerciseSelect.innerHTML = `
+      <option value="" disabled selected>Exercise</option>
+      ${exercises.map(exercise => `
+          <option value="${exercise.name}">${exercise.name}</option>
+      `).join('')}
+      `;
+      exerciseSelect.disabled = selectedType === 'Rest';
+      setsSelect.disabled = selectedType === 'Rest';
+      if (callback) {
+        callback();
+      }
+    }
+  };
+  xhr.send();
+}
+itemSelect.addEventListener("change", () => {
+  updateExerciseSelect(itemSelect.value); 
+});
 addItemBtn.addEventListener("click", () => {
-  let secondsInput = document.querySelector('input[name="seconds"]');
-  let setsInput = document.querySelector('input[name="sets"]');
   let $addItemBtn = $('#add-item-btn');
   let selectedListItem = $(".selected");
   let itemsArray = [];
@@ -79,6 +82,7 @@ addItemBtn.addEventListener("click", () => {
       setsInput.value = "";
     }
   $addItemBtn.text('Add Item'); 
+  clearFields();
   document.getElementById("item-select").focus();
 });
 $(function() {
@@ -93,6 +97,12 @@ $(function() {
     }
   });
 });
+function clearFields() {
+  itemSelect.value = "";
+  exerciseSelect.value = "";
+  secondsInput.value = "";
+  setsInput.value = "";
+}
 $(document).on('click', "#items-list li", function(event) {
   const itemText = this.innerText;
   const itemValue = itemText.split(' ')[0];
@@ -108,7 +118,10 @@ $(document).on('click', "#items-list li", function(event) {
   removeItemBtn.classList.add('btn-danger');
   removeItemBtn.addEventListener('click', function() {
     this.parentElement.remove();
+    clearFields();
+    document.getElementById("item-select").focus();
   });
+  const exerciseSelect = document.querySelector('select[name="exercise"]');
   if (event.target.classList.contains('selected')) {
     $(this).removeClass('selected');
     exerciseSelect.disabled = false;
@@ -129,7 +142,11 @@ $(document).on('click', "#items-list li", function(event) {
     } else {
       exerciseSelect.disabled = false;
       setsSelect.disabled = false;
-      exerciseSelect.value = exerciseValue;
+      updateExerciseSelect(itemValue);
+      console.log (exerciseValue);
+      updateExerciseSelect(itemSelect.value, function() {
+        exerciseSelect.value = exerciseValue;
+      });
       setsInput.value = setsValue;
     }
     const itemsArray = [];
@@ -141,7 +158,6 @@ $(document).on('click', "#items-list li", function(event) {
     });
   }
 });
-  
 const outputListItemsBtn = document.querySelector("#output-list-items-btn");
 outputListItemsBtn.addEventListener("click", () => {
   const workoutName = document.getElementById("workout-name").value;
