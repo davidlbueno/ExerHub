@@ -57,9 +57,8 @@
   <div class="row">
     <div class="col s12">
       <button id="add-item-btn" class="btn">Add Item</button>
-    </div>
-  </div>
-  <button id="output-list-items-btn">Get Attributes</button>
+      <button id="output-list-items-btn" class="btn">Save Workout</button>
+    </div> 
 </main>
 <script src="bwe.js"></script>
   <?php require_once 'db.php'; ?>
