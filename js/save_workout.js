@@ -1,3 +1,4 @@
+saveWorkoutBtn = document.getElementById("save-workout-btn");
 saveWorkoutBtn.addEventListener("click", () => {
   const workoutName = document.getElementById("workout-name").value;
   const itemsList = document.getElementById("items-list");
@@ -23,7 +24,7 @@ saveWorkoutBtn.addEventListener("click", () => {
 
   // Send an AJAX request to the PHP script
   const xhr = new XMLHttpRequest();
-  xhr.open("POST", "save_workout.php", true);
+  xhr.open("POST", "php/save_workout.php", true);
   xhr.setRequestHeader("Content-Type", "application/json");
   xhr.onload = () => {
     if (xhr.status === 200) {
@@ -34,5 +35,11 @@ saveWorkoutBtn.addEventListener("click", () => {
       console.error(xhr.responseText);
     }
   };
-  xhr.send(JSON.stringify({ workoutName, workoutData }));
+
+  const payload = {
+    workoutName: workoutName, // Correct property name
+    workoutData: workoutData, // Correct property name
+  };
+
+  xhr.send(JSON.stringify(payload));
 });
