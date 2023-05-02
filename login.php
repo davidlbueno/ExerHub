@@ -1,6 +1,6 @@
 <?php
 // Include the db.php file
-require_once 'db.php';
+require_once 'php/db.php';
 
 // Start the session
 session_start();
@@ -93,7 +93,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     </form>
   </div>
 </main>
-<script src="nav.js"></script>
+<script src="js/nav.js"></script>
 <script>document.getElementById("email").focus();</script>
 </body>
 </html>

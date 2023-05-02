@@ -29,7 +29,7 @@ function fetchSessionVars() {
         }
       }
     };
-    xhr.open('GET', 'get_session_vars.php', true);
+    xhr.open('GET', 'php/get_session_vars.php', true);
     xhr.send();
   });
 }
@@ -39,7 +39,7 @@ function updateNavigation(sessionVars) {
   if (sessionVars.userName) {
     topNavItems = topNavItems.filter(item => item.title !== 'Create Account');
     topNavItems = topNavItems.filter(item => item.title !== 'Log In');
-    topNavItems.push({ title: 'Logout', href: 'logout.php' });
+    topNavItems.push({ title: 'Logout', href: 'php/logout.php' });
   }
   const topNav = document.querySelector('#top-nav');
   const sideNav = document.querySelector('#side-nav');

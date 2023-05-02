@@ -6,7 +6,7 @@
   <title>BWE - Workouts</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <link rel="stylesheet" href="style.css">
-  <?php require_once 'db.php'; ?>
+  <?php require_once 'php/db.php'; ?>
 </head>
 <body class="dark">
 <nav>
@@ -26,6 +26,6 @@
     </div>
   </div>
   </main>
-  <script src="nav.js"></script>
+  <script src="js/nav.js"></script>
 </body>
 </html>
