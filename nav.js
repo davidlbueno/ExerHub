@@ -35,7 +35,7 @@ function fetchSessionVars() {
 }
 // Function to update navigation items based on session variables
 function updateNavigation(sessionVars) {
-  console.log(sessionVars.userName);
+  window.sessionVars = sessionVars;
   if (sessionVars.userName) {
     topNavItems = topNavItems.filter(item => item.title !== 'Create Account');
     topNavItems = topNavItems.filter(item => item.title !== 'Log In');

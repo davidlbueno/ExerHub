@@ -7,6 +7,8 @@ let itemsList = document.getElementById("items-list");
 let secondsInput = document.querySelector('input[name="seconds"]');
 let setsInput = document.querySelector('input[name="sets"]');
 let saveWorkoutBtn = document.getElementById("save-workout-btn");
+let userName = window.sessionVars.userName;
+console.log(userName);
 saveWorkoutBtn.disabled = true;
 document.getElementById("workout-name").focus();
 function updateExerciseSelect(selectedType, callback) {
