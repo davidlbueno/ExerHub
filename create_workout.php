@@ -67,6 +67,7 @@
       document.head.appendChild(script);
     });
   </script>
+  <script src="js/save_workout.js"></script>
   <?php require_once 'php/db.php'; ?>
 </body>
 </html>
