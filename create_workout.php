@@ -57,7 +57,8 @@
   <div class="row">
     <div class="col s12">
       <button id="add-item-btn" class="btn">Add Item</button>
-      <button id="output-list-items-btn" class="btn">Save Workout</button>
+      <button id="clear-list-btn" class="btn">Clear List</button>
+      <button id="save-workout-btn" class="save-workout-btn">Save Workout</button>
     </div> 
 </main>
 <script src="bwe.js"></script>
