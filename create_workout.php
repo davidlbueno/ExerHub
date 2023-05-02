@@ -60,6 +60,7 @@
   </div>
   </main>
   <script src="bwe.js"></script>
+  <script src="nav.js"></script>
   <?php require_once 'db.php'; ?>
 </body>
 </html>
