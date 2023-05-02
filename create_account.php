@@ -16,13 +16,11 @@
     <ul class="right" id="top-nav"></ul>
   </div>
 </nav>
-
 <ul class="sidenav" id="side-nav"></ul>
-
 <main class="container">
   <div class="row">
     <div class="col s8">
-      <h3>Create Account</h3>
+      <h4>Create Account</h4>
       <form action="register.php" method="post">
         <div class="input-field">
           <input type="text" id="name" name="name" required>
@@ -41,7 +39,7 @@
     </div>
   </div>
 </main>
-
+<script>document.getElementById("name").focus();</script>
 <script src="nav.js"></script>
 </body>
 </html>

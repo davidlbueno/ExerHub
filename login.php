@@ -77,11 +77,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <!-- Main content -->
 <main>
   <div class="container">
-    <h1>Welcome to BWE</h1>
-    <p>This web application is designed to help you create and manage bodyweight workout routines. With BWE, you can track your progress, discover new exercises and progressions, and create customized workouts to meet your fitness goals.</p>
-    <p>To get started, please log in or create an account.</p>
-
-    <h2>Log In</h2>
+    <h4>Welcome Back</h4>
+    <p></p>
+    <h5>Log In</h5>
     <form action="login.php" method="POST">
       <div>
         <label for="email">Email:</label>
@@ -96,5 +94,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
   </div>
 </main>
 <script src="nav.js"></script>
+<script>document.getElementById("email").focus();</script>
 </body>
 </html>
