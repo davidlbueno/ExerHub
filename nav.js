@@ -12,11 +12,9 @@ let topNavItems = [
 if (window.location.pathname.includes('create_account.php')) {
   topNavItems = topNavItems.filter(item => item.title !== 'Create Account');
 }
-
 if (window.location.pathname.includes('login.php')) {
   topNavItems = topNavItems.filter(item => item.title !== 'Log In');
 }
-
 // Function to fetch session variables from the server
 function fetchSessionVars() {
   return new Promise((resolve, reject) => {
@@ -35,57 +33,43 @@ function fetchSessionVars() {
     xhr.send();
   });
 }
-
 // Function to update navigation items based on session variables
 function updateNavigation(sessionVars) {
-  console.log(sessionVars);
-  if (sessionVars) {
-    console.log('User is logged in');
-    console.log(topNavItems);
+  console.log(sessionVars.userName);
+  if (sessionVars.userName) {
     topNavItems = topNavItems.filter(item => item.title !== 'Create Account');
     topNavItems = topNavItems.filter(item => item.title !== 'Log In');
-    console.log(topNavItems);
-
-    const topNav = document.querySelector('#top-nav');
-    const sideNav = document.querySelector('#side-nav');
-
-    // Clear existing items
-    sideNav.innerHTML = '';
-    topNav.innerHTML = '';
-
-    // Add items to sideNav
-    sideNavItems.forEach((item) => {
-      const li = document.createElement('li');
-      const a = document.createElement('a');
-
-      a.textContent = item.title;
-      a.href = item.href;
-
-      li.appendChild(a);
-      sideNav.appendChild(li);
-    });
-
-    // Initialize sideNav
-    var elems = document.querySelectorAll('.sidenav');
-    var instances = M.Sidenav.init(elems);
-
-    // Add items to topNav
-    topNavItems.forEach((item) => {
-      const li = document.createElement('li');
-      const a = document.createElement('a');
-
-      a.textContent = item.title;
-      a.href = item.href;
-
-      li.appendChild(a);
-      topNav.appendChild(li);
-    });
-
-    // Make top-nav always visible
-    topNav.classList.remove('hide');
+    topNavItems.push({ title: 'Logout', href: 'logout.php' });
   }
+  const topNav = document.querySelector('#top-nav');
+  const sideNav = document.querySelector('#side-nav');
+  // Initialize sideNav
+  var elems = document.querySelectorAll('.sidenav');
+  var instances = M.Sidenav.init(elems);
+  // Clear existing items
+  sideNav.innerHTML = '';
+  topNav.innerHTML = '';
+  // Add items to sideNav
+  sideNavItems.forEach((item) => {
+    const li = document.createElement('li');
+    const a = document.createElement('a');
+    a.textContent = item.title;
+    a.href = item.href;
+    li.appendChild(a);
+    sideNav.appendChild(li);
+  });
+  // Add items to topNav
+  topNavItems.forEach((item) => {
+    const li = document.createElement('li');
+    const a = document.createElement('a');
+    a.textContent = item.title;
+    a.href = item.href;
+    li.appendChild(a);
+    topNav.appendChild(li);
+  });
+  // Make top-nav always visible
+  topNav.classList.remove('hide');
 }
-
 document.addEventListener('DOMContentLoaded', function () {
   fetchSessionVars().then(updateNavigation);
 });
