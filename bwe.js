@@ -13,7 +13,7 @@ saveWorkoutBtn.disabled = true;
 document.getElementById("workout-name").focus();
 function updateExerciseSelect(selectedType, callback) {
   const xhr = new XMLHttpRequest();
-  xhr.open("GET", `get_exercises.php?type=${selectedType}`, true);
+  xhr.open("GET", `php/get_exercises.php?type=${selectedType}`, true);
   xhr.onload = () => {
     if (xhr.status === 200) {
       const exercises = JSON.parse(xhr.responseText);
@@ -179,13 +179,3 @@ function clearList() {
   itemsList.innerHTML = ""; // Clear the items list
   saveWorkoutBtn.disabled = true;
 }
-clearListBtn.addEventListener("click", clearList);
-saveWorkoutBtn.addEventListener("click", () => {
-  const workoutName = document.getElementById("workout-name").value;
-  const itemsList = document.getElementById("items-list");
-  const items = itemsList.children;
-  console.log(workoutName);
-  for (let i = 0; i < items.length; i++) {
-    console.log(items[i].textContent);
-  }
-});

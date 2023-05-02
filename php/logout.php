@@ -8,7 +8,7 @@ $_SESSION = array();
 session_destroy();
 
 // Redirect the user to the desired page after logout
-header('Location: index.html'); // Replace 'index.php' with the appropriate destination
+header('Location: ../index.html'); // Replace 'index.php' with the appropriate destination
 
 // Make sure to exit the script to prevent further execution
 exit;

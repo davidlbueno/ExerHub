@@ -6,7 +6,7 @@
   <title>BWE - Create Account</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <link rel="stylesheet" href="style.css">
-  <?php require_once 'db.php'; ?>
+  <?php require_once 'php/db.php'; ?>
 </head>
 <body class="dark">
 <nav>
@@ -21,7 +21,7 @@
   <div class="row">
     <div class="col s8">
       <h4>Create Account</h4>
-      <form action="register.php" method="post">
+      <form action="php/register.php" method="post">
         <div class="input-field">
           <input type="text" id="name" name="name" required>
           <label for="name">Name</label>
@@ -40,6 +40,6 @@
   </div>
 </main>
 <script>document.getElementById("name").focus();</script>
-<script src="nav.js"></script>
+<script src="js/nav.js"></script>
 </body>
 </html>

@@ -8,7 +8,7 @@
   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
-  <?php require_once 'db.php'; ?>
+  <?php require_once 'php/db.php'; ?>
 </head>
 <body class="dark">
   <nav>
@@ -59,7 +59,7 @@
     </div> 
   </div>
   </main>
-  <script src="nav.js"></script>
+  <script src="js/nav.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       var script = document.createElement('script');
@@ -67,6 +67,6 @@
       document.head.appendChild(script);
     });
   </script>
-  <?php require_once 'db.php'; ?>
+  <?php require_once 'php/db.php'; ?>
 </body>
 </html>

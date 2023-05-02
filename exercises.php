@@ -9,7 +9,7 @@
   <script type="text/javascript" src="//cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <link rel="stylesheet" href="style.css">
-  <?php require_once 'db.php'; ?>
+  <?php require_once 'php/db.php'; ?>
 </head>
 <body class="dark">
   <nav>
@@ -47,7 +47,7 @@
       </tbody>
     </table>
   </main>
-  <script src="nav.js"></script>
+  <script src="js/nav.js"></script>
   <script>
     $(document).ready(function() {
       $('#exercise-table').DataTable({
