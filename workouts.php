@@ -15,7 +15,6 @@
     <a href="index.html" data-target="side-nav" class="show-on-large sidenav-trigger"><i class="material-icons">menu</i></a>
     <ul class="right" id="top-nav"></ul>
 </div>
-
 </nav>
   <ul class="sidenav" id="side-nav"></ul>
   <main class="container">
