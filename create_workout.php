@@ -59,8 +59,14 @@
     </div> 
   </div>
   </main>
-  <script src="bwe.js"></script>
   <script src="nav.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var script = document.createElement('script');
+      script.src = 'bwe.js';
+      document.head.appendChild(script);
+    });
+  </script>
   <?php require_once 'db.php'; ?>
 </body>
 </html>
