@@ -115,6 +115,9 @@ select {
   font-size: 24px;
 }
 
+input {
+  color: #bdbdbd;
+}
 .input-field {
   margin: 0 0 0 0 !important;
   align-items: left;
@@ -180,4 +183,8 @@ h4 {
 
 li.selected {
   border-color: red;
+}
+
+.hide {
+  display: none;
 }
