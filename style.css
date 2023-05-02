@@ -61,15 +61,21 @@ nav .brand-logo {
   color: #ffffff;
 }
 
-.remove-btn{
+#save-workout-btn.btn[disabled] {
+  background-color: #2f2f2f !important;
+  color: #525252 !important;
+}
+
+.copy-del-btn{
   background-color: #5e5d5d;
   color: #ffffff;
   float: right;
   border: none;
   height: 24px;
+  margin: 0 2px 0 2px;
 }
 
-.remove-btn:hover {
+.copy-del-btn:hover {
   background-color: #a30e0e;
   border: none;
   height: 24px;
@@ -175,4 +181,3 @@ h4 {
 li.selected {
   border-color: red;
 }
-

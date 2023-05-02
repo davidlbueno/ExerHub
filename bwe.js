@@ -2,9 +2,12 @@ let itemSelect = document.getElementById("item-select");
 let exerciseSelect = document.getElementById("exercise-select");
 let setsSelect = document.getElementById("sets-select");
 let addItemBtn = document.getElementById("add-item-btn");
+let clearListBtn = document.getElementById("clear-list-btn");
 let itemsList = document.getElementById("items-list");
 let secondsInput = document.querySelector('input[name="seconds"]');
 let setsInput = document.querySelector('input[name="sets"]');
+let saveWorkoutBtn = document.getElementById("save-workout-btn");
+saveWorkoutBtn.disabled = true;
 document.getElementById("workout-name").focus();
 function updateExerciseSelect(selectedType, callback) {
   const xhr = new XMLHttpRequest();
@@ -44,43 +47,39 @@ addItemBtn.addEventListener("click", () => {
       newItem.innerHTML = `${itemSelect.value} - (${secondsInput.value}s)`;
       newItem.style.backgroundColor = "#454500";
       itemsList.appendChild(newItem);
-      itemSelect.value = "";
-      secondsInput.value = "";
+      clearFields();
+      saveWorkoutBtn.disabled = false;
     } else {
         selectedListItem.html(`${itemSelect.value} - (${secondsInput.value}s)`)
-        itemSelect.value = "";
-        secondsInput.value = "";
+        clearFields();
         selectedListItem.css('background-color', '#454500');
         selectedListItem.removeClass('selected');  
     }
   } else {
-      exerciseSelect.disabled = false;
-      setsSelect.disabled = false;
-      if (itemSelect.value && exerciseSelect.value && secondsInput.value && setsInput.value) {
-        itemsArray.push({
-            item: itemSelect.value,
-            exercise: exerciseSelect.value,
-            seconds: secondsInput.value,
-            sets: setsInput.value,
-        });
-        if (!$(".selected").length > 0) {
-        const newItem = document.createElement("li");
-        newItem.innerHTML = `${itemSelect.value} - ${exerciseSelect.value} (${secondsInput.value}s, ${setsInput.value} sets)`;
-        const newNumber = itemsList.children.length + 1;
-        newItem.setAttribute('value', newNumber);
-        itemsList.appendChild(newItem);
-        } else {
-          selectedListItem.html(`${itemSelect.value} - ${exerciseSelect.value} (${secondsInput.value}s, ${setsInput.value} sets)`)
-          selectedListItem.css('background-color', '#3d3d3d');
-          selectedListItem.removeClass('selected');      }
-      } else {
-        alert("Please enter all required information.");
-      }
-      itemSelect.value = "";
-      exerciseSelect.value = "";
-      secondsInput.value = "";
-      setsInput.value = "";
+    exerciseSelect.disabled = false;
+    setsSelect.disabled = false;
+    if (itemSelect.value && exerciseSelect.value && secondsInput.value && setsInput.value) {
+      itemsArray.push({
+        item: itemSelect.value,
+        exercise: exerciseSelect.value,
+        seconds: secondsInput.value,
+        sets: setsInput.value,
+    });
+    if (!$(".selected").length > 0) {
+      const newItem = document.createElement("li");
+      newItem.innerHTML = `${itemSelect.value} - ${exerciseSelect.value} (${secondsInput.value}s, ${setsInput.value} sets)`;
+      const newNumber = itemsList.children.length + 1;
+      newItem.setAttribute('value', newNumber);
+      itemsList.appendChild(newItem);
+      saveWorkoutBtn.disabled = false;
+    } else {
+      selectedListItem.html(`${itemSelect.value} - ${exerciseSelect.value} (${secondsInput.value}s, ${setsInput.value} sets)`)
+      selectedListItem.css('background-color', '#3d3d3d');
+      selectedListItem.removeClass('selected');      }
+    } else {
+      alert("Please enter all required information.");
     }
+  }
   $addItemBtn.text('Add Item'); 
   clearFields();
   document.getElementById("item-select").focus();
@@ -113,9 +112,8 @@ $(document).on('click', "#items-list li", function(event) {
   const setsInput = document.querySelector('input[name="sets"]');
   const $addItemBtn = $('#add-item-btn');
   const removeItemBtn = document.createElement('button');
-  removeItemBtn.textContent = 'Remove Item';
-  removeItemBtn.classList.add('remove-btn');
-  removeItemBtn.classList.add('btn-danger');
+  removeItemBtn.textContent = 'Del';
+  removeItemBtn.classList.add('copy-del-btn');
   removeItemBtn.addEventListener('click', function() {
     this.parentElement.remove();
     clearFields();
@@ -127,12 +125,29 @@ $(document).on('click', "#items-list li", function(event) {
     exerciseSelect.disabled = false;
     setsSelect.disabled = false;
     $addItemBtn.text('Add Item');
-    const removeItemBtn = $(this).find('.remove-btn');
+    const removeItemBtn = $(this).find('.copy-del-btn');
     removeItemBtn.remove();
+    saveWorkoutBtn.disabled = false;
   } else {
-    $('.selected').removeClass('selected').find('.remove-btn').remove();
+    $('.selected').removeClass('selected').find('.copy-del-btn').remove();
     this.classList.add('selected');
+    const duplicateItemBtn = document.createElement('button');
+    duplicateItemBtn.textContent = 'Copy';
+    duplicateItemBtn.classList.add('copy-del-btn');
+    duplicateItemBtn.addEventListener('click', function() {
+      const newItem = document.createElement("li");
+      if (itemValue === "Rest") {
+        newItem.style.backgroundColor = "#454500";
+        newItem.innerHTML = `${itemSelect.value} - (${secondsInput.value}s)`;
+      } else {
+      newItem.innerHTML = `${itemValue} - ${exerciseValue} (${secondsValue}s, ${setsValue} sets)`;
+      }
+      const newNumber = itemsList.children.length + 1;
+      newItem.setAttribute('value', newNumber);
+      itemsList.appendChild(newItem);
+    });
     this.appendChild(removeItemBtn);
+    this.appendChild(duplicateItemBtn);
     $addItemBtn.text('Update Item');
     itemSelect.value = itemValue;
     secondsInput.value = secondsValue;
@@ -143,12 +158,12 @@ $(document).on('click', "#items-list li", function(event) {
       exerciseSelect.disabled = false;
       setsSelect.disabled = false;
       updateExerciseSelect(itemValue);
-      console.log (exerciseValue);
       updateExerciseSelect(itemSelect.value, function() {
         exerciseSelect.value = exerciseValue;
       });
       setsInput.value = setsValue;
     }
+    saveWorkoutBtn.disabled = true;
     const itemsArray = [];
     itemsArray.push({
       item: itemValue,
@@ -158,8 +173,12 @@ $(document).on('click', "#items-list li", function(event) {
     });
   }
 });
-const outputListItemsBtn = document.querySelector("#output-list-items-btn");
-outputListItemsBtn.addEventListener("click", () => {
+function clearList() {
+  itemsList.innerHTML = ""; // Clear the items list
+  saveWorkoutBtn.disabled = true;
+}
+clearListBtn.addEventListener("click", clearList);
+saveWorkoutBtn.addEventListener("click", () => {
   const workoutName = document.getElementById("workout-name").value;
   const itemsList = document.getElementById("items-list");
   const items = itemsList.children;
