@@ -5,44 +5,87 @@ const sideNavItems = [
   { title: 'Exercises', href: 'exercises.php' },
   { title: 'Workouts', href: 'workouts.php' },
 ];
-
-const topNavItems = [
-  { title: 'Log In', href: '#' },
-  { title: 'Create Account', href: '#' },
+let topNavItems = [
+  { title: 'Log In', href: 'login.php' },
+  { title: 'Create Account', href: 'create_account.php' },
 ];
+if (window.location.pathname.includes('create_account.php')) {
+  topNavItems = topNavItems.filter(item => item.title !== 'Create Account');
+}
+
+if (window.location.pathname.includes('login.php')) {
+  topNavItems = topNavItems.filter(item => item.title !== 'Log In');
+}
+
+// Function to fetch session variables from the server
+function fetchSessionVars() {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === XMLHttpRequest.DONE) {
+        if (xhr.status === 200) {
+          const sessionVars = JSON.parse(xhr.responseText);
+          resolve(sessionVars);
+        } else {
+          reject();
+        }
+      }
+    };
+    xhr.open('GET', 'get_session_vars.php', true);
+    xhr.send();
+  });
+}
+
+// Function to update navigation items based on session variables
+function updateNavigation(sessionVars) {
+  console.log(sessionVars);
+  if (sessionVars) {
+    console.log('User is logged in');
+    console.log(topNavItems);
+    topNavItems = topNavItems.filter(item => item.title !== 'Create Account');
+    topNavItems = topNavItems.filter(item => item.title !== 'Log In');
+    console.log(topNavItems);
+
+    const topNav = document.querySelector('#top-nav');
+    const sideNav = document.querySelector('#side-nav');
+
+    // Clear existing items
+    sideNav.innerHTML = '';
+    topNav.innerHTML = '';
+
+    // Add items to sideNav
+    sideNavItems.forEach((item) => {
+      const li = document.createElement('li');
+      const a = document.createElement('a');
+
+      a.textContent = item.title;
+      a.href = item.href;
+
+      li.appendChild(a);
+      sideNav.appendChild(li);
+    });
+
+    // Initialize sideNav
+    var elems = document.querySelectorAll('.sidenav');
+    var instances = M.Sidenav.init(elems);
+
+    // Add items to topNav
+    topNavItems.forEach((item) => {
+      const li = document.createElement('li');
+      const a = document.createElement('a');
+
+      a.textContent = item.title;
+      a.href = item.href;
+
+      li.appendChild(a);
+      topNav.appendChild(li);
+    });
+
+    // Make top-nav always visible
+    topNav.classList.remove('hide');
+  }
+}
 
 document.addEventListener('DOMContentLoaded', function () {
-  var elems = document.querySelectorAll('.sidenav');
-  var instances = M.Sidenav.init(elems);
-
-  // Generate navigation links
-  const topNav = document.querySelector('#top-nav');
-  const sideNav = document.querySelector('#side-nav');
-
-  // Add items to sideNav
-  sideNavItems.forEach((item) => {
-    const li = document.createElement('li');
-    const a = document.createElement('a');
-
-    a.textContent = item.title;
-    a.href = item.href;
-
-    li.appendChild(a);
-    sideNav.appendChild(li.cloneNode(true));
-  });
-
-  // Add items to topNav
-  topNavItems.forEach((item) => {
-    const li = document.createElement('li');
-    const a = document.createElement('a');
-
-    a.textContent = item.title;
-    a.href = item.href;
-
-    li.appendChild(a);
-    topNav.appendChild(li.cloneNode(true));
-  });
-
-  // Make top-nav always visible
-  topNav.classList.remove('hide');
+  fetchSessionVars().then(updateNavigation);
 });
