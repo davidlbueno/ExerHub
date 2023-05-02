@@ -21,15 +21,13 @@
   <ul class="sidenav" id="side-nav"></ul>
   <main class="container">
   <div class="row">
-
-  <div class="row">
-  <div class="input-field col s12">
-    <input type="text" name="workout-name" id="workout-name" placeholder="Workout Name" style="width:100%;">
-  </div>
-</div>
-
+    <div class="row">
+      <div class="input-field col s12">
+        <input type="text" name="workout-name" id="workout-name" placeholder="Workout Name" style="width:100%;">
+      </div>
+    </div>
     <div class="col s12">
-    <ol id="items-list" class="sortable"></ol>
+      <ol id="items-list" class="sortable"></ol>
     </div>
   </div>
   <div class="row">
@@ -42,26 +40,26 @@
         <option value="Rest">Rest</option>
       </select>
     </div>
-    <div class="input-field col s5">
-      <select name="exercise" id="exercise-select" disabled>
-        <option value="" disabled selected>Exercise</option>
-      </select>
-    </div>
-    <div class="input-field col s2">
-      <input type="number" name="seconds" min="0" max="300" step="15" placeholder="Seconds" style="width:100%;">
-    </div>
-    <div class="input-field col s2">
-      <input type="number" name="sets" id="sets-select" min="0" max="10" step="1" placeholder="Sets" style="width:100%;">
-    </div>
+  <div class="input-field col s5">
+    <select name="exercise" id="exercise-select" disabled>
+      <option value="" disabled selected>Exercise</option>
+    </select>
+  </div>
+  <div class="input-field col s2">
+    <input type="number" name="seconds" min="0" max="300" step="15" placeholder="Seconds" style="width:100%;">
+  </div>
+  <div class="input-field col s2">
+    <input type="number" name="sets" id="sets-select" min="0" max="10" step="1" placeholder="Sets" style="width:100%;">
   </div>
   <div class="row">
     <div class="col s12">
       <button id="add-item-btn" class="btn">Add Item</button>
       <button id="clear-list-btn" class="btn">Clear List</button>
-      <button id="save-workout-btn" class="save-workout-btn">Save Workout</button>
+      <button id="save-workout-btn" class="btn">Save Workout</button>
     </div> 
-</main>
-<script src="bwe.js"></script>
+  </div>
+  </main>
+  <script src="bwe.js"></script>
   <?php require_once 'db.php'; ?>
 </body>
 </html>

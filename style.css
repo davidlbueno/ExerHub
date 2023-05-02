@@ -58,7 +58,7 @@ nav .brand-logo {
 /* Button styles */
 .btn {
   background-color: #424242;
-  color: #ffffff;
+  color: #4f4f4f;
 }
 
 #save-workout-btn.btn[disabled] {
