@@ -1,21 +1,21 @@
 saveWorkoutBtn = document.getElementById("save-workout-btn");
 saveWorkoutBtn.addEventListener("click", () => {
   const workoutName = document.getElementById("workout-name").value;
-  const itemsList = document.getElementById("items-list");
-  const items = itemsList.children;
+  const typesList = document.getElementById("types-list");
+  const types = typesList.children;
 
   // Create an array to store the exercise data
   const workoutData = [];
 
-  for (let i = 0; i < items.length; i++) {
-    const itemText = items[i].textContent;
-    const itemValue = itemText.split(' ')[0];
-    const exerciseValue = itemText.split(' - ')[1].split(' (')[0];
-    const secondsValue = (itemValue === "Rest") ? itemText.split('(')[1].split('s)')[0] : itemText.split(' (')[1].split('s, ')[0];
-    const setsValue = (itemValue === "Rest") ? 0 : itemText.split(' (')[1].split('s, ')[1].split(' sets)')[0];
+  for (let i = 0; i < types.length; i++) {
+    const typeText = types[i].textContent;
+    const typeValue = typeText.split(' ')[0];
+    const exerciseValue = typeText.split(' - ')[1].split(' (')[0];
+    const secondsValue = (typeValue === "Rest") ? typeText.split('(')[1].split('s)')[0] : typeText.split(' (')[1].split('s, ')[0];
+    const setsValue = (typeValue === "Rest") ? 0 : typeText.split(' (')[1].split('s, ')[1].split(' sets)')[0];
 
     workoutData.push({
-      item: itemValue,
+      type: typeValue,
       exercise: exerciseValue,
       seconds: secondsValue,
       sets: setsValue,

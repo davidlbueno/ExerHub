@@ -27,14 +27,14 @@
       </div>
     </div>
     <div class="col s12">
-      <ol id="items-list" class="sortable"></ol>
+      <ol id="types-list" class="sortable"></ol>
     </div>
   </div>
   <div class="row">
     <div class="input-field col s3">
-      <select name="item" id="item-select">
+      <select name="type" id="type-select">
         <option value="" disabled selected>Item</option>
-        <option value="Push">Push</option>
+        <option value="Push">Push</option>type
         <option value="Pull">Pull</option>
         <option value="Legs">Legs</option>
         <option value="Rest">Rest</option>
@@ -53,7 +53,7 @@
   </div>
   <div class="row">
     <div class="col s12">
-      <button id="add-item-btn" class="btn">Add Item</button>
+      <button id="add-type-btn" class="btn">Add Item</button>
       <button id="clear-list-btn" class="btn">Clear List</button>
       <button id="save-workout-btn" class="btn">Save Workout</button>
     </div> 
