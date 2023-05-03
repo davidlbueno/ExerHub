@@ -118,6 +118,7 @@ $(document).on('click', "#types-list li", function(event) {
   removeItemBtn.addEventListener('click', function() {
     this.parentElement.remove();
     clearFields();
+    saveWorkoutBtn.disabled = false;
     document.getElementById("type-select").focus();
   });
   const exerciseSelect = document.querySelector('select[name="exercise"]');
