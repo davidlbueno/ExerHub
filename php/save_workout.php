@@ -28,26 +28,38 @@ $result = query($query);
 
 // Check if the query was successful
 if ($result) {
-  // Workout record created successfully
-  //$workoutId = mysqli_insert_id($conn); // Get the auto-generated workout ID
+  //Workout record created successfully
+  $workoutId = mysqli_insert_id($conn); // Get the auto-generated workout ID
 
   // Process the workout data
-  //  foreach ($workoutData as $item) {
-  //  $itemValue = $item['item'];
-  //  $exerciseValue = $item['exercise'];
-  //  $secondsValue = $item['seconds'];
-  //  $setsValue = $item['sets'];
+  foreach ($workoutData as $type) {
+    $typeValue = $type['type'];
+    $exerciseValue = $type['exercise'];
+    $secondsValue = $type['seconds'];
+    $setsValue = $type['sets'];
 
-    // Insert the workout item into the database table
- //   $query = "INSERT INTO workout_sequence(workout_id, exercise_id, seconds, sets)
- //             VALUES ($workoutId, '$itemValue', '$exerciseValue', $secondsValue, $setsValue)";
- //   $result = query($query);
+   // Get the exercise ID based on the exercise name
+   $exerciseQuery = "SELECT id FROM exercises WHERE name = '$exerciseValue'";
+   $exerciseResult = query($exerciseQuery);
 
-    //if (!$result) {
-      // Handle the error (e.g., display an error message, rollback changes, etc.)
-    //  die("Error creating workout item: " . mysqli_error($conn));
-   // }
- // }
+   if ($exerciseResult && mysqli_num_rows($exerciseResult) > 0) {
+     $exerciseRow = mysqli_fetch_assoc($exerciseResult);
+     $exerciseId = $exerciseRow['id'];
+
+     // Insert the workout type into the database table
+     $query = "INSERT INTO workout_sequences(workout_id, type, exercise_id, seconds, sets)
+               VALUES ($workoutId, '$typeValue', $exerciseId, $secondsValue, $setsValue)";
+     $result = query($query);
+
+     if (!$result) {
+       // Handle the error (e.g., display an error message, rollback changes, etc.)
+       die("Error creating workout type: " . mysqli_error($conn));
+     }
+   } else {
+     // Exercise not found, handle the error accordingly
+     die("Error: Exercise not found for name '$exerciseValue'");
+   }
+ }
 
   // Redirect the user to the success page or display a success message
   header("Location: ../workouts.php"); // Replace "workout_success.php" with your actual success page URL
