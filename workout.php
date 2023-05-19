@@ -21,110 +21,124 @@
   <div class="row">
     <div class="col s12">
       <div class="col s8">
-        <?php
-          session_start();
-          $userId = $_SESSION['user_id'];
-          $workoutId = $_GET['workout_id'];
-          $workout_name = $_GET['workout_name'];
-          echo "<h5>$workout_name</h5>";
+      <?php
+  session_start();
+  $userId = $_SESSION['user_id'];
+  $workoutId = $_GET['workout_id'];
+  $workout_name = $_GET['workout_name'];
+  echo "<h5>$workout_name</h5>";
+  $workoutItems = fetchWorkoutItems($workoutId);
+  displayWorkoutDetails($workoutItems);
 
-          $workoutItems = fetchWorkouts($workoutId);
-          displayWorkoutDetails($workoutItems);
-        
-          function fetchWorkouts($workoutId) {
-            global $conn;            
-            $query = "SELECT * FROM workout_sequences WHERE workout_id = $workoutId";
-            $result = query($query);
-            $items = array();
-            while ($row = mysqli_fetch_assoc($result)) {
-              $items[] = $row;
-            }
-            
-            return $items;
-          }
+  function fetchWorkoutItems($workoutId) {
+    global $conn;
+    $query = "SELECT ws.type, ws.exercise_id, ws.seconds, ws.sets, e.name as exercise_name FROM workout_sequences ws LEFT JOIN exercises e ON ws.exercise_id = e.id WHERE ws.workout_id = $workoutId";
+    $result = query($query);
+    $items = array();
+    while ($row = mysqli_fetch_assoc($result)) {
+      $items[] = $row;
+    }
+    return $items;
+  }
 
-          function displayWorkoutDetails($items) {
-            if (empty($items)) {
-              echo "<p>No workout found.</p>";
-            } else {
-              
-              foreach ($items as $item) {
-                echo "<h6>" . $item['type'] . " " . $item['exercise'] . " " . $item['seconds'] . " " . $item['sets'] . "</h6>";
-                // Display other workout details here
-              }
-            }
-          }
-        ?>
-      </div>
-    </div>
-  </div>
-  <div>
-    <button id="startButton" data-target="timerModal" class="btn">Start</button>
-  </div>
-  <div id="timerModal" class="modal">
-   <div class="modal-content">
-    <h4>Workout Timer</h4>
-    <p id="exerciseName"></
-    <button id="startButton" data-target="timerModal" class="btn">Start</button>
-    <div id="timerModal" class="modal">
-      <div class="modal-content">
-        <h4>Workout Timer</h4>
-        <p id="exerciseName"></p>
-        <p id="timer"></p>
-      </div>
-      <div class="modal-footer">
-        <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
-      </div>
-    </div>
-</main>
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    var startButton = document.getElementById('startButton');
-    var timerModal = document.getElementById('timerModal');
-    var exerciseName = document.getElementById('exerciseName');
-    var timer = document.getElementById('timer');
-    var workoutItems = <?php echo json_encode($workoutItems); ?>;
-
-    var currentIndex = 0;
-    var countdownInterval;
-
-    startButton.addEventListener('click', function() {
-      currentIndex = 0;
-      startCountdown();
-      var modalInstance = M.Modal.init(timerModal); // Initialize the modal instance
-      modalInstance.open(); // Open the modal
-    });
-
-    function startCountdown() {
-      if (currentIndex < workoutItems.length) {
-        var currentItem = workoutItems[currentIndex];
-        exerciseName.textContent = currentItem['exercise'];
-        var seconds = currentItem['seconds'];
-        var count = seconds;
-
-        timer.textContent = formatTime(count);
-
-        countdownInterval = setInterval(function() {
-          count--;
-          timer.textContent = formatTime(count);
-
-          if (count === 0) {
-            clearInterval(countdownInterval);
-            currentIndex++;
-            startCountdown();
-          }
-        }, 1000);
+  function displayWorkoutDetails($items) {
+    if (empty($items)) {
+      echo "<p>No workout found.</p>";
+    } else {
+      foreach ($items as $item) {
+        echo "<h6>" . $item['type'] . " " . ($item['exercise_name'] ?: '') . " " . $item['seconds'] . " " . $item['sets'] . "</h6>";
+        // Display other workout details here
       }
     }
+  }
+?>
 
-    function formatTime(seconds) {
-      var minutes = Math.floor(seconds / 60);
-      var remainingSeconds = seconds % 60;
+        <button id="startButton" class="btn">Start</button>
+        <div id="timerModal" class="modal">
+          <div class="modal-content">
+            <h4>Workout Timer</h4>
+            <ul id="workoutList"></ul>
+          </div>
+          <div class="modal-footer">
+            <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+<script>
+  var workoutItems = <?php echo json_encode($workoutItems); ?>;
+document.addEventListener('DOMContentLoaded', function() {
+  var startButton = document.getElementById('startButton');
+  var timerModal = document.getElementById('timerModal');
+  var workoutList = document.getElementById('workoutList');
+  var currentIndex = 0; // Track the current item index
 
-      return minutes.toString().padStart(2, '0') + ':' + remainingSeconds.toString().padStart(2, '0');
-    }
+  startButton.addEventListener('click', startWorkout);
+
+  // Listen for modal-close event to reset the currentIndex
+  timerModal.addEventListener('modal-close', function() {
+    currentIndex = 0;
   });
+
+  function startWorkout() {
+    // Clear the existing workout list
+    workoutList.innerHTML = '';
+
+    // Populate the workout list
+    workoutItems.forEach(function(item) {
+      var li = document.createElement('li');
+      var text = document.createTextNode(item.type + ' ' + item.exercise_name + ' ' + item.seconds + ' seconds');
+      li.appendChild(text);
+
+      // Duplicate the list item based on the number of sets
+      for (var i = 1; i < item.sets; i++) {
+        workoutList.appendChild(li.cloneNode(true));
+      }
+
+      workoutList.appendChild(li);
+    });
+
+    // Start the countdown for the first item
+    countdown(workoutItems[currentIndex]);
+
+    // Initialize the modal
+    var modalInstance = M.Modal.init(timerModal);
+    modalInstance.open();
+  }
+
+  function countdown(item) {
+    var seconds = item.seconds;
+    var element = workoutList.children[currentIndex];
+
+    var interval = setInterval(function() {
+      if (item.type === 'Rest') {
+        element.textContent = item.type + ' ' + seconds + ' seconds'; // Update the countdown display
+      } else {
+        element.textContent = item.type + ' ' + item.exercise_name + ' ' + seconds + ' seconds'; // Update the countdown display
+      }
+
+      if (seconds <= 0) {
+        clearInterval(interval); // Stop the countdown when it reaches 0
+
+        currentIndex++; // Move to the next item
+
+        // Check if there are more items in the list
+        if (currentIndex < workoutItems.length) {
+          // Start the countdown for the next item
+          countdown(workoutItems[currentIndex]);
+        } else {
+          // All items have been counted down
+          // You can add your desired action here
+        }
+      }
+
+      seconds--;
+    }, 1000);
+  }
+});
+
 </script>
-<script src="js/nav.js"></script>
 </body>
 </html>
