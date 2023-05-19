@@ -126,11 +126,11 @@
       }
 
       function countdown(item) {
-        var seconds = remainingTime > 0 ? remainingTime : parseFloat(item.seconds);
-        var element = workoutList.children[currentIndex];
+          var seconds = remainingTime > 0 ? remainingTime : parseFloat(item.seconds);
+          var element = workoutList.children[currentIndex];
 
         interval = setInterval(function() {
-          element.textContent = item.type + ' ' + (item.exercise_name || '') + ' ' + seconds.toFixed(2) + ' seconds';
+            element.textContent = item.type + ' ' + (item.exercise_name || '') + ' ' + seconds.toFixed(2) + ' seconds';
 
           if (seconds <= 0) {
             clearInterval(interval);
@@ -139,6 +139,8 @@
 
             if (currentIndex < workoutItems.length) {
               countdown(workoutItems[currentIndex]);
+              // Highlight the next list item
+              workoutList.children[currentIndex].classList.add('highlighted');
             } else {
               // All items have been counted down
               // You can add your desired action here
@@ -147,6 +149,9 @@
 
           seconds -= 0.01;
         }, 10); // Run the interval every 10 milliseconds (hundredths of a second)
+
+      // Highlight the current list item
+      element.classList.add('highlighted');
       }
 
       function togglePlay() {
@@ -178,9 +183,21 @@
 
       function skipCountdown() {
         clearInterval(interval);
+
+        // Remove the highlight from the current list item
+        workoutList.children[currentIndex].classList.remove('highlighted');
+
         currentIndex++;
         remainingTime = 0;
-        playCountdown();
+
+        if (currentIndex < workoutItems.length) {
+          countdown(workoutItems[currentIndex]);
+          // Highlight the next list item
+          workoutList.children[currentIndex].classList.add('highlighted');
+        } else {
+          // All items have been counted down
+          // You can add your desired action here
+        }
       }
 
       function restartCountdown() {
