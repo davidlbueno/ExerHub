@@ -57,15 +57,14 @@
         <button id="startButton" class="btn">Start</button>
         <div id="timerModal" class="modal">
           <div class="modal-content">
-            <h4>Workout Timer</h4>
+            <div class="modal-title">
+              <h4>Workout Timer</h4>
+              <div class="modal-buttons">
+                <button id="playButton" class="btn-flat"><i class="material-icons">play_arrow</i></button>
+                <button id="closeButton" class="modal-close btn-flat"><i class="material-icons">close</i></button>
+              </div>
+            </div>
             <ul id="workoutList"></ul>
-          </div>
-          <div class="modal-footer">
-            <a href="#!" id="pauseButton" class="waves-effect waves-green btn-flat">
-              <i class="material-icons" id="pauseIcon">pause</i>
-              <i class="material-icons" id="playIcon" style="display: none;">play_arrow</i>
-            </a>
-            <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
           </div>
         </div>
       </div>
@@ -76,22 +75,25 @@
   var workoutItems = <?php echo json_encode($workoutItems); ?>;
   document.addEventListener('DOMContentLoaded', function() {
     var startButton = document.getElementById('startButton');
-    var pauseButton = document.getElementById('pauseButton');
-    var pauseIcon = document.getElementById('pauseIcon');
-    var playIcon = document.getElementById('playIcon');
     var timerModal = document.getElementById('timerModal');
     var workoutList = document.getElementById('workoutList');
+    var playButton = document.getElementById('playButton');
+    var closeButton = document.getElementById('closeButton');
     var currentIndex = 0; // Track the current item index
-    var remainingSeconds = 0; // Track the remaining seconds for the current item
-    var interval; // Variable to store the interval ID
-    var isPaused = false; // Flag to track the paused state
+    var interval; // Interval variable to store the countdown interval
+    var isPaused = true; // Start with the timer paused
+    var remainingTime = 0; // Track the remaining time for the current item
 
     startButton.addEventListener('click', startWorkout);
-    pauseButton.addEventListener('click', togglePause);
+    playButton.addEventListener('click', togglePlay);
 
-    // Listen for modal-close event to reset the currentIndex
+    // Listen for modal-close event to reset the currentIndex, clear the interval, and reset the timer state
     timerModal.addEventListener('modal-close', function() {
       currentIndex = 0;
+      clearInterval(interval);
+      isPaused = true;
+      remainingTime = 0;
+      playButton.innerHTML = '<i class="material-icons">play_arrow</i>';
     });
 
     function startWorkout() {
@@ -109,9 +111,6 @@
         }
       });
 
-      // Start the countdown for the first item
-      countdown(workoutItems[currentIndex]);
-
       // Initialize the modal
       var modalInstance = M.Modal.init(timerModal);
       modalInstance.open();
@@ -124,37 +123,8 @@
       return li;
     }
 
-    function togglePause() {
-      if (isPaused) {
-        resumeCountdown(); // If paused, resume the countdown
-      } else {
-        pauseCountdown(); // If not paused, pause the countdown
-      }
-      isPaused = !isPaused; // Toggle the paused state
-      togglePlayPauseIcons(); // Toggle the display of pause/play icons
-    }
-
-    function pauseCountdown() {
-      clearInterval(interval); // Clear the interval to pause the countdown
-      remainingSeconds = getRemainingSeconds(); // Store the remaining seconds
-    }
-
-    function resumeCountdown() {
-      countdown(workoutItems[currentIndex], remainingSeconds); // Resume the countdown with remaining seconds
-    }
-
-    function togglePlayPauseIcons() {
-      if (isPaused) {
-        pauseIcon.style.display = 'none'; // Hide pause icon
-        playIcon.style.display = 'inline'; // Show play icon
-      } else {
-        pauseIcon.style.display = 'inline'; // Show pause icon
-        playIcon.style.display = 'none'; // Hide play icon
-      }
-    }
-
-    function countdown(item, seconds) {
-      seconds = seconds || item.seconds; // Use the remaining seconds if provided
+    function countdown(item) {
+      var seconds = remainingTime > 0 ? remainingTime : item.seconds; // Use remaining time if available
       var element = workoutList.children[currentIndex];
 
       interval = setInterval(function() {
@@ -168,6 +138,7 @@
           clearInterval(interval); // Stop the countdown when it reaches 0
 
           currentIndex++; // Move to the next item
+          remainingTime = 0; // Reset remaining time
 
           // Check if there are more items in the list
           if (currentIndex < workoutItems.length) {
@@ -183,10 +154,31 @@
       }, 1000);
     }
 
-    function getRemainingSeconds() {
-      var element = workoutList.children[currentIndex];
-      var timeParts = element.textContent.split(' ');
-      return parseInt(timeParts[timeParts.length - 2]); // Extract the remaining seconds from the display text
+    function togglePlay() {
+      if (isPaused) {
+        playCountdown();
+      } else {
+        pauseCountdown();
+      }
+    }
+
+    function playCountdown() {
+      if (currentIndex < workoutItems.length) {
+        var item = workoutItems[currentIndex];
+        countdown(item);
+        isPaused = false;
+        playButton.innerHTML = '<i class="material-icons">pause</i>';
+      }
+    }
+
+    function pauseCountdown() {
+      clearInterval(interval);
+      isPaused = true;
+      playButton.innerHTML = '<i class="material-icons">play_arrow</i>';
+      var currentElement = workoutList.children[currentIndex];
+      var timeText = currentElement.textContent;
+      var timeArray = timeText.split(' ');
+      remainingTime = parseInt(timeArray[timeArray.length - 2]);
     }
   });
 </script>
