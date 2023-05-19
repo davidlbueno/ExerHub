@@ -21,37 +21,38 @@
   <div class="row">
     <div class="col s12">
       <div class="col s8">
-      <?php
-  session_start();
-  $userId = $_SESSION['user_id'];
-  $workoutId = $_GET['workout_id'];
-  $workout_name = $_GET['workout_name'];
-  echo "<h5>$workout_name</h5>";
-  $workoutItems = fetchWorkoutItems($workoutId);
-  displayWorkoutDetails($workoutItems);
+        <?php
+          session_start();
+          $userId = $_SESSION['user_id'];
+          $workoutId = $_GET['workout_id'];
+          $workout_name = $_GET['workout_name'];
+          echo "<h5>$workout_name</h5>";
+          $workoutItems = fetchWorkoutItems($workoutId);
+          displayWorkoutDetails($workoutItems);
 
-  function fetchWorkoutItems($workoutId) {
-    global $conn;
-    $query = "SELECT ws.type, ws.exercise_id, ws.seconds, ws.sets, e.name as exercise_name FROM workout_sequences ws LEFT JOIN exercises e ON ws.exercise_id = e.id WHERE ws.workout_id = $workoutId";
-    $result = query($query);
-    $items = array();
-    while ($row = mysqli_fetch_assoc($result)) {
-      $items[] = $row;
-    }
-    return $items;
-  }
+          function fetchWorkoutItems($workoutId) {
+            global $conn;
+            $query = "SELECT ws.type, ws.exercise_id, ws.seconds, ws.sets, e.name as exercise_name FROM workout_sequences ws LEFT JOIN exercises e ON ws.exercise_id = e.id WHERE ws.workout_id = $workoutId";
+            $result = query($query);
+            $items = array();
+            while ($row = mysqli_fetch_assoc($result)) {
+              $items[] = $row;
+            }
+            return $items;
+          }
 
-  function displayWorkoutDetails($items) {
-    if (empty($items)) {
-      echo "<p>No workout found.</p>";
-    } else {
-      foreach ($items as $item) {
-        echo "<h6>" . $item['type'] . " " . ($item['exercise_name'] ?: '') . " " . $item['seconds'] . " " . $item['sets'] . "</h6>";
-        // Display other workout details here
-      }
-    }
-  }
-?>
+          function displayWorkoutDetails($items) {
+            if (empty($items)) {
+              echo "<p>No workout found.</p>";
+            } else {
+              foreach ($items as $item) {
+                $exerciseName = $item['exercise_name'] ?: '';
+                echo "<h6>{$item['type']} {$exerciseName} {$item['seconds']} {$item['sets']}</h6>";
+                // Display other workout details here
+              }
+            }
+          }
+        ?>
 
         <button id="startButton" class="btn">Start</button>
         <div id="timerModal" class="modal">
@@ -88,16 +89,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Populate the workout list
     workoutItems.forEach(function(item) {
-      var li = document.createElement('li');
-      var text = document.createTextNode(item.type + ' ' + item.exercise_name + ' ' + item.seconds + ' seconds');
-      li.appendChild(text);
+      var listItem = createListItem(item);
+      workoutList.appendChild(listItem);
 
       // Duplicate the list item based on the number of sets
       for (var i = 1; i < item.sets; i++) {
-        workoutList.appendChild(li.cloneNode(true));
+        workoutList.appendChild(listItem.cloneNode(true));
       }
-
-      workoutList.appendChild(li);
     });
 
     // Start the countdown for the first item
@@ -108,6 +106,13 @@ document.addEventListener('DOMContentLoaded', function() {
     modalInstance.open();
   }
 
+  function createListItem(item) {
+    var li = document.createElement('li');
+    var text = document.createTextNode(item.type + ' ' + (item.exercise_name || '') + ' ' + item.seconds + ' seconds');
+    li.appendChild(text);
+    return li;
+  }
+
   function countdown(item) {
     var seconds = item.seconds;
     var element = workoutList.children[currentIndex];
@@ -116,7 +121,7 @@ document.addEventListener('DOMContentLoaded', function() {
       if (item.type === 'Rest') {
         element.textContent = item.type + ' ' + seconds + ' seconds'; // Update the countdown display
       } else {
-        element.textContent = item.type + ' ' + item.exercise_name + ' ' + seconds + ' seconds'; // Update the countdown display
+        element.textContent = item.type + ' ' + (item.exercise_name || '') + ' ' + seconds + ' seconds'; // Update the countdown display
       }
 
       if (seconds <= 0) {
@@ -138,7 +143,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 1000);
   }
 });
-
 </script>
 </body>
 </html>
