@@ -71,6 +71,9 @@
         <h4 id="modalTitle"></h4>
         <div class="controls">
           <button id="playPauseBtn" class="btn"><i class="material-icons">play_arrow</i></button>
+          <button id="prevBtn" class="btn"><i class="material-icons">skip_previous</i></button>
+          <button id="nextBtn" class="btn"><i class="material-icons">skip_next</i></button>
+          <button id="resetBtn" class="btn"><i class="material-icons">replay</i></button>
         </div>
         <ol class="workout-list"></ol>
       </div>  
