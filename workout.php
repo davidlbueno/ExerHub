@@ -181,6 +181,16 @@
       remainingTime = parseInt(timeArray[timeArray.length - 2]);
     }
   });
+
+  // Trigger the 'modal-close' event when the modal is closed
+  document.addEventListener('DOMContentLoaded', function() {
+    var closeModalButton = document.querySelector('.modal-close');
+    closeModalButton.addEventListener('click', function() {
+      var event = new Event('modal-close');
+      timerModal.dispatchEvent(event);
+    });
+  });
 </script>
+
 </body>
 </html>
