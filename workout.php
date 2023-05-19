@@ -28,7 +28,7 @@
           $userId = $_SESSION['user_id'];
           $workoutId = $_GET['workout_id'];
           $workout_name = $_GET['workout_name'];
-          echo "<h5>$workout_name</h5>";
+          echo "<h5 id='workoutName'>$workout_name</h5>";
           $workoutItems = fetchWorkoutItems($workoutId);
           displayWorkoutDetails($workoutItems);
 
@@ -103,14 +103,18 @@
 
         workoutItems.forEach(function(item) {
           for (var i = 0; i < item.sets; i++) {
-            var listItem = createListItem(item);
-            workoutList.appendChild(listItem);
+            workoutList.appendChild(createListItem(item));
           }
         });
 
         var modalInstance = M.Modal.init(timerModal);
         modalInstance.open();
         modalInstance.options.onCloseEnd = resetTimer;
+
+        // Set workout name as modal title
+        var workoutName = document.getElementById('workoutName').innerText;
+        var modalTitle = document.querySelector('#timerModal .modal-title h4');
+        modalTitle.textContent = workoutName;
       }
 
       function createListItem(item) {
@@ -126,11 +130,7 @@
         var element = workoutList.children[currentIndex];
 
         interval = setInterval(function() {
-          if (item.type === 'Rest') {
-            element.textContent = item.type + ' ' + seconds.toFixed(2) + ' seconds';
-          } else {
-            element.textContent = item.type + ' ' + (item.exercise_name || '') + ' ' + seconds.toFixed(2) + ' seconds';
-          }
+          element.textContent = item.type + ' ' + (item.exercise_name || '') + ' ' + seconds.toFixed(2) + ' seconds';
 
           if (seconds <= 0) {
             clearInterval(interval);
@@ -184,28 +184,28 @@
       }
 
       function restartCountdown() {
-  clearInterval(interval);
-  currentIndex = 0;
-  remainingTime = 0;
+        clearInterval(interval);
+        currentIndex = 0;
+        remainingTime = 0;
 
-  // Reset 'seconds' values for each list item
-  workoutItems.forEach(function(item) {
-    item.seconds = parseFloat(item.seconds);
-  });
+        // Reset 'seconds' values for each list item
+        workoutItems.forEach(function(item) {
+          item.seconds = parseFloat(item.seconds);
+        });
 
-  // Update displayed list items with new 'seconds' values
-  var listItems = workoutList.getElementsByTagName('li');
-  for (var i = 0; i < listItems.length; i++) {
-    var item = workoutItems[i];
-    if (item) {
-      var seconds = Number(item.seconds);
-      var text = item.type + ' ' + (item.exercise_name || '') + ' ' + seconds.toFixed(2) + ' seconds';
-      listItems[i].textContent = text;
-    }
-  }
+        // Update displayed list items with new 'seconds' values
+        var listItems = workoutList.getElementsByTagName('li');
+        for (var i = 0; i < listItems.length; i++) {
+          var item = workoutItems[i];
+          if (item) {
+            var seconds = Number(item.seconds);
+            var text = item.type + ' ' + (item.exercise_name || '') + ' ' + seconds.toFixed(2) + ' seconds';
+            listItems[i].textContent = text;
+          }
+        }
 
-  pauseCountdown();
-}
+        pauseCountdown();
+      }
 
       function resetTimer() {
         currentIndex = 0;
@@ -216,7 +216,5 @@
       }
     });
   </script>
-
 </body>
-
 </html>
