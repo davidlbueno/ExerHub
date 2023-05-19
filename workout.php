@@ -112,18 +112,41 @@
       // Play/Pause button functionality
       const playPauseBtn = document.getElementById('playPauseBtn');
       let isPlaying = false;
+      let countdownTimer;
 
       playPauseBtn.addEventListener('click', function () {
-        isPlaying = !isPlaying;
-        if (isPlaying) {
+        if (!isPlaying) {
           playPauseBtn.innerHTML = '<i class="material-icons">pause</i>';
+          isPlaying = true;
           // Start playing the workout
-          // Replace this code with your actual workout playback logic
-          console.log('Workout started.');
+          const countdownItems = workoutList.querySelectorAll('li');
+          let currentItemIndex = 0;
+          let currentSeconds = parseInt(countdownItems[currentItemIndex].textContent.match(/\d+/));
+
+          function countdown() {
+            countdownItems[currentItemIndex].textContent = countdownItems[currentItemIndex].textContent.replace(/\d+/, currentSeconds);
+            currentSeconds--;
+
+            if (currentSeconds < 0) {
+              currentItemIndex++;
+              if (currentItemIndex < countdownItems.length) {
+                currentSeconds = parseInt(countdownItems[currentItemIndex].textContent.match(/\d+/));
+              } else {
+                console.log('Workout completed.');
+                modalInstance.close();
+                return;
+              }
+            }
+
+            countdownTimer = setTimeout(countdown, 1000);
+          }
+
+          countdown();
         } else {
           playPauseBtn.innerHTML = '<i class="material-icons">play_arrow</i>';
-          // Pause the workout
-          // Replace this code with your actual workout pause logic
+          isPlaying = false;
+          // Pause the countdown timer
+          clearTimeout(countdownTimer);
           console.log('Workout paused.');
         }
       });
