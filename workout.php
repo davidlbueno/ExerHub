@@ -65,6 +65,8 @@
                 <h4>Workout Timer</h4>
                 <div class="modal-buttons">
                   <button id="playButton" class="btn-flat"><i class="material-icons">play_arrow</i></button>
+                  <button id="skipButton" class="btn-flat"><i class="material-icons">skip_next</i></button>
+                  <button id="restartButton" class="btn-flat"><i class="material-icons">replay</i></button>
                   <button id="closeButton" class="modal-close btn-flat"><i class="material-icons">close</i></button>
                 </div>
               </div>
@@ -82,6 +84,8 @@
       var timerModal = document.getElementById('timerModal');
       var workoutList = document.getElementById('workoutList');
       var playButton = document.getElementById('playButton');
+      var skipButton = document.getElementById('skipButton');
+      var restartButton = document.getElementById('restartButton');
       var closeButton = document.getElementById('closeButton');
       var currentIndex = 0;
       var interval;
@@ -90,6 +94,8 @@
 
       startButton.addEventListener('click', startWorkout);
       playButton.addEventListener('click', togglePlay);
+      skipButton.addEventListener('click', skipCountdown);
+      restartButton.addEventListener('click', restartCountdown);
       closeButton.addEventListener('click', resetTimer);
 
       function startWorkout() {
@@ -109,20 +115,21 @@
 
       function createListItem(item) {
         var li = document.createElement('li');
-        var text = document.createTextNode(item.type + ' ' + (item.exercise_name || '') + ' ' + item.seconds + ' seconds');
+        var seconds = Number(item.seconds);
+        var text = document.createTextNode(item.type + ' ' + (item.exercise_name || '') + ' ' + seconds.toFixed(2) + ' seconds');
         li.appendChild(text);
         return li;
       }
 
       function countdown(item) {
-        var seconds = remainingTime > 0 ? remainingTime : item.seconds;
+        var seconds = remainingTime > 0 ? remainingTime : parseFloat(item.seconds);
         var element = workoutList.children[currentIndex];
 
         interval = setInterval(function() {
           if (item.type === 'Rest') {
-            element.textContent = item.type + ' ' + seconds + ' seconds';
+            element.textContent = item.type + ' ' + seconds.toFixed(2) + ' seconds';
           } else {
-            element.textContent = item.type + ' ' + (item.exercise_name || '') + ' ' + seconds + ' seconds';
+            element.textContent = item.type + ' ' + (item.exercise_name || '') + ' ' + seconds.toFixed(2) + ' seconds';
           }
 
           if (seconds <= 0) {
@@ -138,8 +145,8 @@
             }
           }
 
-          seconds--;
-        }, 1000);
+          seconds -= 0.01;
+        }, 10); // Run the interval every 10 milliseconds (hundredths of a second)
       }
 
       function togglePlay() {
@@ -166,8 +173,39 @@
         var currentElement = workoutList.children[currentIndex];
         var timeText = currentElement.textContent;
         var timeArray = timeText.split(' ');
-        remainingTime = parseInt(timeArray[timeArray.length - 2]);
+        remainingTime = parseFloat(timeArray[timeArray.length - 2]);
       }
+
+      function skipCountdown() {
+        clearInterval(interval);
+        currentIndex++;
+        remainingTime = 0;
+        playCountdown();
+      }
+
+      function restartCountdown() {
+  clearInterval(interval);
+  currentIndex = 0;
+  remainingTime = 0;
+
+  // Reset 'seconds' values for each list item
+  workoutItems.forEach(function(item) {
+    item.seconds = parseFloat(item.seconds);
+  });
+
+  // Update displayed list items with new 'seconds' values
+  var listItems = workoutList.getElementsByTagName('li');
+  for (var i = 0; i < listItems.length; i++) {
+    var item = workoutItems[i];
+    if (item) {
+      var seconds = Number(item.seconds);
+      var text = item.type + ' ' + (item.exercise_name || '') + ' ' + seconds.toFixed(2) + ' seconds';
+      listItems[i].textContent = text;
+    }
+  }
+
+  pauseCountdown();
+}
 
       function resetTimer() {
         currentIndex = 0;
