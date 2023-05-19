@@ -188,3 +188,8 @@ li.selected {
 .hide {
   display: none;
 }
+
+.highlighted {
+  background-color: red !important;
+  color: white !important;
+}
