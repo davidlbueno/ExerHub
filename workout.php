@@ -161,6 +161,10 @@
           activeItem.classList.remove('active');
           nextItem.classList.add('active');
           const nextSeconds = parseInt(nextItem.textContent.match(/\d+/));
+          pauseCountdown();
+          isTimerRunning = false;
+          updatePlayPauseButton();
+          updateCountdown(nextSeconds);
         }
       }
     });
@@ -177,9 +181,30 @@
           activeItem.classList.remove('active');
           prevItem.classList.add('active');
           const prevSeconds = parseInt(prevItem.textContent.match(/\d+/));
+          pauseCountdown();
+          updatePlayPauseButton();
+          isTimerRunning = false;
+          updateCountdown(prevSeconds);
         }
       }
     });
+
+    // Update the countdown timer with the provided seconds
+      function updateCountdown(seconds) {
+        const countdownClock = document.querySelector('.countdown-clock');
+        countdownClock.textContent = formatTime(seconds);
+      }
+    
+    // Update the play/pause button appearance
+      function updatePlayPauseButton() {
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        
+        if (isTimerRunning) {
+          playPauseBtn.innerHTML = '<i class="material-icons">pause</i>'; // Set button appearance to "Pause"
+        } else {
+          playPauseBtn.innerHTML = '<i class="material-icons">play_arrow</i>'; // Set button appearance to "Play"
+        }
+      }
 
     // Add event listener to "Reset" button
     const resetBtn = document.getElementById('resetBtn');
@@ -194,7 +219,7 @@
       if (firstItem) {
         firstItem.classList.add('active');
         const firstSeconds = parseInt(firstItem.textContent.match(/\d+/));
-        startCountdown(firstSeconds);
+        updateCountdown(firstSeconds);
       }
     });
 
