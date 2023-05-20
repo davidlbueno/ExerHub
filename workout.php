@@ -70,7 +70,7 @@
             <button id="prevBtn" class="btn"><i class="material-icons">skip_previous</i></button>
             <button id="nextBtn" class="btn"><i class="material-icons">skip_next</i></button>
             <button id="resetBtn" class="btn"><i class="material-icons">replay</i></button>
-            <div class="countdown-clock" style="display: inline-block;">00:00</div>
+            <div class="countdown-clock" style="display: inline-block;">00:00:00</div>
           </div>
           <ol class="workout-list"></ol>
         </div>  
@@ -92,7 +92,7 @@
       const modalTitle = document.getElementById('modalTitle');
       const workoutName = modal.getAttribute('data-workout-name');
       modalTitle.textContent = workoutName;
-
+      
       const startWorkoutBtn = document.getElementById('startWorkoutBtn');
       const workoutList = document.querySelector('.workout-list');
       const playPauseBtn = document.getElementById('playPauseBtn');
@@ -113,19 +113,23 @@
 
       startWorkoutBtn.addEventListener('click', function () {
         modalInstance.open();
+        const firstItem = document.querySelector('.workout-list li:first-child');
+      const firstSeconds = parseInt(firstItem.textContent.match(/\d+/));
+      updateCountdown(firstSeconds);
       });
 
       playPauseBtn.addEventListener('click', function () {
         const activeItem = document.querySelector('.workout-list li.active');
 
         if (activeItem) {
-          const seconds = parseInt(activeItem.textContent.match(/\d+/));
+          let seconds = parseInt(activeItem.textContent.match(/\d+/));
 
           if (isTimerRunning) {
             pauseCountdown();
             isTimerRunning = false;
             playPauseBtn.innerHTML = '<i class="material-icons">play_arrow</i>';
           } else {
+            seconds = parseInt(countdownClock.textContent.split(':')[1]);
             startCountdown(seconds);
             isTimerRunning = true;
             playPauseBtn.innerHTML = '<i class="material-icons">pause</i>';
