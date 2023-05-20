@@ -70,7 +70,7 @@
             <button id="prevBtn" class="btn"><i class="material-icons">skip_previous</i></button>
             <button id="nextBtn" class="btn"><i class="material-icons">skip_next</i></button>
             <button id="resetBtn" class="btn"><i class="material-icons">replay</i></button>
-            <div class="countdown-clock" style="display: inline-block;">00:00:00</div>
+            <h5 class="countdown-clock" style="display: inline-block;">00:00:00</h5>
           </div>
           <ol class="workout-list"></ol>
         </div>  
@@ -211,14 +211,20 @@
       }
 
       let countdownInterval;
+      let startTime;
 
       function startCountdown(seconds) {
-        function updateCountdown() {
-          countdownClock.textContent = formatTime(seconds);
+        startTime = new Date().getTime(); // Store the start time
 
-          if (seconds > 0) {
-            seconds -= 0.01;
+        function updateCountdown() {
+          const currentTime = new Date().getTime();
+          const elapsedTime = (currentTime - startTime) / 1000; // Convert milliseconds to seconds
+
+          const remainingTime = seconds - elapsedTime;
+          if (remainingTime > 0) {
+            countdownClock.textContent = formatTime(remainingTime);
           } else {
+            countdownClock.textContent = formatTime(0); // Set the display to 00:00:00 when countdown is completed
             clearInterval(countdownInterval);
             internalCall = true;
             nextBtn.click();
