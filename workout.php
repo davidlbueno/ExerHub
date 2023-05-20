@@ -222,12 +222,11 @@
       function updateCountdown() {
         countdownClock.textContent = formatTime(seconds);
 
-        if (seconds > 0 && isTimerRunning) {
+        if (seconds > 0) {
           seconds -= 0.01;
         } else {
           clearInterval(countdownInterval);
-          isTimerRunning = false;
-          playPauseBtn.innerHTML = '<i class="material-icons">play_arrow</i>'; // Set button appearance to "Play"
+          nextBtn.click(); // Call the nextBtn.click() function
         }
       }
 
@@ -241,7 +240,5 @@
     }
   });
 </script>
-
-
 </body>
 </html>
