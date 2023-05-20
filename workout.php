@@ -161,7 +161,6 @@
           activeItem.classList.remove('active');
           nextItem.classList.add('active');
           const nextSeconds = parseInt(nextItem.textContent.match(/\d+/));
-          startCountdown(nextSeconds);
         }
       }
     });
@@ -178,7 +177,6 @@
           activeItem.classList.remove('active');
           prevItem.classList.add('active');
           const prevSeconds = parseInt(prevItem.textContent.match(/\d+/));
-          startCountdown(prevSeconds);
         }
       }
     });
