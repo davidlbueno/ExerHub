@@ -149,6 +149,8 @@
       }
     });
 
+    let internalCall = false;
+
     // Add event listener to "Next" button
     const nextBtn = document.getElementById('nextBtn');
     nextBtn.addEventListener('click', function () {
@@ -162,9 +164,14 @@
           nextItem.classList.add('active');
           const nextSeconds = parseInt(nextItem.textContent.match(/\d+/));
           pauseCountdown();
-          isTimerRunning = false;
-          updatePlayPauseButton();
           updateCountdown(nextSeconds);
+          if (!internalCall) {
+            isTimerRunning = false;
+            updatePlayPauseButton();
+          } else {
+            internalCall = false;
+            startCountdown(nextSeconds);
+          }
         }
       }
     });
@@ -182,9 +189,9 @@
           prevItem.classList.add('active');
           const prevSeconds = parseInt(prevItem.textContent.match(/\d+/));
           pauseCountdown();
+          updateCountdown(prevSeconds);
           updatePlayPauseButton();
           isTimerRunning = false;
-          updateCountdown(prevSeconds);
         }
       }
     });
@@ -249,6 +256,7 @@
           seconds -= 0.01;
         } else {
           clearInterval(countdownInterval);
+          internalCall = true;
           nextBtn.click(); // Call the nextBtn.click() function
         }
       }
