@@ -200,15 +200,17 @@
       }
     });
 
-    // Format time in mm:ss format
+    // Format time in mm:ss:ms format (minutes:seconds:hundredths)
     function formatTime(seconds) {
       const minutes = Math.floor(seconds / 60);
       const remainingSeconds = seconds % 60;
+      const hundredths = Math.floor((remainingSeconds % 1) * 100);
 
       const formattedMinutes = String(minutes).padStart(2, '0');
-      const formattedSeconds = String(remainingSeconds).padStart(2, '0');
+      const formattedSeconds = String(Math.floor(remainingSeconds)).padStart(2, '0');
+      const formattedHundredths = String(hundredths).padStart(2, '0');
 
-      return `${formattedMinutes}:${formattedSeconds}`;
+      return `${formattedMinutes}:${formattedSeconds}:${formattedHundredths}`;
     }
 
     // Countdown timer function
@@ -221,7 +223,7 @@
         countdownClock.textContent = formatTime(seconds);
 
         if (seconds > 0 && isTimerRunning) {
-          seconds--;
+          seconds -= 0.01;
         } else {
           clearInterval(countdownInterval);
           isTimerRunning = false;
@@ -230,7 +232,7 @@
       }
 
       updateCountdown();
-      countdownInterval = setInterval(updateCountdown, 1000);
+      countdownInterval = setInterval(updateCountdown, 10); // Update every hundredth of a second (10ms)
     }
 
     // Pause the countdown timer
@@ -239,6 +241,7 @@
     }
   });
 </script>
+
 
 </body>
 </html>
