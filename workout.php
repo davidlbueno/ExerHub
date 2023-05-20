@@ -170,8 +170,8 @@
             const prevSeconds = parseInt(prevItem.textContent.match(/\d+/));
             pauseCountdown();
             updateCountdown(prevSeconds);
-            updatePlayPauseButton();
             isTimerRunning = false;
+            updatePlayPauseButton();
           }
         }
       });
@@ -189,6 +189,7 @@
           const firstSeconds = parseInt(firstItem.textContent.match(/\d+/));
           pauseCountdown();
           updateCountdown(firstSeconds);
+          isTimerRunning = false;
           updatePlayPauseButton();
         }
       });
