@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>BWE - Workout</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <link rel="stylesheet" href="style.css">
   <?php require_once 'php/db.php'; ?>
@@ -70,11 +71,12 @@
       <div class="modal-content">
         <h4 id="modalTitle"></h4>
         <div class="controls">
-          <button id="playPauseBtn" class="btn"><i class="material-icons">play_arrow</i></button>
-          <button id="prevBtn" class="btn"><i class="material-icons">skip_previous</i></button>
-          <button id="nextBtn" class="btn"><i class="material-icons">skip_next</i></button>
-          <button id="resetBtn" class="btn"><i class="material-icons">replay</i></button>
-        </div>
+        <button id="playPauseBtn" class="btn"><i class="material-icons">play_arrow</i></button>
+        <button id="prevBtn" class="btn"><i class="material-icons">skip_previous</i></button>
+        <button id="nextBtn" class="btn"><i class="material-icons">skip_next</i></button>
+        <button id="resetBtn" class="btn"><i class="material-icons">replay</i></button>
+        <div class="countdown-clock" style="display: inline-block;">00:00</div>
+      </div>
         <ol class="workout-list"></ol>
       </div>  
       <div class="modal-footer">
@@ -89,88 +91,154 @@
 <script src="js/nav.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function () {
-  // Initialize the modal
-  const modal = document.getElementById('workoutModal');
-  const modalInstance = M.Modal.init(modal);
+    let isTimerRunning = false; // Variable to track the timer state
 
-  // Set the modal title
-  const modalTitle = document.getElementById('modalTitle');
-  const workoutName = modal.getAttribute('data-workout-name');
-  modalTitle.textContent = workoutName;
+    // Initialize the modal
+    const modal = document.getElementById('workoutModal');
+    const modalInstance = M.Modal.init(modal);
 
-  // Add event listener to "Start Workout" button
-  const startWorkoutBtn = document.getElementById('startWorkoutBtn');
-  startWorkoutBtn.addEventListener('click', function () {
-    // Clear previous workout list items
-    const workoutList = document.querySelector('.workout-list');
-    workoutList.innerHTML = '';
+    // Set the modal title
+    const modalTitle = document.getElementById('modalTitle');
+    const workoutName = modal.getAttribute('data-workout-name');
+    modalTitle.textContent = workoutName;
 
-    // Clone and append workout list items to the modal
-    const workoutItems = document.querySelectorAll('ol li');
-    const workoutItemsArray = Array.from(workoutItems); // Convert NodeList to array
+    // Add event listener to "Start Workout" button
+    const startWorkoutBtn = document.getElementById('startWorkoutBtn');
+    startWorkoutBtn.addEventListener('click', function () {
+      // Clear previous workout list items
+      const workoutList = document.querySelector('.workout-list');
+      workoutList.innerHTML = '';
 
-    workoutItemsArray.forEach(function (item, index) {
-      const listItem = item.cloneNode(true);
-      workoutList.appendChild(listItem);
+      // Clone and append workout list items to the modal
+      const workoutItems = document.querySelectorAll('ol li');
+      const workoutItemsArray = Array.from(workoutItems); // Convert NodeList to array
 
-      // Add the 'active' class to the first list item
-      if (index === 0) {
-        listItem.classList.add('active');
+      workoutItemsArray.forEach(function (item, index) {
+        const listItem = item.cloneNode(true);
+        workoutList.appendChild(listItem);
+
+        // Add the 'active' class to the first list item
+        if (index === 0) {
+          listItem.classList.add('active');
+        }
+      });
+
+      // Open the modal
+      modalInstance.open();
+    });
+
+    // Add event listener to "Play/Pause" button inside the modal
+    const playPauseBtn = document.getElementById('playPauseBtn');
+    playPauseBtn.addEventListener('click', function () {
+      const activeItem = document.querySelector('.workout-list li.active');
+
+      if (activeItem) {
+        const seconds = parseInt(activeItem.textContent.match(/\d+/));
+
+        if (isTimerRunning) {
+          // Pause the timer
+          pauseCountdown();
+          isTimerRunning = false;
+          playPauseBtn.innerHTML = '<i class="material-icons">play_arrow</i>'; // Set button appearance to "Play"
+        } else {
+          // Start the timer
+          startCountdown(seconds);
+          isTimerRunning = true;
+          playPauseBtn.innerHTML = '<i class="material-icons">pause</i>'; // Set button appearance to "Pause"
+        }
       }
     });
 
-    // Open the modal
-    modalInstance.open();
-  });
+    // Add event listener to "Next" button
+    const nextBtn = document.getElementById('nextBtn');
+    nextBtn.addEventListener('click', function () {
+      const activeItem = document.querySelector('.workout-list li.active');
 
-  // Add event listener to "Next" button
-  const nextBtn = document.getElementById('nextBtn');
-  nextBtn.addEventListener('click', function () {
-    const activeItem = document.querySelector('.workout-list li.active');
+      if (activeItem) {
+        const nextItem = activeItem.nextElementSibling;
 
-    if (activeItem) {
-      const nextItem = activeItem.nextElementSibling;
-
-      if (nextItem) {
-        activeItem.classList.remove('active');
-        nextItem.classList.add('active');
-        const nextSeconds = parseInt(nextItem.textContent.match(/\d+/));
-        nextItem.setAttribute('data-seconds', nextSeconds); // Store initial seconds as a data attribute for the next item
+        if (nextItem) {
+          activeItem.classList.remove('active');
+          nextItem.classList.add('active');
+          const nextSeconds = parseInt(nextItem.textContent.match(/\d+/));
+          startCountdown(nextSeconds);
+        }
       }
-    }
-  });
+    });
 
-  // Add event listener to "Previous" button
-  const prevBtn = document.getElementById('prevBtn');
-  prevBtn.addEventListener('click', function () {
-    const activeItem = document.querySelector('.workout-list li.active');
+    // Add event listener to "Previous" button
+    const prevBtn = document.getElementById('prevBtn');
+    prevBtn.addEventListener('click', function () {
+      const activeItem = document.querySelector('.workout-list li.active');
 
-    if (activeItem) {
-      const prevItem = activeItem.previousElementSibling;
+      if (activeItem) {
+        const prevItem = activeItem.previousElementSibling;
 
-      if (prevItem) {
-        activeItem.classList.remove('active');
-        prevItem.classList.add('active');
+        if (prevItem) {
+          activeItem.classList.remove('active');
+          prevItem.classList.add('active');
+          const prevSeconds = parseInt(prevItem.textContent.match(/\d+/));
+          startCountdown(prevSeconds);
+        }
       }
+    });
+
+    // Add event listener to "Reset" button
+    const resetBtn = document.getElementById('resetBtn');
+    resetBtn.addEventListener('click', function () {
+      const activeItem = document.querySelector('.workout-list li.active');
+      const firstItem = document.querySelector('.workout-list li:first-child');
+
+      if (activeItem) {
+        activeItem.classList.remove('active');
+      }
+
+      if (firstItem) {
+        firstItem.classList.add('active');
+        const firstSeconds = parseInt(firstItem.textContent.match(/\d+/));
+        startCountdown(firstSeconds);
+      }
+    });
+
+    // Format time in mm:ss format
+    function formatTime(seconds) {
+      const minutes = Math.floor(seconds / 60);
+      const remainingSeconds = seconds % 60;
+
+      const formattedMinutes = String(minutes).padStart(2, '0');
+      const formattedSeconds = String(remainingSeconds).padStart(2, '0');
+
+      return `${formattedMinutes}:${formattedSeconds}`;
+    }
+
+    // Countdown timer function
+    let countdownInterval;
+
+    function startCountdown(seconds) {
+      const countdownClock = document.querySelector('.countdown-clock');
+
+      function updateCountdown() {
+        countdownClock.textContent = formatTime(seconds);
+
+        if (seconds > 0 && isTimerRunning) {
+          seconds--;
+        } else {
+          clearInterval(countdownInterval);
+          isTimerRunning = false;
+          playPauseBtn.innerHTML = '<i class="material-icons">play_arrow</i>'; // Set button appearance to "Play"
+        }
+      }
+
+      updateCountdown();
+      countdownInterval = setInterval(updateCountdown, 1000);
+    }
+
+    // Pause the countdown timer
+    function pauseCountdown() {
+      clearInterval(countdownInterval);
     }
   });
-
-  // Add event listener to "Reset" button
-  const resetBtn = document.getElementById('resetBtn');
-  resetBtn.addEventListener('click', function () {
-    const activeItem = document.querySelector('.workout-list li.active');
-    const firstItem = document.querySelector('.workout-list li:first-child');
-
-    if (activeItem) {
-      activeItem.classList.remove('active');
-    }
-
-    if (firstItem) {
-      firstItem.classList.add('active');
-    }
-  });
-
-});
 </script>
+
 </body>
 </html>
