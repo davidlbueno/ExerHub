@@ -187,7 +187,9 @@
         if (firstItem) {
           firstItem.classList.add('active');
           const firstSeconds = parseInt(firstItem.textContent.match(/\d+/));
+          pauseCountdown();
           updateCountdown(firstSeconds);
+          updatePlayPauseButton();
         }
       });
 
