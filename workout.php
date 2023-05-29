@@ -84,67 +84,67 @@
     ?>
   </main>
   <script src="js/nav.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      let isTimerRunning = false;
-      let progressPercentage = 0; // Store the progress percentage
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    let isTimerRunning = false;
+    let progressPercentage = 0; // Store the progress percentage
 
-      const modal = document.getElementById('workoutModal');
-      const modalInstance = M.Modal.init(modal);
-      const modalTitle = document.getElementById('modalTitle');
-      const workoutName = modal.getAttribute('data-workout-name');
-      modalTitle.textContent = workoutName;
+    const modal = document.getElementById('workoutModal');
+    const modalInstance = M.Modal.init(modal);
+    const modalTitle = document.getElementById('modalTitle');
+    const workoutName = modal.getAttribute('data-workout-name');
+    modalTitle.textContent = workoutName;
 
-      const startWorkoutBtn = document.getElementById('startWorkoutBtn');
-      const workoutList = document.querySelector('.workout-list');
-      const playPauseBtn = document.getElementById('playPauseBtn');
-      const nextBtn = document.getElementById('nextBtn');
-      const prevBtn = document.getElementById('prevBtn');
-      const resetBtn = document.getElementById('resetBtn');
-      const countdownClock = document.querySelector('.countdown-clock');
+    const startWorkoutBtn = document.getElementById('startWorkoutBtn');
+    const workoutList = document.querySelector('.workout-list');
+    const playPauseBtn = document.getElementById('playPauseBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const prevBtn = document.getElementById('prevBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const countdownClock = document.querySelector('.countdown-clock');
 
-      const workoutItems = document.querySelectorAll('ol li');
-      workoutItems.forEach(function (item, index) {
-        const listItem = item.cloneNode(true);
-        const progressBar = document.createElement('div');
-        progressBar.classList.add('progress-bar', 'positioned');
-        listItem.appendChild(progressBar);
-        workoutList.appendChild(listItem);
+    const workoutItems = document.querySelectorAll('ol li');
+    workoutItems.forEach(function (item, index) {
+      const listItem = item.cloneNode(true);
+      const progressBar = document.createElement('div');
+      progressBar.classList.add('progress-bar', 'positioned');
+      listItem.appendChild(progressBar);
+      workoutList.appendChild(listItem);
 
-        if (index === 0) {
-          listItem.classList.add('active');
+      if (index === 0) {
+        listItem.classList.add('active');
+      }
+    });
+
+    startWorkoutBtn.addEventListener('click', function () {
+      modalInstance.open();
+      const firstItem = document.querySelector('.workout-list li:first-child');
+      const firstSeconds = parseInt(firstItem.textContent.match(/\d+/));
+      updateCountdown(firstSeconds);
+    });
+
+    playPauseBtn.addEventListener('click', function () {
+      const activeItem = document.querySelector('.workout-list li.active');
+
+      if (activeItem) {
+        const initialDuration = parseInt(activeItem.dataset.initialDuration); // Retrieve the initial duration
+
+        if (isTimerRunning) {
+          pauseCountdown();
+          isTimerRunning = false;
+          playPauseBtn.innerHTML = '<i class="material-icons">play_arrow</i>';
+        } else {
+          const remainingTime = initialDuration - elapsedTime; // Use the initial duration and elapsed time
+          startCountdown(remainingTime, progressPercentage); // Pass the remaining time and progress percentage
+          isTimerRunning = true;
+          playPauseBtn.innerHTML = '<i class="material-icons">pause</i>';
         }
-      });
+      }
+    });
 
-      startWorkoutBtn.addEventListener('click', function () {
-        modalInstance.open();
-        const firstItem = document.querySelector('.workout-list li:first-child');
-        const firstSeconds = parseInt(firstItem.textContent.match(/\d+/));
-        updateCountdown(firstSeconds);
-      });
+    let internalCall = false;
 
-      playPauseBtn.addEventListener('click', function () {
-        const activeItem = document.querySelector('.workout-list li.active');
-
-        if (activeItem) {
-          let seconds = parseInt(activeItem.textContent.match(/\d+/));
-
-          if (isTimerRunning) {
-            pauseCountdown();
-            isTimerRunning = false;
-            playPauseBtn.innerHTML = '<i class="material-icons">play_arrow</i>';
-          } else {
-            seconds = parseInt(countdownClock.textContent.split(':')[1]);
-            startCountdown(seconds, progressPercentage); // Pass the stored progress percentage
-            isTimerRunning = true;
-            playPauseBtn.innerHTML = '<i class="material-icons">pause</i>';
-          }
-        }
-      });
-
-      let internalCall = false;
-
-      nextBtn.addEventListener('click', function () {
+    nextBtn.addEventListener('click', function () {
       const activeItem = document.querySelector('.workout-list li.active');
 
       if (activeItem) {
@@ -231,22 +231,25 @@
     let elapsedTime;
 
     function startCountdown(seconds, progress) {
-      startTime = new Date().getTime() - progress * seconds * 10; // Calculate the start time based on progress
+      const activeItem = document.querySelector('.workout-list li.active');
+      const initialDuration = parseInt(activeItem.textContent.match(/\d+/));
+      activeItem.dataset.initialDuration = initialDuration; // Store the initial duration
+
+      startTime = performance.now() - progress / 100 * initialDuration * 1000; // Calculate the start time based on the progress percentage and initial duration
       elapsedTime = 0; // Initialize the elapsed time
 
       function updateCountdown() {
-        const currentTime = new Date().getTime();
+        const currentTime = performance.now();
         elapsedTime = (currentTime - startTime) / 1000; // Convert milliseconds to seconds
 
-        const remainingTime = seconds - elapsedTime;
+        const remainingTime = initialDuration - elapsedTime;
         if (remainingTime > 0) {
           countdownClock.textContent = formatTime(remainingTime);
 
-          // Calculate the progress percentage based on the remaining time and total seconds
-          progressPercentage = (1 - remainingTime / seconds) * 100;
+          // Calculate the progress percentage based on the remaining time and initial duration
+          progressPercentage = (1 - remainingTime / initialDuration) * 100;
 
           // Update the width of the progress bar
-          const activeItem = document.querySelector('.workout-list li.active');
           const progressBar = activeItem.querySelector('.progress-bar');
           progressBar.style.width = `${progressPercentage}%`;
         } else {
@@ -258,7 +261,6 @@
       }
 
       // Add the progress-bar class to the active item
-      const activeItem = document.querySelector('.workout-list li.active');
       activeItem.classList.add('progress-bar');
 
       updateCountdown();
@@ -280,7 +282,7 @@
         playPauseBtn.innerHTML = '<i class="material-icons">play_arrow</i>';
       }
     }
-    });
-  </script>
+  });
+</script>
 </body>
 </html>
