@@ -193,3 +193,55 @@ li.selected {
   background-color: #b90000; /* Add your desired background color */
   font-weight: bold; /* Add your desired font weight */
 }
+
+
+
+.progress-bar {
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-bar:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: #000; /* black color */
+  transform: translateX(-100%); /* initially hide the progress bar off-screen */
+  transition: transform 0.1s linear; /* animate the sliding effect */
+}
+
+.progress-bar:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: #000; /* black color */
+  transform: translateX(-100%); /* initially hide the progress bar off-screen */
+  transition: transform 0.1s linear; /* animate the sliding effect */
+}
+
+.workout-list li {
+  position: relative;
+}
+
+.workout-list li .progress-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0;
+  background-color: #000;
+  opacity: 50%;
+  transition: width 0.1s linear;
+  z-index: 0 !important;
+}
+
+.workout-list li span {
+  position: relative !important;
+  z-index: 1 !important;
+}
