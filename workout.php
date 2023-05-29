@@ -158,11 +158,12 @@
           updateCountdown(nextSeconds);
           if (!internalCall) {
             isTimerRunning = false;
-            progressPercentage = 0; // Reset the progress percentage
+            resetCountdown(nextItem);
+            progressPercentage = 0;
             updatePlayPauseButton();
           } else {
             internalCall = false;
-            startCountdown(nextSeconds, 0); // Reset the progress percentage
+            startCountdown(nextSeconds, 0);
           }
         }
       }
@@ -170,22 +171,25 @@
 
     prevBtn.addEventListener('click', function () {
       const activeItem = document.querySelector('.workout-list li.active');
+      const prevItem = activeItem.previousElementSibling;
 
-      if (activeItem) {
-        const prevItem = activeItem.previousElementSibling;
-
-        if (prevItem) {
-          activeItem.classList.remove('active');
-          prevItem.classList.add('active');
-          const prevSeconds = parseInt(prevItem.textContent.match(/\d+/));
-          pauseCountdown();
-          updateCountdown(prevSeconds);
-          isTimerRunning = false;
-          progressPercentage = 0; // Reset the progress percentage
-          updatePlayPauseButton();
-        }
+      if (prevItem) {
+        activeItem.classList.remove('active');
+        prevItem.classList.add('active');
+        const prevSeconds = parseInt(prevItem.textContent.match(/\d+/));   
+        updateCountdown(prevSeconds);
+        resetCountdown(prevItem);
+        progressPercentage = 0;
       }
     });
+
+    function resetCountdown(item) {
+      const progressBar = item.querySelector('.progress-bar');
+      progressBar.style.width = '0%'; // Reset the width of the progress bar for the item
+
+      const initialDuration = parseInt(item.textContent.match(/\d+/));
+      item.dataset.initialDuration = initialDuration; // Store the initial duration
+    }
 
     resetBtn.addEventListener('click', function () {
       const activeItem = document.querySelector('.workout-list li.active');
