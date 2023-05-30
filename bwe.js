@@ -73,21 +73,25 @@ addItemBtn.addEventListener("click", () => {
         seconds: secondsInput.value,
         sets: setsInput.value,
       });
-
+    
       if ($(".selected").length > 0) {
         selectedListItem.html(`${typeSelect.value} - ${exerciseSelect.value} (${secondsInput.value}s, ${setsInput.value} sets)`);
         selectedListItem.css('background-color', '#3d3d3d');
         selectedListItem.removeClass('selected');
       } else {
-        newItem.innerHTML = `${typeSelect.value} - ${exerciseSelect.value} (${secondsInput.value}s, ${setsInput.value} sets)`;
         const newNumber = typesList.children.length + 1;
-        newItem.setAttribute('value', newNumber);
-        typesList.appendChild(newItem);
         saveWorkoutBtn.disabled = false;
+        
+        for (let i = 0; i < setsInput.value; i++) {
+          const newItem = document.createElement('li');
+          newItem.innerHTML = `${typeSelect.value} - ${exerciseSelect.value} (${secondsInput.value}s)`;
+          newItem.setAttribute('value', newNumber);
+          typesList.appendChild(newItem);
+        }
       }
     } else {
       alert("Please enter all required information.");
-    }
+    }    
   }
 
   $addItemBtn.text('Add Item');
