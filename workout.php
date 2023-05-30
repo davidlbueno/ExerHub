@@ -174,6 +174,12 @@
       resetCountdown(nextItem);
       progressPercentage = 0;
       updateCountdown(nextSeconds);
+      if (internalCall) {
+        internalCall = false;
+        startCountdown(nextSeconds, 0);
+        isTimerRunning = true;
+        playPauseBtn.innerHTML = '<i class="material-icons">pause</i>';
+      }
     }
   });
 
