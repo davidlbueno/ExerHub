@@ -177,21 +177,16 @@ li:hover {
   cursor: pointer;
 }
 
+li.rest {
+  background-color: rgb(39, 91, 0);
+}
+
 h4 {
   margin-top: 0;
 }
 
 li.selected {
   border-color: red;
-}
-
-/* CSS styles for the rest list items */
-li.rest {
-  background-color: rgb(39, 91, 0);
-}
-
-li.rest.selected {
-  background-color: rgb(43, 160, 0);
 }
 
 .hide {
