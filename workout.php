@@ -97,6 +97,7 @@
   modalTitle.textContent = workoutName;
 
   const startWorkoutBtn = document.getElementById('startWorkoutBtn');
+  const editBtn = document.getElementById('editBtn');
   const workoutList = document.querySelector('.workout-list');
   const playPauseBtn = document.getElementById('playPauseBtn');
   const nextBtn = document.getElementById('nextBtn');
@@ -134,6 +135,13 @@
     const firstItem = document.querySelector('.workout-list li:first-child');
     const firstSeconds = parseInt(firstItem.textContent.match(/\d+/));
     updateCountdown(firstSeconds);
+  });
+
+  editBtn.addEventListener('click', function () {
+    const workoutId = <?php echo json_encode($workoutId); ?>;
+    const workoutName = <?php echo json_encode($workoutName); ?>;
+    const editUrl = `edit_workout.php?workout_id=${workoutId}&workout_name=${encodeURIComponent(workoutName)}`;
+    window.location.href = editUrl;
   });
 
   playPauseBtn.addEventListener('click', function () {
