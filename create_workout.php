@@ -27,7 +27,7 @@
       </div>
     </div>
     <div class="col s12">
-      <ol id="types-list" class="sortable"></ol>
+      <ol id="workout-list" class="sortable"></ol>
     </div>
   </div>
   <div class="row">

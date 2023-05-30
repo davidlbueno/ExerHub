@@ -4,7 +4,7 @@ const exerciseSelect = document.getElementById("exercise-select");
 const setsSelect = document.getElementById("sets-select");
 const addItemBtn = document.getElementById("add-type-btn");
 const clearListBtn = document.getElementById("clear-list-btn");
-const typesList = document.getElementById("types-list");
+const typesList = document.getElementById("workout-list");
 const secondsInput = document.querySelector('input[name="seconds"]');
 const setsInput = document.querySelector('input[name="sets"]');
 const saveWorkoutBtn = document.getElementById("save-workout-btn");
@@ -108,8 +108,8 @@ $(function() {
   });
 });
 
-// Event delegation for selecting items in types-list
-$(document).on('click', "#types-list li", function(event) {
+// Event delegation for selecting items in workout-list
+$(document).on('click', "#workout-list li", function(event) {
   const typeText = this.innerText;
   const typeValue = typeText.split(' ')[0];
   const exerciseValue = typeText.split(' - ')[1].split(' (')[0];
