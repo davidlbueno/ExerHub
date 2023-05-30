@@ -25,6 +25,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
   if (query($query)) {
     // Account creation successful
     echo "Account created successfully!";
+    header("Location: ../login.php");
+    exit;
   } else {
     // Handle the case when the query fails
     echo "Account creation failed: " . mysqli_error($conn);
