@@ -26,7 +26,7 @@
       </div>
     </div>
     <div class="col s12">
-    <ol id="types-list" class="sortable">
+    <ol id="workout-list" class="sortable">
         <?php
         require_once 'php/db.php';
 
@@ -48,10 +48,10 @@
           $seconds = $row['seconds'];
 
           if ($type === "Rest") {
-            echo "<li class='rest'><strong>Rest</strong> - $seconds seconds</li>";
+            echo "<li class='rest'><strong>Rest</strong> - ({$seconds}s)</li>";
           } else {
             $exerciseType = $exercises[$exerciseName]['type'];
-            echo "<li ><strong>$exerciseName</strong> - $exerciseType ($seconds seconds)</li>";
+            echo "<li ><strong>$exerciseType</strong> - $exerciseName ({$seconds}s)</li>";
           }
         }
         ?>

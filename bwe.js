@@ -25,7 +25,7 @@ function updateExerciseSelect(selectedType, callback) {
         ${exercises.map(exercise => `<option value="${exercise.name}">${exercise.name}</option>`).join('')}
       `;
       exerciseSelect.disabled = selectedType === 'Rest';
-      setsSelect.disabled = selectedType === 'Rest';
+      setsSelect.disabled = (selectedType === 'Rest') || $('.selected').length > 0;
       if (callback) {
         callback();
       }
@@ -55,6 +55,7 @@ addItemBtn.addEventListener("click", () => {
     if ($(".selected").length > 0) {
       selectedListItem.html(`${typeSelect.value} - (${secondsInput.value}s)`);
       selectedListItem.removeClass('selected');
+      selectedListItem.addClass('rest');
     } else {
       newItem.innerHTML = `${typeSelect.value} - (${secondsInput.value}s)`;
       typesList.appendChild(newItem);
@@ -66,7 +67,7 @@ addItemBtn.addEventListener("click", () => {
     exerciseSelect.disabled = false;
     setsSelect.disabled = false;
 
-    if (typeSelect.value && exerciseSelect.value && secondsInput.value && setsInput.value) {
+    if ((typeSelect.value && exerciseSelect.value && secondsInput.value) || selectedListItem.length > 0) {    
       typesArray.push({
         type: typeSelect.value,
         exercise: exerciseSelect.value,
@@ -75,7 +76,7 @@ addItemBtn.addEventListener("click", () => {
       });
     
       if ($(".selected").length > 0) {
-        selectedListItem.html(`${typeSelect.value} - ${exerciseSelect.value} (${secondsInput.value}s, ${setsInput.value} sets)`);
+        selectedListItem.html(`${typeSelect.value} - ${exerciseSelect.value} (${secondsInput.value}s)`);
         selectedListItem.css('background-color', '#3d3d3d');
         selectedListItem.removeClass('selected');
       } else {
@@ -117,9 +118,10 @@ $(document).on('click', "#workout-list li", function(event) {
   const typeText = this.innerText;
   const typeValue = typeText.split(' ')[0];
   const exerciseValue = typeText.split(' - ')[1].split(' (')[0];
-  const secondsValue = (typeValue === "Rest") ? typeText.split('(')[1].split('s)')[0] : typeText.split(' (')[1].split('s, ')[0];
-  const setsValue = (typeValue === "Rest") ? 0 : typeText.split(' (')[1].split('s, ')[1].split(' sets)')[0];
-
+  const secondsValue = parseInt(typeText.match(/\((\d+)s\)/)[1]);
+  console.log(typeText)
+  console.log(typeValue, exerciseValue, secondsValue);
+  
   const $addItemBtn = $('#add-type-btn');
   const removeItemBtn = document.createElement('button');
   removeItemBtn.textContent = 'Del';
@@ -133,10 +135,11 @@ $(document).on('click', "#workout-list li", function(event) {
 
   const exerciseSelect = document.querySelector('select[name="exercise"]');
 
+  setsSelect.disabled = true;
+
   if (event.target.classList.contains('selected')) {
     $(this).removeClass('selected');
     exerciseSelect.disabled = false;
-    setsSelect.disabled = false;
     $addItemBtn.text('Add Item');
     $(this).find('.copy-del-btn').remove();
     saveWorkoutBtn.disabled = false;
@@ -152,7 +155,7 @@ $(document).on('click', "#workout-list li", function(event) {
         newItem.classList.add('rest');
         newItem.innerHTML = `${typeSelect.value} - (${secondsInput.value}s)`;
       } else {
-        newItem.innerHTML = `${typeValue} - ${exerciseValue} (${secondsValue}s, ${setsValue} sets)`;
+        newItem.innerHTML = `${typeValue} - ${exerciseValue} (${secondsValue}s`;
       }
       const newNumber = typesList.children.length + 1;
       newItem.setAttribute('value', newNumber);
@@ -166,15 +169,12 @@ $(document).on('click', "#workout-list li", function(event) {
 
     if (typeValue === "Rest") {
       exerciseSelect.disabled = true;
-      setsSelect.disabled = true;
     } else {
       exerciseSelect.disabled = false;
-      setsSelect.disabled = false;
       updateExerciseSelect(typeValue);
       updateExerciseSelect(typeSelect.value, function() {
         exerciseSelect.value = exerciseValue;
       });
-      setsInput.value = setsValue;
     }
     saveWorkoutBtn.disabled = true;
   }
