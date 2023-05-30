@@ -185,6 +185,15 @@ li.selected {
   border-color: red;
 }
 
+/* CSS styles for the rest list items */
+li.rest {
+  background-color: rgb(39, 91, 0);
+}
+
+li.rest.selected {
+  background-color: rgb(43, 160, 0);
+}
+
 .hide {
   display: none;
 }
@@ -194,7 +203,14 @@ li.selected {
   font-weight: bold; /* Add your desired font weight */
 }
 
+/* CSS styles for the rest list items */
+.workout-list li.rest {
+  background-color: rgb(39, 91, 0);
+}
 
+.workout-list li.rest.active {
+  background-color: rgb(43, 160, 0);
+}
 
 .progress-bar {
   position: relative;
