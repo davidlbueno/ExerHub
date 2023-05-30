@@ -19,73 +19,74 @@
   </nav>
   <ul class="sidenav" id="side-nav"></ul>
   <main class="container">
-  <div class="row">
     <div class="row">
-      <div class="input-field col s12">
-        <input type="text" name="workout-name" id="workout-name" placeholder="Workout Name" style="width:100%;">
+      <div class="row">
+        <div class="input-field col s12">
+          <input type="text" name="workout-name" id="workout-name" placeholder="Workout Name" style="width:100%;">
+        </div>
+      </div>
+      <div class="col s12">
+        <ol id="workout-list" class="sortable">
+          <?php
+          require_once 'php/db.php';
+
+          // Get the workout ID from the URL parameter
+          $workoutId = $_GET['workout_id'];
+
+          // Retrieve the workout sequence items from the database
+          $query = "SELECT ws.type, e.name AS exercise_name, ws.seconds 
+                    FROM workout_sequences ws
+                    LEFT JOIN exercises e ON ws.exercise_id = e.id
+                    WHERE ws.workout_id = $workoutId
+                    ORDER BY ws.id";
+          $result = query($query);
+
+          // Create the list items based on the retrieved data
+          while ($row = mysqli_fetch_assoc($result)) {
+            $type = $row['type'];
+            $exerciseName = $row['exercise_name'];
+            $seconds = $row['seconds'];
+
+            if ($type === "Rest") {
+              echo "<li class='rest'><strong>Rest</strong> - ({$seconds}s)</li>";
+            } else {
+              $exerciseType = $exercises[$exerciseName]['type'];
+              echo "<li ><strong>$exerciseType</strong> - $exerciseName ({$seconds}s)</li>";
+            }
+          }
+          ?>
+        </ol>
       </div>
     </div>
-    <div class="col s12">
-    <ol id="workout-list" class="sortable">
-        <?php
-        require_once 'php/db.php';
-
-        // Get the workout ID from the URL parameter
-        $workoutId = $_GET['workout_id'];
-
-        // Retrieve the workout sequence items from the database
-        $query = "SELECT ws.type, e.name AS exercise_name, ws.seconds 
-                  FROM workout_sequences ws
-                  LEFT JOIN exercises e ON ws.exercise_id = e.id
-                  WHERE ws.workout_id = $workoutId
-                  ORDER BY ws.id";
-        $result = query($query);
-
-        // Create the list items based on the retrieved data
-        while ($row = mysqli_fetch_assoc($result)) {
-          $type = $row['type'];
-          $exerciseName = $row['exercise_name'];
-          $seconds = $row['seconds'];
-
-          if ($type === "Rest") {
-            echo "<li class='rest'><strong>Rest</strong> - ({$seconds}s)</li>";
-          } else {
-            $exerciseType = $exercises[$exerciseName]['type'];
-            echo "<li ><strong>$exerciseType</strong> - $exerciseName ({$seconds}s)</li>";
-          }
-        }
-        ?>
-      </ol>
+    <div class="row">
+      <div class="input-field col s3">
+        <select name="type" id="type-select">
+          <option value="" disabled selected>Item</option>
+          <option value="Push">Push</option>
+          <option value="Pull">Pull</option>
+          <option value="Legs">Legs</option>
+          <option value="Rest">Rest</option>
+        </select>
+      </div>
+      <div class="input-field col s5">
+        <select name="exercise" id="exercise-select" disabled>
+          <option value="" disabled selected>Exercise</option>
+        </select>
+      </div>
+      <div class="input-field col s2">
+        <input type="number" name="seconds" min="0" max="300" step="15" placeholder="Seconds" style="width:100%;">
+      </div>
+      <div class="input-field col s2">
+        <input type="number" name="sets" id="sets-select" min="0" max="10" step="1" placeholder="Sets" style="width:100%;">
+      </div>
     </div>
-  </div>
-  <div class="row">
-    <div class="input-field col s3">
-      <select name="type" id="type-select">
-        <option value="" disabled selected>Item</option>
-        <option value="Push">Push</option>type
-        <option value="Pull">Pull</option>
-        <option value="Legs">Legs</option>
-        <option value="Rest">Rest</option>
-      </select>
+    <div class="row">
+      <div class="col s12">
+        <button id="add-type-btn" class="btn">Add Item</button>
+        <button id="clear-list-btn" class="btn">Clear List</button>
+        <button id="save-workout-btn" class="btn">Update Workout</button>
+      </div>
     </div>
-  <div class="input-field col s5">
-    <select name="exercise" id="exercise-select" disabled>
-      <option value="" disabled selected>Exercise</option>
-    </select>
-  </div>
-  <div class="input-field col s2">
-    <input type="number" name="seconds" min="0" max="300" step="15" placeholder="Seconds" style="width:100%;">
-  </div>
-  <div class="input-field col s2">
-    <input type="number" name="sets" id="sets-select" min="0" max="10" step="1" placeholder="Sets" style="width:100%;">
-  </div>
-  <div class="row">
-    <div class="col s12">
-      <button id="add-type-btn" class="btn">Add Item</button>
-      <button id="clear-list-btn" class="btn">Clear List</button>
-      <button id="save-workout-btn" class="btn">Update Workout</button>
-    </div> 
-  </div>
   </main>
   <script src="js/nav.js"></script>
   <script>
@@ -100,7 +101,7 @@
     document.addEventListener('DOMContentLoaded', function() {
       var urlParams = new URLSearchParams(window.location.search);
       var workoutName = urlParams.get('workout_name');
-      
+
       if (workoutName) {
         document.getElementById('workout-name').value = workoutName;
       }

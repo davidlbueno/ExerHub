@@ -46,8 +46,7 @@ foreach ($workoutData as $type) {
     // Insert the workout type into the database table without exercise_id
     $query = "INSERT INTO workout_sequences(workout_id, type, seconds)
               VALUES ($workoutId, '$typeValue', $secondsValue)";
-  }
-    
+  }    
   $result = query($query);
   if (!$result) {
     // Handle the error (e.g., display an error message, rollback changes, etc.)
