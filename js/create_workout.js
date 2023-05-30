@@ -109,6 +109,7 @@ $(function() {
       types.each((index, element) => {
         element.setAttribute('value', index + 1);
       });
+      saveWorkoutBtn.disabled = false;
     }
   });
 });
