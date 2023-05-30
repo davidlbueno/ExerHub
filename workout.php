@@ -15,6 +15,9 @@
     .modal.modal-dark {
       background-color: #252525;
     }
+    .modal-footer {
+      background-color: #252525 !important;
+    }
   </style>
 </head>
 
@@ -51,7 +54,7 @@
         $sets = $row['sets'];
 
         if ($exerciseType === 'Rest') {
-          echo "<li><strong>Rest</strong> - $seconds seconds</li>";
+          echo "<li class='rest'><strong>Rest</strong> - $seconds seconds</li>";
         } else {
           for ($i = 1; $i <= $sets; $i++) {
             echo "<li><strong>$exerciseName</strong> - $exerciseType ($seconds seconds)</li>";
@@ -110,6 +113,11 @@
 
     if (index === 0) {
       listItem.classList.add('active');
+    }
+
+    const exerciseType = item.querySelector('strong').textContent;
+    if (exerciseType === 'Rest') {
+      listItem.classList.add('rest');
     }
   });
 
