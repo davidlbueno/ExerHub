@@ -28,7 +28,6 @@ foreach ($workoutData as $type) {
   $typeValue = $type['type'];
   $exerciseValue = $type['exercise'];
   $secondsValue = $type['seconds'];
-  $setsValue = $type['sets'];
   // Get the exercise ID based on the exercise name
   $exerciseQuery = "SELECT id FROM exercises WHERE name = '$exerciseValue'";
   $exerciseResult = query($exerciseQuery);
@@ -37,17 +36,18 @@ foreach ($workoutData as $type) {
       $exerciseRow = mysqli_fetch_assoc($exerciseResult);
       $exerciseId = $exerciseRow['id'];
       // Insert the workout type into the database table
-      $query = "INSERT INTO workout_sequences(workout_id, type, exercise_id, seconds, sets)
-                VALUES ($workoutId, '$typeValue', $exerciseId, $secondsValue, $setsValue)";
+      $query = "INSERT INTO workout_sequences(workout_id, type, exercise_id, seconds)
+                VALUES ($workoutId, '$typeValue', $exerciseId, $secondsValue)";
     } else {
       // Exercise not found, handle the error accordingly
       die("Error: Exercise not found for name '$exerciseValue'");
     }
   } else {
     // Insert the workout type into the database table without exercise_id
-    $query = "INSERT INTO workout_sequences(workout_id, type, seconds, sets)
-              VALUES ($workoutId, '$typeValue', $secondsValue, $setsValue)";
+    $query = "INSERT INTO workout_sequences(workout_id, type, seconds)
+              VALUES ($workoutId, '$typeValue', $secondsValue)";
   }
+    
   $result = query($query);
   if (!$result) {
     // Handle the error (e.g., display an error message, rollback changes, etc.)

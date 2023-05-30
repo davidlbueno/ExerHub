@@ -1,8 +1,8 @@
 saveWorkoutBtn = document.getElementById("save-workout-btn");
 saveWorkoutBtn.addEventListener("click", () => {
   const workoutName = document.getElementById("workout-name").value;
-  const typesList = document.getElementById("types-list");
-  const types = typesList.children;
+  const workoutList = document.getElementById("workout-list");
+  const types = workoutList.children;
 
   // Create an array to store the exercise data
   const workoutData = [];
@@ -11,14 +11,13 @@ saveWorkoutBtn.addEventListener("click", () => {
     const typeText = types[i].textContent;
     const typeValue = typeText.split(' ')[0];
     const exerciseValue = typeText.split(' - ')[1].split(' (')[0];
-    const secondsValue = (typeValue === "Rest") ? typeText.split('(')[1].split('s)')[0] : typeText.split(' (')[1].split('s, ')[0];
-    const setsValue = (typeValue === "Rest") ? 0 : typeText.split(' (')[1].split('s, ')[1].split(' sets)')[0];
+    const secondsText = typeText.match(/\((\d+)s\)/)[1];
+    const secondsValue = parseInt(secondsText, 10);
 
     workoutData.push({
       type: typeValue,
       exercise: exerciseValue,
       seconds: secondsValue,
-      sets: setsValue,
     });
   }
 
