@@ -5,15 +5,12 @@ saveWorkoutBtn.addEventListener("click", () => {
   const workoutName = document.getElementById("workout-name").value;
   const workoutList = document.getElementById("workout-list");
   const types = workoutList.children;
- 
-  // Create an array to store the exercise data
   const workoutData = [];
 
   for (let i = 0; i < types.length; i++) {
     const typeText = types[i].textContent;
     const typeValue = typeText.split(' ')[0];
 
-    // Handle Rest items separately
     if (typeValue === 'Rest') {
       const secondsText = typeText.match(/\((\d+)s\)/)[1];
       const secondsValue = parseInt(secondsText, 10);
@@ -38,7 +35,6 @@ saveWorkoutBtn.addEventListener("click", () => {
     });
   }
 
-  // Send an AJAX request to the PHP script
   const xhr = new XMLHttpRequest();
   console.log(workoutId, workoutName, workoutData);
   xhr.open("POST", "php/update_workout.php", true);
@@ -54,7 +50,7 @@ saveWorkoutBtn.addEventListener("click", () => {
   };
 
   const payload = {
-    workoutId: workoutId, // Add workoutId
+    workoutId: workoutId,
     workoutName: workoutName,
     workoutData: workoutData,
   };
