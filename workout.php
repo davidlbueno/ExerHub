@@ -30,7 +30,7 @@
     </div>
   </nav>
   <ul class="sidenav" id="side-nav"></ul>
-  <main>
+  <main class="container">
     <?php
     $workoutId = $_GET['workout_id'] ?? null;
     if ($workoutId) {
