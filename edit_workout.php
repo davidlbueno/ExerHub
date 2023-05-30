@@ -8,7 +8,6 @@
   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
-  <?php require_once 'php/db.php'; ?>
 </head>
 <body class="dark">
   <nav>
@@ -27,7 +26,36 @@
       </div>
     </div>
     <div class="col s12">
-      <ol id="types-list" class="sortable"></ol>
+    <ol id="types-list" class="sortable">
+        <?php
+        require_once 'php/db.php';
+
+        // Get the workout ID from the URL parameter
+        $workoutId = $_GET['workout_id'];
+
+        // Retrieve the workout sequence items from the database
+        $query = "SELECT ws.type, e.name AS exercise_name, ws.seconds 
+                  FROM workout_sequences ws
+                  LEFT JOIN exercises e ON ws.exercise_id = e.id
+                  WHERE ws.workout_id = $workoutId
+                  ORDER BY ws.id";
+        $result = query($query);
+
+        // Create the list items based on the retrieved data
+        while ($row = mysqli_fetch_assoc($result)) {
+          $type = $row['type'];
+          $exerciseName = $row['exercise_name'];
+          $seconds = $row['seconds'];
+
+          if ($type === "Rest") {
+            echo "<li class='rest'><strong>Rest</strong> - $seconds seconds</li>";
+          } else {
+            $exerciseType = $exercises[$exerciseName]['type'];
+            echo "<li ><strong>$exerciseName</strong> - $exerciseType ($seconds seconds)</li>";
+          }
+        }
+        ?>
+      </ol>
     </div>
   </div>
   <div class="row">
