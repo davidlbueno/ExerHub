@@ -42,6 +42,8 @@ saveWorkoutBtn.addEventListener("click", () => {
   xhr.onload = () => {
     if (xhr.status === 200) {
       // Handle the response from the PHP script if needed
+      const redirectUrl = `workout.php?workout_id=${workoutId}&workout_name=${encodeURIComponent(workoutName)}`;
+      window.location.href = redirectUrl;
       console.log(xhr.responseText);
     } else {
       // Handle errors
