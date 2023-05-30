@@ -63,7 +63,7 @@
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       var script = document.createElement('script');
-      script.src = 'bwe.js';
+      script.src = 'js/create_workout.js';
       document.head.appendChild(script);
     });
   </script>

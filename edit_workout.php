@@ -83,12 +83,19 @@
     <div class="col s12">
       <button id="add-type-btn" class="btn">Add Item</button>
       <button id="clear-list-btn" class="btn">Clear List</button>
-      <button id="save-workout-btn" class="btn">Save Workout</button>
+      <button id="save-workout-btn" class="btn">Update Workout</button>
     </div> 
   </div>
   </main>
   <script src="js/nav.js"></script>
-  <script src="js/save_workout.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var script = document.createElement('script');
+      script.src = 'js/create_workout.js';
+      document.head.appendChild(script);
+    });
+  </script>
+  <script src="js/update_workout.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       var urlParams = new URLSearchParams(window.location.search);
@@ -97,10 +104,6 @@
       if (workoutName) {
         document.getElementById('workout-name').value = workoutName;
       }
-      
-      var script = document.createElement('script');
-      script.src = 'bwe.js';
-      document.head.appendChild(script);
     });
   </script>
 </body>
