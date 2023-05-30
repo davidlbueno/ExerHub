@@ -37,8 +37,8 @@ try {
     $seconds = $item['seconds'];
 
     // Handle Rest items with null exercise value
-    if ($exercise === 'Rest') {
-      $exercise = null;
+    if ($type === 'Rest') {
+      $exerciseId = 'NULL';
     } else {
       // Retrieve exercise ID
       $query = "SELECT id FROM exercises WHERE name = '$exercise'";
