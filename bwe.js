@@ -1,14 +1,19 @@
-let typeSelect = document.getElementById("type-select");
-let exerciseSelect = document.getElementById("exercise-select");
-let setsSelect = document.getElementById("sets-select");
-let addItemBtn = document.getElementById("add-type-btn");
-let clearListBtn = document.getElementById("clear-list-btn");
-let typesList = document.getElementById("types-list");
-let secondsInput = document.querySelector('input[name="seconds"]');
-let setsInput = document.querySelector('input[name="sets"]');
-let saveWorkoutBtn = document.getElementById("save-workout-btn");
+// Select elements
+const typeSelect = document.getElementById("type-select");
+const exerciseSelect = document.getElementById("exercise-select");
+const setsSelect = document.getElementById("sets-select");
+const addItemBtn = document.getElementById("add-type-btn");
+const clearListBtn = document.getElementById("clear-list-btn");
+const typesList = document.getElementById("types-list");
+const secondsInput = document.querySelector('input[name="seconds"]');
+const setsInput = document.querySelector('input[name="sets"]');
+const saveWorkoutBtn = document.getElementById("save-workout-btn");
+const workoutNameInput = document.getElementById("workout-name");
+
+// Disable saveWorkoutBtn initially
 saveWorkoutBtn.disabled = true;
-document.getElementById("workout-name").focus();
+
+// Function to update exercise select options
 function updateExerciseSelect(selectedType, callback) {
   const xhr = new XMLHttpRequest();
   xhr.open("GET", `php/get_exercises.php?type=${selectedType}`, true);
@@ -16,10 +21,8 @@ function updateExerciseSelect(selectedType, callback) {
     if (xhr.status === 200) {
       const exercises = JSON.parse(xhr.responseText);
       exerciseSelect.innerHTML = `
-      <option value="" disabled selected>Exercise</option>
-      ${exercises.map(exercise => `
-          <option value="${exercise.name}">${exercise.name}</option>
-      `).join('')}
+        <option value="" disabled selected>Exercise</option>
+        ${exercises.map(exercise => `<option value="${exercise.name}">${exercise.name}</option>`).join('')}
       `;
       exerciseSelect.disabled = selectedType === 'Rest';
       setsSelect.disabled = selectedType === 'Rest';
@@ -30,86 +33,89 @@ function updateExerciseSelect(selectedType, callback) {
   };
   xhr.send();
 }
+
+// Event listener for typeSelect change
 typeSelect.addEventListener("change", () => {
-  updateExerciseSelect(typeSelect.value); 
+  updateExerciseSelect(typeSelect.value);
 });
+
+// Event listener for addItemBtn click
 addItemBtn.addEventListener("click", () => {
-  let $addItemBtn = $('#add-type-btn');
-  let selectedListItem = $(".selected");
-  let typesArray = [];
-  let newItem = document.createElement("li");
+  const $addItemBtn = $('#add-type-btn');
+  const selectedListItem = $(".selected");
+  const typesArray = [];
+  const newItem = document.createElement("li");
+
   if (typeSelect.value === "Rest" && secondsInput.value) {
     typesArray.push({
-        type: typeSelect.value,
-        seconds: secondsInput.value,
-      });
-    if (!$(".selected").length > 0) {
+      type: typeSelect.value,
+      seconds: secondsInput.value,
+    });
+
+    if ($(".selected").length > 0) {
+      selectedListItem.html(`${typeSelect.value} - (${secondsInput.value}s)`);
+      selectedListItem.removeClass('selected');
+    } else {
       newItem.innerHTML = `${typeSelect.value} - (${secondsInput.value}s)`;
-      newItem.style.backgroundColor = "#454500";
       typesList.appendChild(newItem);
       clearFields();
       saveWorkoutBtn.disabled = false;
-    } else {
-        selectedListItem.html(`${typeSelect.value} - (${secondsInput.value}s)`)
-        clearFields();
-        selectedListItem.css('background-color', '#454500');
-        selectedListItem.removeClass('selected');  
     }
+    newItem.classList.add('rest');
   } else {
     exerciseSelect.disabled = false;
     setsSelect.disabled = false;
+
     if (typeSelect.value && exerciseSelect.value && secondsInput.value && setsInput.value) {
       typesArray.push({
         type: typeSelect.value,
         exercise: exerciseSelect.value,
         seconds: secondsInput.value,
         sets: setsInput.value,
-    });
-    if (!$(".selected").length > 0) {
-      const newItem = document.createElement("li");
-      newItem.innerHTML = `${typeSelect.value} - ${exerciseSelect.value} (${secondsInput.value}s, ${setsInput.value} sets)`;
-      const newNumber = typesList.children.length + 1;
-      newItem.setAttribute('value', newNumber);
-      typesList.appendChild(newItem);
-      saveWorkoutBtn.disabled = false;
-    } else {
-      selectedListItem.html(`${typeSelect.value} - ${exerciseSelect.value} (${secondsInput.value}s, ${setsInput.value} sets)`)
-      selectedListItem.css('background-color', '#3d3d3d');
-      selectedListItem.removeClass('selected');      }
+      });
+
+      if ($(".selected").length > 0) {
+        selectedListItem.html(`${typeSelect.value} - ${exerciseSelect.value} (${secondsInput.value}s, ${setsInput.value} sets)`);
+        selectedListItem.css('background-color', '#3d3d3d');
+        selectedListItem.removeClass('selected');
+      } else {
+        newItem.innerHTML = `${typeSelect.value} - ${exerciseSelect.value} (${secondsInput.value}s, ${setsInput.value} sets)`;
+        const newNumber = typesList.children.length + 1;
+        newItem.setAttribute('value', newNumber);
+        typesList.appendChild(newItem);
+        saveWorkoutBtn.disabled = false;
+      }
     } else {
       alert("Please enter all required information.");
     }
   }
-  $addItemBtn.text('Add Item'); 
+
+  $addItemBtn.text('Add Item');
   clearFields();
-  document.getElementById("type-select").focus();
+  typeSelect.focus();
 });
+
+// Sortable functionality
 $(function() {
-  $( ".sortable" ).sortable({
+  $(".sortable").sortable({
     revert: true,
     update: function() {
-      const typesList = $(this);
-      const types = typesList.children();
-      for (let i = 0; i < types.length; i++) {
-        types[i].setAttribute('value', i + 1);
-      }
+      const types = $(this).children();
+      types.each((index, element) => {
+        element.setAttribute('value', index + 1);
+      });
     }
   });
 });
-function clearFields() {
-  typeSelect.value = "";
-  exerciseSelect.value = "";
-  secondsInput.value = "";
-  setsInput.value = "";
-}
+
+// Event delegation for selecting items in types-list
 $(document).on('click', "#types-list li", function(event) {
   const typeText = this.innerText;
   const typeValue = typeText.split(' ')[0];
   const exerciseValue = typeText.split(' - ')[1].split(' (')[0];
   const secondsValue = (typeValue === "Rest") ? typeText.split('(')[1].split('s)')[0] : typeText.split(' (')[1].split('s, ')[0];
   const setsValue = (typeValue === "Rest") ? 0 : typeText.split(' (')[1].split('s, ')[1].split(' sets)')[0];
-  const secondsInput = document.querySelector('input[name="seconds"]');
-  const setsInput = document.querySelector('input[name="sets"]');
+
   const $addItemBtn = $('#add-type-btn');
   const removeItemBtn = document.createElement('button');
   removeItemBtn.textContent = 'Del';
@@ -118,16 +124,17 @@ $(document).on('click', "#types-list li", function(event) {
     this.parentElement.remove();
     clearFields();
     saveWorkoutBtn.disabled = false;
-    document.getElementById("type-select").focus();
+    typeSelect.focus();
   });
+
   const exerciseSelect = document.querySelector('select[name="exercise"]');
+
   if (event.target.classList.contains('selected')) {
     $(this).removeClass('selected');
     exerciseSelect.disabled = false;
     setsSelect.disabled = false;
     $addItemBtn.text('Add Item');
-    const removeItemBtn = $(this).find('.copy-del-btn');
-    removeItemBtn.remove();
+    $(this).find('.copy-del-btn').remove();
     saveWorkoutBtn.disabled = false;
   } else {
     $('.selected').removeClass('selected').find('.copy-del-btn').remove();
@@ -138,10 +145,10 @@ $(document).on('click', "#types-list li", function(event) {
     duplicateItemBtn.addEventListener('click', function() {
       const newItem = document.createElement("li");
       if (typeValue === "Rest") {
-        newItem.style.backgroundColor = "#454500";
+        newItem.classList.add('rest');
         newItem.innerHTML = `${typeSelect.value} - (${secondsInput.value}s)`;
       } else {
-      newItem.innerHTML = `${typeValue} - ${exerciseValue} (${secondsValue}s, ${setsValue} sets)`;
+        newItem.innerHTML = `${typeValue} - ${exerciseValue} (${secondsValue}s, ${setsValue} sets)`;
       }
       const newNumber = typesList.children.length + 1;
       newItem.setAttribute('value', newNumber);
@@ -152,6 +159,7 @@ $(document).on('click', "#types-list li", function(event) {
     $addItemBtn.text('Update Item');
     typeSelect.value = typeValue;
     secondsInput.value = secondsValue;
+
     if (typeValue === "Rest") {
       exerciseSelect.disabled = true;
       setsSelect.disabled = true;
@@ -165,16 +173,25 @@ $(document).on('click', "#types-list li", function(event) {
       setsInput.value = setsValue;
     }
     saveWorkoutBtn.disabled = true;
-    const typesArray = [];
-    typesArray.push({
-      type: typeValue,
-      exercise: exerciseValue,
-      seconds: secondsValue,
-      sets: setsValue,
-    });
   }
 });
+
+// Function to clear input fields
+function clearFields() {
+  typeSelect.value = "";
+  exerciseSelect.value = "";
+  secondsInput.value = "";
+  setsInput.value = "";
+}
+
+// Event listener for clearListBtn click
+clearListBtn.addEventListener("click", clearList);
+
+// Function to clear the types list
 function clearList() {
-  typesList.innerHTML = ""; // Clear the types list
+  typesList.innerHTML = "";
   saveWorkoutBtn.disabled = true;
 }
+
+// Set focus on workout name input
+workoutNameInput.focus();
