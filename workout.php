@@ -65,6 +65,7 @@
 
       echo '
       <button class="btn" id="startWorkoutBtn">Start Workout</button>
+      <button class="btn" id="editBtn">Edit Workout</button>
       <div id="workoutModal" class="modal modal-dark" data-workout-name="' . htmlspecialchars($workoutName) . '">
         <div class="modal-content">
           <h4 id="modalTitle"></h4>
