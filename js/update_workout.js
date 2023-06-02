@@ -1,7 +1,13 @@
+const urlParams = new URLSearchParams(window.location.search);
+const workoutId = urlParams.get('workout_id');
+const workoutName = urlParams.get('workout_name');
+const redirectUrl = `workout.php?workout_id=${workoutId}&workout_name=${encodeURIComponent(workoutName)}`;
 saveWorkoutBtn = document.getElementById("save-workout-btn");
+const deleteWorkoutBtn = document.getElementById("delete-workout-btn");
+const cancelWorkoutBtn = document.getElementById("cancel-workout-btn");
+
+
 saveWorkoutBtn.addEventListener("click", () => {
-  const urlParams = new URLSearchParams(window.location.search);
-  const workoutId = urlParams.get('workout_id');
   const workoutName = document.getElementById("workout-name").value;
   const workoutList = document.getElementById("workout-list");
   const types = workoutList.children;
@@ -41,12 +47,9 @@ saveWorkoutBtn.addEventListener("click", () => {
   xhr.setRequestHeader("Content-Type", "application/json");
   xhr.onload = () => {
     if (xhr.status === 200) {
-      // Handle the response from the PHP script if needed
-      const redirectUrl = `workout.php?workout_id=${workoutId}&workout_name=${encodeURIComponent(workoutName)}`;
       window.location.href = redirectUrl;
       console.log(xhr.responseText);
     } else {
-      // Handle errors
       console.error(xhr.responseText);
     }
   };
@@ -58,4 +61,30 @@ saveWorkoutBtn.addEventListener("click", () => {
   };
 
   xhr.send(JSON.stringify(payload));
+});
+
+cancelWorkoutBtn.addEventListener("click", () => {
+  window.location.href = redirectUrl;
+});
+
+deleteWorkoutBtn.addEventListener("click", () => {
+  if (confirm(`Are you sure you want to delete the workout: ${workoutName}?`)) {
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "php/delete_workout.php", true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.onload = () => {
+      if (xhr.status === 200) {
+        window.location.href = '../workouts.php';
+        console.log(xhr.responseText);
+      } else {
+        console.error(xhr.responseText);
+      }
+    };
+
+    const payload = {
+      workoutId: workoutId,
+    };
+
+    xhr.send(JSON.stringify(payload));
+  }
 });
