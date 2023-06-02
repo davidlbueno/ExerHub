@@ -281,6 +281,16 @@
   function updatePlayPauseButton() {
     playPauseBtn.innerHTML = isTimerRunning ? '<i class="material-icons">pause</i>' : '<i class="material-icons">play_arrow</i>';
   }
+
+    // Event handler for the "modal-close" event
+    modal.querySelector('.modal-close').addEventListener('click', function() {
+    resetModalVars();
+  });
+  
+  function resetModalVars() {
+    // Reset variables here
+    resetBtn.click();
+  }
 });
 
 </script>
