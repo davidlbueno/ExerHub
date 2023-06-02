@@ -76,7 +76,7 @@
           <ol class="workout-list"></ol>
         </div>  
         <div class="modal-footer">
-          <button class="modal-close btn">Close</button>
+        <a href="#!" class="modal-close"><i class="material-icons">close</i></a>
         </div>
       </div>';
     } else {
@@ -88,7 +88,7 @@
   <script>
   document.addEventListener('DOMContentLoaded', function () {
   const modal = document.getElementById('workoutModal');
-  const modalInstance = M.Modal.init(modal);
+  const modalInstance = M.Modal.init(modal, { dismissible: false });
   const modalTitle = document.getElementById('modalTitle');
   const workoutName = modal.getAttribute('data-workout-name');
   modalTitle.textContent = workoutName;
