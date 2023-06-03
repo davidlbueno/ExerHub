@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,13 +10,11 @@
   <link rel="stylesheet" href="style.css">
   <?php require_once 'php/db.php'; ?>
   <style>
-    /* CSS styles for the modal */
     .modal.modal-dark {
       background-color: #252525;
     }
   </style>
 </head>
-
 <body class="dark">
   <nav>
     <div class="nav-wrapper">
