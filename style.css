@@ -265,3 +265,14 @@ li.selected {
   color: #fff;
   font-size: 24px;
 }
+
+.countdown-clock {
+  font-family: "Courier New", monospace;
+  font-size: 48px;
+  letter-spacing: -2px;
+  text-align: center;
+  background-color: #1b1b1b;
+  padding: 5px;
+  border: 1px solid #525252;
+}
+

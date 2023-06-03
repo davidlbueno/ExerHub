@@ -67,6 +67,7 @@
         <div class="modal-content">
           <h4 id="modalTitle"></h4>
           <div class="controls">
+            <h5 id="currentExerciseName"></h5>
             <button id="playPauseBtn" class="btn"><i class="material-icons">play_arrow</i></button>
             <button id="prevBtn" class="btn"><i class="material-icons">skip_previous</i></button>
             <button id="nextBtn" class="btn"><i class="material-icons">skip_next</i></button>
@@ -102,6 +103,14 @@
   const resetBtn = document.getElementById('resetBtn');
   const countdownClock = document.querySelector('.countdown-clock');
 
+  function setActiveItem(item) {
+    const activeItem = document.querySelector('.workout-list li.active');
+    activeItem.classList.remove('active');
+    item.classList.add('active');
+    const exerciseName = item.querySelector('strong').textContent;
+    document.getElementById('currentExerciseName').textContent = exerciseName; // Display the exercise name
+  }
+
   const workoutItems = document.querySelectorAll('ol li');
   workoutItems.forEach(function (item, index) {
     const listItem = item.cloneNode(true);
@@ -112,6 +121,7 @@
 
     if (index === 0) {
       listItem.classList.add('active');
+      setActiveItem(listItem);
     }
 
     const exerciseType = item.querySelector('strong').textContent;
@@ -214,12 +224,6 @@
     }
   });
 
-  function setActiveItem(item) {
-    const activeItem = document.querySelector('.workout-list li.active');
-    activeItem.classList.remove('active');
-    item.classList.add('active');
-  }
-
   function resetCountdown(item) {
     const progressBar = item.querySelector('.progress-bar');
     progressBar.style.width = '0%';
@@ -270,13 +274,12 @@
   }
 
   function formatTime(seconds) {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    const hundredths = Math.floor((remainingSeconds % 1) * 100);
-    return `${String(minutes).padStart(2, '0')}:${String(Math.floor(remainingSeconds)).padStart(2, '0')}:${String(
-      hundredths
-    ).padStart(2, '0')}`;
-  }
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = Math.floor(seconds % 60);
+  const hundredths = Math.floor((seconds % 1) * 100);
+  return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}:${String(hundredths).padStart(2, '0')}`;
+}
+
 
   function updatePlayPauseButton() {
     playPauseBtn.innerHTML = isTimerRunning ? '<i class="material-icons">pause</i>' : '<i class="material-icons">play_arrow</i>';
