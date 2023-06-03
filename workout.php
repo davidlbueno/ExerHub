@@ -80,6 +80,7 @@
       <div>
         <ol class="workout-list"></ol>
       </div>
+      <a href="#!" class="modal-close"><i class="material-icons">close</i></a>
     </div>
       </div>';
     } else {
