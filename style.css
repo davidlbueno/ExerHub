@@ -193,6 +193,11 @@ li.selected {
   display: none;
 }
 
+.workout-list {
+  margin: 0;
+  padding: 0;
+}
+
 .workout-list li.active {
   background-color: #b90000; /* Add your desired background color */
   font-weight: bold; /* Add your desired font weight */
@@ -253,10 +258,10 @@ li.selected {
 
 .countdown-clock {
   font-family: "Courier New", monospace;
-  font-size: 48px;
+  font-size: 40px;
   letter-spacing: -2px;
   text-align: center;
   background-color: #1b1b1b;
-  padding: 5px;
+  padding: 2px;
   border: 1px solid #525252;
 }
