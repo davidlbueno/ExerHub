@@ -194,7 +194,6 @@ li.selected {
 
 .workout-list li.active {
   background-color: #b90000; /* Add your desired background color */
-  font-weight: bold; /* Add your desired font weight */
 }
 
 /* CSS styles for the rest list items */
