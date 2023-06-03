@@ -64,18 +64,26 @@
       <button class="btn" id="startWorkoutBtn">Start Workout</button>
       <button class="btn" id="editBtn">Edit Workout</button>
       <div id="workoutModal" class="modal modal-dark" data-workout-name="' . htmlspecialchars($workoutName) . '">
-        <div class="modal-content">
+      <div class="modal-content" style="display: flex; flex-direction: column;">
+      <div class="upper-row" style="display: flex;">
+        <div class="upper-left-column" style="flex: 1;">
           <h4 id="modalTitle"></h4>
           <div class="controls">
-            <h5 id="currentExerciseName"></h5>
             <button id="playPauseBtn" class="btn"><i class="material-icons">play_arrow</i></button>
             <button id="prevBtn" class="btn"><i class="material-icons">skip_previous</i></button>
             <button id="nextBtn" class="btn"><i class="material-icons">skip_next</i></button>
             <button id="resetBtn" class="btn"><i class="material-icons">replay</i></button>
-            <h5 class="countdown-clock" style="display: inline-block;">00:00:00</h5>
           </div>
-          <ol class="workout-list"></ol>
-        </div>  
+        </div>
+        <div class="upper-right-column" style="flex: 1;">
+          <h6 id="currentExerciseName"></h6>
+          <h5 class="countdown-clock">00:00:00</h5>
+        </div>
+      </div>
+      <div>
+        <ol class="workout-list"></ol>
+      </div>
+    </div>
         <div class="modal-footer">
         <a href="#!" class="modal-close"><i class="material-icons">close</i></a>
         </div>
