@@ -209,7 +209,6 @@ li.selected {
 
 .progress-bar {
   position: relative;
-  overflow: hidden;
 }
 
 .progress-bar:before {
@@ -218,22 +217,9 @@ li.selected {
   top: 0;
   left: 0;
   height: 100%;
-  width: 100%;
+  width: 0%;
   background-color: #000; /* black color */
-  transform: translateX(-100%); /* initially hide the progress bar off-screen */
-  transition: transform 0.1s linear; /* animate the sliding effect */
-}
-
-.progress-bar:before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
-  background-color: #000; /* black color */
-  transform: translateX(-100%); /* initially hide the progress bar off-screen */
-  transition: transform 0.1s linear; /* animate the sliding effect */
+  transition: width 0.1s linear; /* animate the width expansion effect */
 }
 
 .workout-list li {
@@ -249,7 +235,6 @@ li.selected {
   background-color: #000;
   opacity: 50%;
   transition: width 0.1s linear;
-  z-index: 0 !important;
 }
 
 .workout-list li span {
@@ -275,4 +260,3 @@ li.selected {
   padding: 5px;
   border: 1px solid #525252;
 }
-
