@@ -46,3 +46,4 @@ while ($row = mysqli_fetch_assoc($result)) {
   $exercises[$exerciseName]['muscles'][$muscleName] = $intensity;
 }
 ?>
+

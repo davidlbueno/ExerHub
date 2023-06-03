@@ -29,25 +29,27 @@
       $workoutName = $row['name'];
       echo "<h1>$workoutName</h1>";
 
-      $query = "SELECT ws.type, e.name AS exercise_name, ws.seconds
-              FROM workout_sequences ws
-              LEFT JOIN exercises e ON e.id = ws.exercise_id
-              WHERE ws.workout_id = $workoutId";
+      $query = "SELECT ws.type, e.id AS exercise_id, e.name AS exercise_name, ws.seconds
+                FROM workout_sequences ws
+                LEFT JOIN exercises e ON e.id = ws.exercise_id
+                WHERE ws.workout_id = $workoutId";
       $result = query($query);
 
       echo "<ol>";
       while ($row = mysqli_fetch_assoc($result)) {
-        $exerciseName = $row['exercise_name'];
-        $exerciseType = $row['type'];
-        $seconds = $row['seconds'];
+          $exerciseId = $row['exercise_id'];
+          $exerciseName = $row['exercise_name'];
+          $exerciseType = $row['type'];
+          $seconds = $row['seconds'];
 
-        if ($exerciseType === 'Rest') {
-          echo "<li class='rest'><strong>Rest</strong> - $seconds seconds</li>";
-        } else {
-          echo "<li><strong>$exerciseName</strong> - $exerciseType ($seconds seconds)
-            <div class='exercise-details'>Exercise details go here</div>
-          </li>";
-        }
+          if ($exerciseType === 'Rest') {
+              echo "<li class='rest'><strong>Rest</strong> - $seconds seconds</li>";
+          } else {
+              echo "<li class='exercise-list-item' data-exercise-id='$exerciseId'>
+                      <strong>$exerciseName</strong> - $exerciseType ($seconds seconds)
+                      <div class='exercise-details'>Exercise details go here</div>
+                    </li>";
+          }
       }
       echo "</ol>";
 
@@ -117,7 +119,6 @@
       activeExerciseDetails.style.display = 'block'; // Show the exercise details for the active item
     }
   }
-
 
   const workoutItems = document.querySelectorAll('ol li');
   workoutItems.forEach(function (item, index) {
@@ -249,6 +250,12 @@
     const initialDuration = parseInt(activeItem.textContent.match(/\d+/));
     activeItem.dataset.initialDuration = initialDuration;
 
+    // Add the code to create the workout_log entry
+    const userId = sessionVars.userId;
+    const workoutId = <?php echo json_encode($workoutId); ?>;
+    const exerciseId = activeItem.dataset.exerciseId;
+    createWorkoutLogEntry(userId, workoutId, exerciseId);
+
     startTime = performance.now() - (progress / 100) * initialDuration * 1000;
     elapsedTime = 0;
 
@@ -268,9 +275,7 @@
         nextBtn.click();
       }
     }
-
     activeItem.classList.add('progress-bar');
-
     updateCountdown();
     countdownInterval = setInterval(updateCountdown, 10);
   }
@@ -281,13 +286,28 @@
     updatePlayPauseButton();
   }
 
-  function formatTime(seconds) {
-  const minutes = Math.floor(seconds / 60);
-  const remainingSeconds = Math.floor(seconds % 60);
-  const hundredths = Math.floor((seconds % 1) * 100);
-  return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}:${String(hundredths).padStart(2, '0')}`;
-}
+  function createWorkoutLogEntry(userId, workoutId, exerciseId, startTime) {
+    const workoutStartTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    const query = "INSERT INTO workout_logs (user_id, workout_id, exercise_id, workoutStart_time) VALUES (?, ?, ?, ?)";
+    const params = [userId, workoutId, exerciseId, workoutStartTime];
+    $.post('php/db.php', { query, params })
+      .done(function(response) {
+        console.log("Workout log entry created successfully");
+        console.log(query);
+        console.log(params);
+        console.log(response);
+      })
+      .fail(function(error) {
+        console.error("Failed to create workout log entry:", error);
+      });
+  }
 
+  function formatTime(seconds) {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = Math.floor(seconds % 60);
+    const hundredths = Math.floor((seconds % 1) * 100);
+    return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}:${String(hundredths).padStart(2, '0')}`;
+  }
 
   function updatePlayPauseButton() {
     playPauseBtn.innerHTML = isTimerRunning ? '<i class="material-icons">pause</i>' : '<i class="material-icons">play_arrow</i>';
