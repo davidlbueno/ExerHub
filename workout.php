@@ -15,9 +15,6 @@
     .modal.modal-dark {
       background-color: #252525;
     }
-    .modal-footer {
-      background-color: #252525 !important;
-    }
   </style>
 </head>
 
@@ -84,9 +81,6 @@
         <ol class="workout-list"></ol>
       </div>
     </div>
-        <div class="modal-footer">
-        <a href="#!" class="modal-close"><i class="material-icons">close</i></a>
-        </div>
       </div>';
     } else {
       echo "<p>No Workout ID provided.</p>";
