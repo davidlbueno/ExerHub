@@ -8,9 +8,13 @@ body.dark {
   background-color: #1e1e1e;
 }
 
+.modal.modal-dark {
+  background-color: #252525;
+}
+
 /* Text color */
-body.dark, 
-body.dark h1, 
+body.dark,
+body.dark h1,
 body.dark p {
   color: #bebdbd;
 }
@@ -48,11 +52,11 @@ nav .brand-logo {
 }
 
 .sidenav li a {
-    color:#c2c2c2
+  color: #c2c2c2;
 }
 
 .sidenav li:hover {
-    background-color:#1e1d1d
+  background-color: #1e1d1d;
 }
 
 /* Button styles */
@@ -66,13 +70,13 @@ nav .brand-logo {
   color: #525252 !important;
 }
 
-.copy-del-btn{
+.copy-del-btn {
   background-color: #5e5d5d;
   color: #ffffff;
   float: right;
   border: none;
   height: 24px;
-  margin: 0 2px 0 2px;
+  margin: 0 2px;
 }
 
 .copy-del-btn:hover {
@@ -81,12 +85,9 @@ nav .brand-logo {
   height: 24px;
 }
 
-.btn:hover {
-    background-color: #a30e0e;
-}
-
+.btn:hover,
 .btn-active {
-    background-color: #a30e0e;
+  background-color: #a30e0e;
 }
 
 /* Link styles */
@@ -94,7 +95,6 @@ a {
   color: #ffffff;
   display: flex;
   align-items: center;
-
 }
 
 select {
@@ -115,19 +115,17 @@ select {
   font-size: 24px;
 }
 
-input {
+input,
+input[type="number"] {
   color: #bdbdbd;
 }
+
 .input-field {
-  margin: 0 0 0 0 !important;
+  margin: 0 !important;
   align-items: left;
 }
 
-.input-field input[type="number"] {
-  border: 1px solid #bebdbd;
-}
-
-.input-field input[type="number"], 
+.input-field input[type="number"],
 .input-field select {
   height: 32px;
   color: #bebebe !important;
@@ -135,11 +133,8 @@ input {
   padding-left: 10px;
 }
 
-.input-field select:disabled {
-  background-color: #3d3d3d;
-}
-
-.input-field input:disabled{
+.input-field select:disabled,
+.input-field input:disabled {
   background-color: #3d3d3d;
   border: 1px solid #bebdbd !important;
 }
@@ -169,7 +164,6 @@ li {
 
 li:nth-child(even) {
   background-color: #5c5b5b;
-  border: 1px solid #5c5b5b;
 }
 
 li:hover {
@@ -222,7 +216,7 @@ li.selected {
   top: 0;
   left: 0;
   height: 100%;
-  width: 0%;
+  width: 0;
   background-color: #000; /* black color */
   transition: width 0.1s linear; /* animate the width expansion effect */
 }
@@ -238,7 +232,7 @@ li.selected {
   height: 100%;
   width: 0;
   background-color: #000;
-  opacity: 50%;
+  opacity: 0.5;
   transition: width 0.1s linear;
 }
 
@@ -264,4 +258,31 @@ li.selected {
   background-color: #1b1b1b;
   padding: 2px;
   border: 1px solid #525252;
+}
+
+.exercise-details {
+  display: none;
+  padding: 5px;
+  margin-bottom: 0px;
+  background-color: #1a1a1a;
+  position: absolute;
+  top: 34px;
+  left: 0;
+  right: 0;
+  transition: transform 0.3s ease-in-out;
+  transform: translateY(-100%);
+}
+
+li.active .exercise-details {
+  display: block;
+  transform: translateY(0);
+}
+
+
+li.active + li {
+  margin-top: 40px; /* Adjust the spacing as needed */
+}
+
+li.active + li:not(.rest) {
+  margin-top: 0; /* Reset margin for non-rest items */
 }

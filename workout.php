@@ -9,11 +9,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <link rel="stylesheet" href="style.css">
   <?php require_once 'php/db.php'; ?>
-  <style>
-    .modal.modal-dark {
-      background-color: #252525;
-    }
-  </style>
 </head>
 <body class="dark">
   <nav>
@@ -49,7 +44,9 @@
         if ($exerciseType === 'Rest') {
           echo "<li class='rest'><strong>Rest</strong> - $seconds seconds</li>";
         } else {
-          echo "<li><strong>$exerciseName</strong> - $exerciseType ($seconds seconds)</li>";
+          echo "<li><strong>$exerciseName</strong> - $exerciseType ($seconds seconds)
+            <div class='exercise-details'>Exercise details go here</div>
+          </li>";
         }
       }
       echo "</ol>";
@@ -109,7 +106,18 @@
     item.classList.add('active');
     const exerciseName = item.querySelector('strong').textContent;
     document.getElementById('currentExerciseName').textContent = exerciseName; // Display the exercise name
+
+    const exerciseDetails = activeItem.querySelector('.exercise-details');
+    if (exerciseDetails) {
+      exerciseDetails.style.display = 'none'; // Hide previously active exercise details
+    }
+
+    const activeExerciseDetails = item.querySelector('.exercise-details');
+    if (activeExerciseDetails) {
+      activeExerciseDetails.style.display = 'block'; // Show the exercise details for the active item
+    }
   }
+
 
   const workoutItems = document.querySelectorAll('ol li');
   workoutItems.forEach(function (item, index) {
