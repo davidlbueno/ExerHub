@@ -45,4 +45,29 @@ while ($row = mysqli_fetch_assoc($result)) {
   }
   $exercises[$exerciseName]['muscles'][$muscleName] = $intensity;
 }
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  $query = $_POST['query'];
+  $params = $_POST['params'];
+
+  // Prepare the statement
+  $stmt = mysqli_prepare($conn, $query);
+
+  // Bind the parameters
+  mysqli_stmt_bind_param($stmt, str_repeat('s', count($params)), ...$params);
+
+  // Execute the statement
+  mysqli_stmt_execute($stmt);
+
+  // Check for errors
+  if (mysqli_stmt_errno($stmt)) {
+    echo "SQL Command Failed: " . mysqli_stmt_error($stmt);
+  } else {
+    echo "SQL Command completed successfully";
+  }
+
+  // Close the statement
+  mysqli_stmt_close($stmt);
+}
+
 ?>
