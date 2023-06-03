@@ -59,11 +59,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   // Execute the statement
   mysqli_stmt_execute($stmt);
 
+  // Get the newly inserted id
+  $id = mysqli_insert_id($conn);
+
   // Check for errors
   if (mysqli_stmt_errno($stmt)) {
     echo "SQL Command Failed: " . mysqli_stmt_error($stmt);
   } else {
-    echo "SQL Command completed successfully";
+    echo $id;
   }
 
   // Close the statement
