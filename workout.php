@@ -45,10 +45,12 @@
           if ($exerciseType === 'Rest') {
               echo "<li class='rest'><strong>Rest</strong> - $seconds seconds</li>";
           } else {
-              echo "<li class='exercise-list-item' data-exercise-id='$exerciseId'>
-                      <strong>$exerciseName</strong> - $exerciseType ($seconds seconds)
-                      <div class='exercise-details'>Exercise details go here</div>
-                    </li>";
+            echo "<li class='exercise-list-item' data-exercise-id='$exerciseId'>
+              <strong>$exerciseName</strong> - $exerciseType ($seconds seconds)
+            <div class='exercise-details'>
+              <input type='number' id='repsInput' max='999' placeholder='Reps' style='width: 70px; height: 30px'>
+            </div>
+          </li>";
           }
       }
       echo "</ol>";
@@ -101,6 +103,7 @@
   const prevBtn = document.getElementById('prevBtn');
   const resetBtn = document.getElementById('resetBtn');
   const countdownClock = document.querySelector('.countdown-clock');
+  let workoutStartTime = null;
 
   function setActiveItem(item) {
     const activeItem = document.querySelector('.workout-list li.active');
@@ -250,12 +253,29 @@
     const initialDuration = parseInt(activeItem.textContent.match(/\d+/));
     activeItem.dataset.initialDuration = initialDuration;
 
-    // Add the code to create the workout_log entry
+    // Create Workout Log Entry
     const userId = sessionVars.userId;
     const workoutId = <?php echo json_encode($workoutId); ?>;
-    const exerciseId = activeItem.dataset.exerciseId;
-    createWorkoutLogEntry(userId, workoutId, exerciseId);
+    if (!workoutStartTime) {
+      workoutStartTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
+      createWorkoutLogEntry(userId, workoutId, workoutStartTime);
+    }
 
+    // Add Exercise details for each list item
+    const exerciseId = activeItem.dataset.exerciseId;
+    if (!(activeItem.dataset.exerciseStartTime)) {
+      activeItem.dataset.exerciseStartTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    }
+    //Add input field for reps in exercise details
+    const exerciseDetails = activeItem.querySelector('.exercise-details');
+    const exerciseDetailsInput = document.createElement('input');
+    exerciseDetailsInput.setAttribute('type', 'number');
+    exerciseDetailsInput.setAttribute('placeholder', 'Reps');
+    exerciseDetailsInput.setAttribute('id', 'reps');
+
+
+    //createWorkoutLogItemsEntry();
+ 
     startTime = performance.now() - (progress / 100) * initialDuration * 1000;
     elapsedTime = 0;
 
@@ -286,21 +306,35 @@
     updatePlayPauseButton();
   }
 
-  function createWorkoutLogEntry(userId, workoutId, exerciseId, startTime) {
-  const workoutStartTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
-  const query = "INSERT INTO workout_logs (workout_id, exercise_id, start_time) VALUES (?, ?, ?)";
-  const params = [workoutId, exerciseId, workoutStartTime];
-  $.post('php/db.php', { query, params })
-    .done(function(response) {
-      console.log("Workout log entry created successfully");
+  function createWorkoutLogItemEntry() {
+    const activeItem = document.querySelector('.workout-list li.active');
+    const workoutId = <?php echo json_encode($workoutId); ?>;
+    const exerciseStartTime = activeItem.dataset.exerciseStartTime;
+    const exerciseId = activeItem.dataset.exerciseId;
+    const query = "INSERT INTO workout_log_items (workout_id, exercise_id, start_time) VALUES (?, ?, ?)";
+    const params = [workoutId, exerciseId, exerciseStartTime];
+
+      console.log("Exercise Start Time: " + exerciseStartTime);
       console.log(query);
       console.log(params);
-      console.log(response);
-    })
-    .fail(function(error) {
-      console.error("Failed to create workout log entry:", error);
-    });
-}
+      console.log(activeItem.dataset);
+  }
+
+  function createWorkoutLogEntry(userId, workoutId, workoutStartTime) {
+    const query = "INSERT INTO workout_logs (user_id, workout_id, start_time) VALUES (?, ?, ?)";
+    const params = [userId, workoutId, workoutStartTime];
+    console.log("Workout Start Time: " + workoutStartTime);
+    console.log(query);
+    console.log(params);
+    $.post('php/db.php', { query, params })
+      .done(function(response) {      
+        const workoutLogId = response;
+        console.log("Workout Log ID: " + workoutLogId);
+      })
+      .fail(function(error) {
+        console.error("Failed to create workout log entry:", error);
+      });
+  }
 
   function formatTime(seconds) {
     const minutes = Math.floor(seconds / 60);
