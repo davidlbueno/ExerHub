@@ -79,6 +79,8 @@
         <ol class="workout-list"></ol>
       </div>
       <a href="#!" class="modal-close"><i class="material-icons">close</i></a>
+      <div class="modal-footer" style="background-color: #252525">
+        <button class="btn" id="view_log">View Log</button>
     </div>
       </div>';
     } else {
@@ -187,25 +189,26 @@
     const exerciseType = activeItem.querySelector('strong').textContent;
     const nextItem = activeItem.nextElementSibling;
 
-    if (nextItem) {
       pauseCountdown();
       if (exerciseType != 'Rest') {
-        activeItem.dataset.exerciseStopTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
+        if (!activeItem.dataset.exerciseStopTime) {
+          activeItem.dataset.exerciseStopTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
+        }
         console.log("Exercise Stop Time: " + activeItem.dataset.exerciseStopTime);
       }
-      setActiveItem(nextItem);
-      const nextSeconds = parseInt(nextItem.textContent.match(/\d+/));
-      resetCountdown(nextItem);
-      progressPercentage = 0;
-      updateCountdown(nextSeconds);
-      activeItem.dataset.exerciseStartTime = null;
-      if (internalCall) {
-        internalCall = false;
-        startCountdown(nextSeconds, 0);
-        isTimerRunning = true;
-        playPauseBtn.innerHTML = '<i class="material-icons">pause</i>';
+      if (nextItem) {
+        setActiveItem(nextItem);
+        const nextSeconds = parseInt(nextItem.textContent.match(/\d+/));
+        resetCountdown(nextItem);
+        progressPercentage = 0;
+        updateCountdown(nextSeconds);
+        if (internalCall) {
+          internalCall = false;
+          startCountdown(nextSeconds, 0);
+          isTimerRunning = true;
+          playPauseBtn.innerHTML = '<i class="material-icons">pause</i>';
+        }
       }
-    }
   });
 
   prevBtn.addEventListener('click', function () {
@@ -245,6 +248,7 @@
   function resetCountdown(item) {
     const progressBar = item.querySelector('.progress-bar');
     progressBar.style.width = '0%';
+    elapsedTime = 0;
 
     const initialDuration = parseInt(item.textContent.match(/\d+/));
     item.dataset.initialDuration = initialDuration;
@@ -272,7 +276,7 @@
     if (exerciseType != 'Rest') {
       const exerciseId = activeItem.dataset.exerciseId;
       const reps = activeItem.querySelector('#repsInput').value;
-      if (!activeItem.dataset.exerciseStartTime) {
+      if (!activeItem.dataset.exerciseStartTime && !elapsedTime) {
         activeItem.dataset.exerciseStartTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
       }
       createWorkoutLogItemEntry();
