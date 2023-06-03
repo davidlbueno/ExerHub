@@ -287,20 +287,20 @@
   }
 
   function createWorkoutLogEntry(userId, workoutId, exerciseId, startTime) {
-    const workoutStartTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
-    const query = "INSERT INTO workout_logs (user_id, workout_id, exercise_id, workoutStart_time) VALUES (?, ?, ?, ?)";
-    const params = [userId, workoutId, exerciseId, workoutStartTime];
-    $.post('php/db.php', { query, params })
-      .done(function(response) {
-        console.log("Workout log entry created successfully");
-        console.log(query);
-        console.log(params);
-        console.log(response);
-      })
-      .fail(function(error) {
-        console.error("Failed to create workout log entry:", error);
-      });
-  }
+  const workoutStartTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
+  const query = "INSERT INTO workout_logs (workout_id, exercise_id, start_time) VALUES (?, ?, ?)";
+  const params = [workoutId, exerciseId, workoutStartTime];
+  $.post('php/db.php', { query, params })
+    .done(function(response) {
+      console.log("Workout log entry created successfully");
+      console.log(query);
+      console.log(params);
+      console.log(response);
+    })
+    .fail(function(error) {
+      console.error("Failed to create workout log entry:", error);
+    });
+}
 
   function formatTime(seconds) {
     const minutes = Math.floor(seconds / 60);
