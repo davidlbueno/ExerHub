@@ -184,15 +184,21 @@
 
   nextBtn.addEventListener('click', function () {
     const activeItem = document.querySelector('.workout-list li.active');
+    const exerciseType = activeItem.querySelector('strong').textContent;
     const nextItem = activeItem.nextElementSibling;
 
     if (nextItem) {
       pauseCountdown();
+      if (exerciseType != 'Rest') {
+        activeItem.dataset.exerciseStopTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
+        console.log("Exercise Stop Time: " + activeItem.dataset.exerciseStopTime);
+      }
       setActiveItem(nextItem);
       const nextSeconds = parseInt(nextItem.textContent.match(/\d+/));
       resetCountdown(nextItem);
       progressPercentage = 0;
       updateCountdown(nextSeconds);
+      activeItem.dataset.exerciseStartTime = null;
       if (internalCall) {
         internalCall = false;
         startCountdown(nextSeconds, 0);
@@ -251,6 +257,7 @@
   function startCountdown(seconds, progress) {
     const activeItem = document.querySelector('.workout-list li.active');
     const initialDuration = parseInt(activeItem.textContent.match(/\d+/));
+    const exerciseType = activeItem.querySelector('strong').textContent;
     activeItem.dataset.initialDuration = initialDuration;
 
     // Create Workout Log Entry
@@ -261,21 +268,16 @@
       createWorkoutLogEntry(userId, workoutId, workoutStartTime);
     }
 
-    // Add Exercise details for each list item
-    const exerciseId = activeItem.dataset.exerciseId;
-    if (!(activeItem.dataset.exerciseStartTime)) {
-      activeItem.dataset.exerciseStartTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    // Add Exercise details
+    if (exerciseType != 'Rest') {
+      const exerciseId = activeItem.dataset.exerciseId;
+      const reps = activeItem.querySelector('#repsInput').value;
+      if (!activeItem.dataset.exerciseStartTime) {
+        activeItem.dataset.exerciseStartTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
+      }
+      createWorkoutLogItemEntry();
     }
-    //Add input field for reps in exercise details
-    const exerciseDetails = activeItem.querySelector('.exercise-details');
-    const exerciseDetailsInput = document.createElement('input');
-    exerciseDetailsInput.setAttribute('type', 'number');
-    exerciseDetailsInput.setAttribute('placeholder', 'Reps');
-    exerciseDetailsInput.setAttribute('id', 'reps');
 
-
-    //createWorkoutLogItemsEntry();
- 
     startTime = performance.now() - (progress / 100) * initialDuration * 1000;
     elapsedTime = 0;
 
@@ -313,11 +315,9 @@
     const exerciseId = activeItem.dataset.exerciseId;
     const query = "INSERT INTO workout_log_items (workout_id, exercise_id, start_time) VALUES (?, ?, ?)";
     const params = [workoutId, exerciseId, exerciseStartTime];
-
       console.log("Exercise Start Time: " + exerciseStartTime);
       console.log(query);
       console.log(params);
-      console.log(activeItem.dataset);
   }
 
   function createWorkoutLogEntry(userId, workoutId, workoutStartTime) {
