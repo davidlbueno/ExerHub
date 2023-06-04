@@ -256,6 +256,7 @@ li.selected {
   cursor: pointer;
   color: #fff;
   font-size: 24px;
+  position: fixed;
 }
 
 .countdown-clock {
