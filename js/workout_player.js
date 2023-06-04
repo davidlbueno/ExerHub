@@ -147,8 +147,11 @@ document.addEventListener('DOMContentLoaded', function () {
       let exerciseId = null;
       let exerciseReps = null;
       if (exerciseType !== 'Rest') {
-        exerciseReps = item.dataset.reps || null; // use null if not defined
         exerciseId = item.dataset.exerciseId || null; // use null if not defined
+  
+        // Get reps value from input field inside the current item
+        const repsInput = item.querySelector('.repsInput');
+        exerciseReps = repsInput ? repsInput.value : null;
       }
       const itemStartTime = item.dataset.exerciseStartTime || null; // use null if not defined
       const itemStopTime = item.dataset.exerciseStopTime || null; // use null if not defined      
@@ -187,7 +190,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (exerciseType != 'Rest') {
       const exerciseId = activeItem.dataset.exerciseId;
       const repsInput = activeItem.querySelector('.repsInput');
-      const reps = repsInput ? repsInput.value : '';
+      const reps = repsInput ? repsInput.value : null;
       if (!activeItem.dataset.exerciseStartTime && !elapsedTime) {
         activeItem.dataset.exerciseStartTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
       }
