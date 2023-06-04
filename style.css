@@ -271,6 +271,7 @@ li.selected {
 
 .exercise-details {
   display: none;
+  height: 36px;
   padding: 5px;
   margin-bottom: 0px;
   background-color: #1a1a1a;
@@ -290,7 +291,12 @@ li.active:not(.rest) + li {
   margin-top: 40px; /* Adjust the spacing as needed */
 }
 
+li.rest.active {
+  margin-top: 40px;
+}
+
 /* Add the transition property for the active state */
 li.active + li {
   transition: margin-top 0.3s ease;
 }
+

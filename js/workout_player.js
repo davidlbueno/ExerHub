@@ -35,6 +35,15 @@ document.addEventListener('DOMContentLoaded', function () {
     if (activeExerciseDetails) {
       activeExerciseDetails.style.display = 'block';
     }
+
+    // If the active item is a rest item, then show the previous items exercise details
+    if (item.classList.contains('rest')) {
+      const previousItem = item.previousElementSibling;
+      const previousExerciseDetails = previousItem.querySelector('.exercise-details');
+      if (previousExerciseDetails) {
+        previousExerciseDetails.style.display = 'block';
+      }
+    }
   }
 
   const workoutItems = document.querySelectorAll('ol li');
@@ -153,7 +162,7 @@ document.addEventListener('DOMContentLoaded', function () {
       }
       const itemStartTime = item.dataset.itemStartTime || null; // use null if not defined
       const itemStopTime = item.dataset.itemStopTime || null; // use null if not defined      
-      console.log(`${exerciseType}, ${exerciseId}, ${exerciseReps},${itemStartTime}, ${itemStopTime}`);
+      console.log(`${exerciseType}, ${exerciseId}, ${exerciseReps}, ${itemStartTime}, ${itemStopTime}`);
     });
   });
   
