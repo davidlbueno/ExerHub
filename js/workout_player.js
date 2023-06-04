@@ -81,12 +81,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const nextItem = activeItem.nextElementSibling;
 
     pauseCountdown();
-    if (exerciseType != 'Rest') {
-      if (!activeItem.dataset.exerciseStopTime) {
-        activeItem.dataset.exerciseStopTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
+      if (!activeItem.dataset.itemStopTime) {
+        activeItem.dataset.itemStopTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
       }
-      console.log("Exercise Stop Time: " + activeItem.dataset.exerciseStopTime);
-    }
+      console.log("Exercise Stop Time: " + activeItem.dataset.itemStopTime);
     if (nextItem) {
       setActiveItem(nextItem);
       const nextSeconds = parseInt(nextItem.textContent.match(/\d+/));
@@ -153,9 +151,9 @@ document.addEventListener('DOMContentLoaded', function () {
         const repsInput = item.querySelector('.repsInput');
         exerciseReps = repsInput ? repsInput.value : null;
       }
-      const itemStartTime = item.dataset.exerciseStartTime || null; // use null if not defined
-      const itemStopTime = item.dataset.exerciseStopTime || null; // use null if not defined      
-      console.log(`Exercise Type: ${exerciseType}, Exercise ID: ${exerciseId}, Reps: ${exerciseReps}, Start Time: ${itemStartTime}, Stop Time: ${itemStopTime}`);
+      const itemStartTime = item.dataset.itemStartTime || null; // use null if not defined
+      const itemStopTime = item.dataset.itemStopTime || null; // use null if not defined      
+      console.log(`${exerciseType}, ${exerciseId}, ${exerciseReps},${itemStartTime}, ${itemStopTime}`);
     });
   });
   
@@ -187,15 +185,13 @@ document.addEventListener('DOMContentLoaded', function () {
       createWorkoutLogEntry(userId, workoutId, workoutStartTime);
     }
 
-    if (exerciseType != 'Rest') {
-      const exerciseId = activeItem.dataset.exerciseId;
-      const repsInput = activeItem.querySelector('.repsInput');
-      const reps = repsInput ? repsInput.value : null;
-      if (!activeItem.dataset.exerciseStartTime && !elapsedTime) {
-        activeItem.dataset.exerciseStartTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
-      }
-      createWorkoutLogItemEntry(userId, workoutId, exerciseId, activeItem.dataset.exerciseStartTime, reps);
+    if (!activeItem.dataset.itemStartTime && !elapsedTime) {
+      activeItem.dataset.itemStartTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
     }
+    const exerciseId = activeItem.dataset.exerciseId || null;
+    const repsInput = activeItem.querySelector('.repsInput');
+    const reps = repsInput ? repsInput.value : null; 
+    createWorkoutLogItemEntry(userId, workoutId, exerciseId, activeItem.dataset.itemStartTime, reps);
 
     startTime = performance.now() - (progress / 100) * initialDuration * 1000;
     elapsedTime = 0;
@@ -244,10 +240,10 @@ document.addEventListener('DOMContentLoaded', function () {
       });
   }
 
-  function createWorkoutLogItemEntry(userId, workoutId, exerciseId, exerciseStartTime, reps) {
+  function createWorkoutLogItemEntry(userId, workoutId, exerciseId, itemStartTime, reps) {
     const query = "INSERT INTO workout_log_items (workout_id, exercise_id, start_time, reps) VALUES (?, ?, ?, ?)";
-    const params = [workoutId, exerciseId, exerciseStartTime, reps];
-    console.log("Exercise Start Time: " + exerciseStartTime);
+    const params = [workoutId, exerciseId, itemStartTime, reps];
+    console.log("Exercise Start Time: " + itemStartTime);
     console.log(query);
     console.log(params);
   }
