@@ -60,7 +60,7 @@
                   <li class="exercise-list-item" data-exercise-id="<?= $exerciseId ?>">
                     <strong><?= $exerciseName ?></strong> - <?= $exerciseType ?> (<?= $seconds ?> seconds)
                     <div class="exercise-details">
-                      <input type="number" id="repsInput" max="999" placeholder="Reps" style="width: 70px; height: 30px">
+                    <input type="number" class="repsInput" max="999" placeholder="Reps" style="width: 70px; height: 30px">
                     </div>
                   </li>
                   <?php
