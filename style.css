@@ -249,6 +249,15 @@ li.selected {
   font-size: 24px;
 }
 
+.player-close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  cursor: pointer;
+  color: #fff;
+  font-size: 24px;
+}
+
 .countdown-clock {
   font-family: "Courier New", monospace;
   font-size: 40px;

@@ -75,11 +75,9 @@
     }
     ?>
   </main>
-  <script src="js/nav.js"></script>
   <script>
   document.addEventListener('DOMContentLoaded', function () {
   const workoutName = <?php echo json_encode($workoutName); ?>;
-
   const startWorkoutBtn = document.getElementById('startWorkoutBtn');
   const editBtn = document.getElementById('editBtn');
   const workoutList = document.querySelector('.workout-list');
@@ -87,8 +85,15 @@
   const nextBtn = document.getElementById('nextBtn');
   const prevBtn = document.getElementById('prevBtn');
   const resetBtn = document.getElementById('resetBtn');
+  const playerCloseBtn = document.querySelector('.player-close-btn');
   const countdownClock = document.querySelector('.countdown-clock');
   let workoutStartTime = null;
+  let isTimerRunning = false;
+  let progressPercentage = 0;
+  let countdownInterval;
+  let startTime;
+  let elapsedTime;
+  let internalCall = false;
 
   const firstItem = document.querySelector('.workout-list li:first-child');
   console.log(firstItem);
@@ -131,13 +136,6 @@
       listItem.classList.add('rest');
     }
   });
-
-  let isTimerRunning = false;
-  let progressPercentage = 0;
-  let countdownInterval;
-  let startTime;
-  let elapsedTime;
-  let internalCall = false;
 
   playPauseBtn.addEventListener('click', function () {
     const activeItem = document.querySelector('.workout-list li.active');
@@ -239,7 +237,7 @@
     activeItem.dataset.initialDuration = initialDuration;
 
     // Create Workout Log Entry
-    const userId = sessionVars.userId;
+    const userId = <?php echo json_encode($userId); ?>;
     const workoutId = <?php echo json_encode($workoutId); ?>;
     if (!workoutStartTime) {
       workoutStartTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
@@ -326,13 +324,13 @@
   }
 
     // Event handler for the "player-close" event
-    player.querySelector('.player-close-btn').addEventListener('click', function() {
-    resetplayerVars();
+    playerCloseBtn.addEventListener('click', function() {
+    resetPlayerVars();
     // Open the referring workout list page
     window.location.href = 'workout_list.php?workout_id=' + userId + '&workout_name_id=' + workoutName;
   });
   
-  function resetplayerVars() {
+  function resetPlayerVars() {
     // Reset variables here
     resetBtn.click();
   }

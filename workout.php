@@ -57,6 +57,7 @@
 
       echo '
       <button class="btn" id="startWorkoutBtn">Start Workout</button>
+      <button class="btn" id="startPlayerBtn">Start Player</button>
       <button class="btn" id="editBtn">Edit Workout</button>
       <div id="workoutModal" class="modal modal-dark" data-workout-name="' . htmlspecialchars($workoutName) . '">
       <div class="modal-content" style="display: flex; flex-direction: column;">
@@ -98,6 +99,7 @@
   modalTitle.textContent = workoutName;
 
   const startWorkoutBtn = document.getElementById('startWorkoutBtn');
+  const startPlayerBtn = document.getElementById('startPlayerBtn');
   const editBtn = document.getElementById('editBtn');
   const workoutList = document.querySelector('.workout-list');
   const playPauseBtn = document.getElementById('playPauseBtn');
@@ -106,6 +108,14 @@
   const resetBtn = document.getElementById('resetBtn');
   const countdownClock = document.querySelector('.countdown-clock');
   let workoutStartTime = null;
+
+  startPlayerBtn.addEventListener('click', function () {
+    // open workout_player.php
+    const workoutId = <?php echo json_encode($workoutId); ?>;
+    const userId = sessionVars.userId;
+    const workoutPlayerUrl = `workout_player.php?user_id=${userId}&workout_id=${workoutId}`;
+    window.location.href = workoutPlayerUrl;
+  });
 
   function setActiveItem(item) {
     const activeItem = document.querySelector('.workout-list li.active');
