@@ -148,6 +148,8 @@ document.addEventListener('DOMContentLoaded', function () {
     countdownClock.textContent = formatTime(seconds);
   }
 
+  let requestId; // Variable to store the request animation frame ID
+
   function startCountdown(seconds, progress) {
     const activeItem = document.querySelector('.workout-list li.active');
     const initialDuration = parseInt(activeItem.textContent.match(/\d+/));
@@ -182,31 +184,23 @@ document.addEventListener('DOMContentLoaded', function () {
         countdownClock.textContent = formatTime(remainingTime);
         progressPercentage = (1 - remainingTime / initialDuration) * 100;
         activeItem.querySelector('.progress-bar').style.width = `${progressPercentage}%`;
+        requestId = requestAnimationFrame(updateCountdown); // Request the next animation frame
       } else {
         countdownClock.textContent = formatTime(0);
-        clearInterval(countdownInterval);
+        cancelAnimationFrame(requestId); // Cancel the animation frame
         internalCall = true;
         nextBtn.click();
       }
     }
 
     activeItem.classList.add('progress-bar');
-    updateCountdown();
-    countdownInterval = setInterval(updateCountdown, 10);
+    requestId = requestAnimationFrame(updateCountdown); // Start the animation frame loop
   }
 
   function pauseCountdown() {
-    clearInterval(countdownInterval);
+    cancelAnimationFrame(requestId); // Cancel the animation frame
     isTimerRunning = false;
     updatePlayPauseButton();
-  }
-
-  function createWorkoutLogItemEntry(userId, workoutId, exerciseId, exerciseStartTime, reps) {
-    const query = "INSERT INTO workout_log_items (workout_id, exercise_id, start_time, reps) VALUES (?, ?, ?, ?)";
-    const params = [workoutId, exerciseId, exerciseStartTime, reps];
-    console.log("Exercise Start Time: " + exerciseStartTime);
-    console.log(query);
-    console.log(params);
   }
 
   function createWorkoutLogEntry(userId, workoutId, workoutStartTime) {
@@ -223,6 +217,14 @@ document.addEventListener('DOMContentLoaded', function () {
       .fail(function (error) {
         console.error("Failed to create workout log entry:", error);
       });
+  }
+
+  function createWorkoutLogItemEntry(userId, workoutId, exerciseId, exerciseStartTime, reps) {
+    const query = "INSERT INTO workout_log_items (workout_id, exercise_id, start_time, reps) VALUES (?, ?, ?, ?)";
+    const params = [workoutId, exerciseId, exerciseStartTime, reps];
+    console.log("Exercise Start Time: " + exerciseStartTime);
+    console.log(query);
+    console.log(params);
   }
 
   function formatTime(seconds) {
