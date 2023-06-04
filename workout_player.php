@@ -73,7 +73,7 @@
             <i class="material-icons">close</i>
           </a>
           <div class="footer" style="background-color: #252525">
-            <button class="btn" id="view_log">View Log</button>
+            <button id="viewLogBtn" class="btn" >View Log</button>
           </div>
         </div>
       </div>

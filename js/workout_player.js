@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const playPauseBtn = document.getElementById('playPauseBtn');
   const playerCloseBtn = document.querySelector('.player-close-btn');
   const countdownClock = document.querySelector('.countdown-clock');
+  const viewLogBtn = document.getElementById('viewLogBtn');
   let workoutStartTime = null;
   let isTimerRunning = false;
   let progressPercentage = 0;
@@ -134,6 +135,27 @@ document.addEventListener('DOMContentLoaded', function () {
       updatePlayPauseButton();
     }
   });
+
+  viewLogBtn.addEventListener('click', function () {
+    workoutItems.forEach((item) => {
+      const exerciseTypeElement = item.querySelector('strong');
+      if (!exerciseTypeElement) {
+        console.error("Element 'strong' not found in item");
+        return;
+      }
+      const exerciseType = exerciseTypeElement.textContent.trim();
+      let exerciseId = null;
+      let exerciseReps = null;
+      if (exerciseType !== 'Rest') {
+        exerciseReps = item.dataset.reps || null; // use null if not defined
+        exerciseId = item.dataset.exerciseId || null; // use null if not defined
+      }
+      const itemStartTime = item.dataset.exerciseStartTime || null; // use null if not defined
+      const itemStopTime = item.dataset.exerciseStopTime || null; // use null if not defined      
+      console.log(`Exercise Type: ${exerciseType}, Exercise ID: ${exerciseId}, Reps: ${exerciseReps}, Start Time: ${itemStartTime}, Stop Time: ${itemStopTime}`);
+    });
+  });
+  
 
   function resetCountdown(item) {
     const progressBar = item.querySelector('.progress-bar');
