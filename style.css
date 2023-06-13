@@ -175,6 +175,10 @@ li.rest {
   background-color: rgb(39, 91, 0);
 }
 
+li.warmup {
+  background-color: rgb(47, 59, 200);
+}
+
 h4 {
   margin-top: 0;
 }
@@ -201,8 +205,16 @@ li.selected {
   background-color: rgb(39, 91, 0);
 }
 
+.workout-list li.warmup {
+  background-color: rgb(47, 59, 200);
+}
+
 .workout-list li.rest.active {
   background-color: rgb(43, 160, 0);
+}
+
+.workout-list li.warmup.active {
+  background-color: rgb(0, 115, 255);
 }
 
 .progress-bar {
@@ -287,11 +299,11 @@ li {
   transition: margin-top 0.3s ease;
 }
 
-li.active:not(.rest) + li {
+li.active:not(.rest):not(.warmup) + li {
   margin-top: 40px; /* Adjust the spacing as needed */
 }
 
-li.rest.active {
+li.rest.active or li.warmup.active + li {
   margin-top: 40px;
 }
 
