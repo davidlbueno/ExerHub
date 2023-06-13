@@ -175,6 +175,10 @@ li.rest {
   background-color: rgb(39, 91, 0);
 }
 
+li.warmup {
+  background-color: rgb(47, 59, 200);
+}
+
 h4 {
   margin-top: 0;
 }
