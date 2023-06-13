@@ -53,15 +53,19 @@ document.addEventListener('DOMContentLoaded', function () {
     progressBar.classList.add('progress-bar', 'positioned');
     listItem.appendChild(progressBar);
     workoutList.appendChild(listItem);
-
+    
     if (index === 0) {
       listItem.classList.add('active');
       setActiveItem(listItem);
     }
 
-    const exerciseType = item.querySelector('strong').textContent;
+    const exerciseType = item.querySelector('strong').textContent;    
     if (exerciseType === 'Rest') {
       listItem.classList.add('rest');
+    }
+    
+    if (exerciseType === 'Warmup') {
+      listItem.classList.add('warmup');
     }
   });
 
