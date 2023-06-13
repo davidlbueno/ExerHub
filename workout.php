@@ -36,22 +36,22 @@
       $result = query($query);
 
       echo "<ol>";
+      // Create the list items based on the retrieved data
       while ($row = mysqli_fetch_assoc($result)) {
-          $exerciseId = $row['exercise_id'];
-          $exerciseName = $row['exercise_name'];
-          $exerciseType = $row['type'];
-          $seconds = $row['seconds'];
+        $type = $row['type'];
+        $exerciseName = $row['exercise_name'];
+        $seconds = $row['seconds'];
 
-          if ($exerciseType === 'Rest') {
-              echo "<li class='rest'><strong>Rest</strong> - $seconds seconds</li>";
+        if ($type === "Rest") {
+          echo "<li class='rest'><strong>Rest</strong> - ({$seconds}s)</li>";
+        } else {
+          if ($type === "Warmup") {
+            echo "<li class='warmup'><strong>Warmup</strong> - $exerciseName ({$seconds}s)</li>";
           } else {
-            echo "<li class='exercise-list-item' data-exercise-id='$exerciseId'>
-              <strong>$exerciseName</strong> - $exerciseType ($seconds seconds)
-            <div class='exercise-details'>
-              <input type='number' id='repsInput' max='999' placeholder='Reps' style='width: 70px; height: 30px'>
-            </div>
-          </li>";
+            $exerciseType = $exercises[$exerciseName]['type'];
+            echo "<li ><strong>$exerciseType</strong> - $exerciseName ({$seconds}s)</li>";
           }
+        }
       }
       echo "</ol>";
 

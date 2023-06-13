@@ -46,33 +46,42 @@
             </div>
           </div>
           <div>
-            <ol class="workout-list">
-              <?php
-              while ($row = mysqli_fetch_assoc($result)) {
-                $exerciseId = $row['exercise_id'];
-                $exerciseName = $row['exercise_name'];
-                $exerciseType = $row['type'];
-                $seconds = $row['seconds'];
-                if ($exerciseType === 'Rest') {
-                  echo "<li class='rest'><strong>Rest</strong> - $seconds seconds</li>";
-                } else {
-                  ?>
-                  <li class="exercise-list-item" data-exercise-id="<?= $exerciseId ?>">
-                    <strong><?= $exerciseName ?></strong> - <?= $exerciseType ?> (<?= $seconds ?> seconds)
-                    <div class="exercise-details">
-                    <input type="number" class="repsInput" max="999" placeholder="Reps" style="width: 70px; height: 30px">
-                    </div>
-                  </li>
-                  <?php
-                }
-              }
-              ?>
-            </ol>
+          <ol class="workout-list">
+  <?php
+  while ($row = mysqli_fetch_assoc($result)) {
+    $exerciseId = $row['exercise_id'];
+    $exerciseName = $row['exercise_name'];
+    $exerciseType = $row['type'];
+    $seconds = $row['seconds'];
+    if ($exerciseType === 'Rest') {
+      echo "<li class='rest'><strong>Rest</strong> - ($seconds seconds)</li>";
+    } else {
+      if ($exerciseType === 'Warmup') {
+        ?>
+        <li class="exercise-list-item" data-exercise-id="<?= $exerciseId ?>">
+          <strong><?= $exerciseType ?></strong> - <?= $exerciseName ?> (<?= $seconds ?> seconds)
+        </li>
+        <?php
+      } else {
+        ?>
+        <li class="exercise-list-item" data-exercise-id="<?= $exerciseId ?>">
+          <strong><?= $exerciseType ?></strong> - <?= $exerciseName ?> (<?= $seconds ?> seconds)
+          <div class="exercise-details">
+            <input type="number" class="repsInput" max="999" placeholder="Reps" style="width: 70px; height: 30px">
+          </div>
+        </li>
+        <?php
+      }
+    }
+  }
+  ?>
+</ol>
+
           </div>
           <a href="workout.php?workout_id=<?= urlencode($workoutId) ?>&workout_name=<?= urlencode($workoutName) ?>" class="player-close-btn">
             <i class="material-icons">close</i>
           </a>
-          <div class="footer" style="background-color: #252525; margin-top: 36px">
+          <div class="footer" style="background-color: #252525; margin-top: 40px">
             <button id="viewLogBtn" class="btn" >View Log</button>
           </div>
         </div>

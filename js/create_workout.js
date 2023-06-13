@@ -79,6 +79,9 @@ addItemBtn.addEventListener("click", () => {
         selectedListItem.html(`${typeSelect.value} - ${exerciseSelect.value} (${secondsInput.value}s)`);
         selectedListItem.css('background-color', '#3d3d3d');
         selectedListItem.removeClass('selected');
+        if (typeSelect.value === "Warmup") {
+          selectedListItem.classList.add('warmup');
+        }
       } else {
         const newNumber = typesList.children.length + 1;
         saveWorkoutBtn.disabled = false;
@@ -88,6 +91,9 @@ addItemBtn.addEventListener("click", () => {
           newItem.innerHTML = `${typeSelect.value} - ${exerciseSelect.value} (${secondsInput.value}s)`;
           newItem.setAttribute('value', newNumber);
           typesList.appendChild(newItem);
+          if (typeSelect.value === "Warmup") {
+            newItem.classList.add('warmup');
+          }
         }
       }
     } else {
@@ -157,6 +163,9 @@ $(document).on('click', "#workout-list li", function(event) {
         newItem.innerHTML = `${typeSelect.value} - (${secondsInput.value}s)`;
       } else {
         newItem.innerHTML = `${typeValue} - ${exerciseValue} (${secondsValue}s`;
+      }
+      if (typeValue === "Warmup") {
+        newItem.classList.add('warmup');
       }
       const newNumber = typesList.children.length + 1;
       newItem.setAttribute('value', newNumber);

@@ -38,6 +38,7 @@
         <option value="Pull">Pull</option>
         <option value="Legs">Legs</option>
         <option value="Rest">Rest</option>
+        <option value="Warmup">Warmup</option>
       </select>
     </div>
   <div class="input-field col s5">
