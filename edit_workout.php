@@ -49,12 +49,13 @@
 
             if ($type === "Rest") {
               echo "<li class='rest'><strong>Rest</strong> - ({$seconds}s)</li>";
-            }
-            if ($type === "Warmup") {
-              echo "<li class='warmup'><strong>Warmup</strong> - $exerciseName ({$seconds}s)</li>";
             } else {
-              $exerciseType = $exercises[$exerciseName]['type'];
-              echo "<li ><strong>$exerciseType</strong> - $exerciseName ({$seconds}s)</li>";
+              if ($type === "Warmup") {
+                echo "<li class='warmup'><strong>Warmup</strong> - $exerciseName ({$seconds}s)</li>";
+              } else {
+                $exerciseType = $exercises[$exerciseName]['type'];
+                echo "<li ><strong>$exerciseType</strong> - $exerciseName ({$seconds}s)</li>";
+              }
             }
           }
           ?>
