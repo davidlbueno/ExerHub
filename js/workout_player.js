@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const activeItem = document.querySelector('.workout-list li.active');
     activeItem.classList.remove('active');
     item.classList.add('active');
-    const exerciseName = item.querySelector('strong').textContent;
+    const exerciseName = item.innerText.split('-')[1].trim();
     document.getElementById('currentExerciseName').textContent = exerciseName;
 
     const exerciseDetails = activeItem.querySelector('.exercise-details');
