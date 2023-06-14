@@ -69,21 +69,44 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-  function initialCountdown(time) {
-    return new Promise((resolve, reject) => {
-        let countdown = time;
-        countdownClock.textContent = formatTime(countdown);
-        const interval = setInterval(() => {
-            countdown--;
-            countdownClock.textContent = formatTime(countdown);
-            if (countdown <= 0) {
-                clearInterval(interval);
-                resolve();
-            }
-        }, 1000);
-    });
-  }
+  const context = new AudioContext();
 
+  function beep(duration, frequency, volume, type, callback) {
+      const oscillator = context.createOscillator();
+      const gainNode = context.createGain();
+  
+      oscillator.connect(gainNode);
+      gainNode.connect(context.destination);
+  
+      if (volume){gainNode.gain.value = volume;}
+      if (frequency){oscillator.frequency.value = frequency;}
+      if (type){oscillator.type = type;}
+      if (callback){oscillator.onended = callback;}
+  
+      oscillator.start(context.currentTime);
+      oscillator.stop(context.currentTime + ((duration || 1) / 1000));
+  }
+  
+  function initialCountdown(time) {
+      return new Promise((resolve, reject) => {
+          let countdown = time;
+          countdownClock.textContent = formatTime(countdown);
+          const interval = setInterval(() => {
+              countdown--;
+              countdownClock.textContent = formatTime(countdown);
+              if (countdown > 0) {
+                  // normal beep
+                  beep(200, 520, 1, 'sine');
+              } else {
+                  // high pitched beep
+                  beep(200, 880, 1, 'sine');
+                  clearInterval(interval);
+                  resolve();
+              }
+          }, 1000);
+      });
+  }
+  
   playPauseBtn.addEventListener('click', function () {
     const activeItem = document.querySelector('.workout-list li.active');
     const firstItem = document.querySelector('.workout-list li:first-child');
@@ -97,11 +120,11 @@ document.addEventListener('DOMContentLoaded', function () {
             playPauseBtn.innerHTML = '<i class="material-icons">play_arrow</i>';
         } else {
             if (activeItem === firstItem && progressPercentage === 0) {
+                playPauseBtn.innerHTML = '<i class="material-icons">pause</i>'; // Set pause button before starting countdown
                 initialCountdown(5).then(() => {
                     const remainingTime = initialDuration - elapsedTime;
                     startCountdown(remainingTime, progressPercentage);
                     isTimerRunning = true;
-                    playPauseBtn.innerHTML = '<i class="material-icons">pause</i>';
                 });
             } else {
                 const remainingTime = initialDuration - elapsedTime;
@@ -112,6 +135,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
   });
+
 
   nextBtn.addEventListener('click', function () {
     const activeItem = document.querySelector('.workout-list li.active');
