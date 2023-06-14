@@ -69,22 +69,47 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
+  function initialCountdown(time) {
+    return new Promise((resolve, reject) => {
+        let countdown = time;
+        countdownClock.textContent = formatTime(countdown);
+        const interval = setInterval(() => {
+            countdown--;
+            countdownClock.textContent = formatTime(countdown);
+            if (countdown <= 0) {
+                clearInterval(interval);
+                resolve();
+            }
+        }, 1000);
+    });
+  }
+
   playPauseBtn.addEventListener('click', function () {
     const activeItem = document.querySelector('.workout-list li.active');
+    const firstItem = document.querySelector('.workout-list li:first-child');
 
     if (activeItem) {
-      const initialDuration = parseInt(activeItem.dataset.initialDuration);
+        const initialDuration = parseInt(activeItem.dataset.initialDuration);
 
-      if (isTimerRunning) {
-        pauseCountdown();
-        isTimerRunning = false;
-        playPauseBtn.innerHTML = '<i class="material-icons">play_arrow</i>';
-      } else {
-        const remainingTime = initialDuration - elapsedTime;
-        startCountdown(remainingTime, progressPercentage);
-        isTimerRunning = true;
-        playPauseBtn.innerHTML = '<i class="material-icons">pause</i>';
-      }
+        if (isTimerRunning) {
+            pauseCountdown();
+            isTimerRunning = false;
+            playPauseBtn.innerHTML = '<i class="material-icons">play_arrow</i>';
+        } else {
+            if (activeItem === firstItem && progressPercentage === 0) {
+                initialCountdown(5).then(() => {
+                    const remainingTime = initialDuration - elapsedTime;
+                    startCountdown(remainingTime, progressPercentage);
+                    isTimerRunning = true;
+                    playPauseBtn.innerHTML = '<i class="material-icons">pause</i>';
+                });
+            } else {
+                const remainingTime = initialDuration - elapsedTime;
+                startCountdown(remainingTime, progressPercentage);
+                isTimerRunning = true;
+                playPauseBtn.innerHTML = '<i class="material-icons">pause</i>';
+            }
+        }
     }
   });
 
