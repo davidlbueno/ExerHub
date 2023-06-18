@@ -105,6 +105,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
   
   function initialCountdown(time) {
+    setButtonsDisabled(true);
       return new Promise((resolve, reject) => {
           let countdown = time;
           countdownClock.textContent = formatTime(countdown);
@@ -119,6 +120,7 @@ document.addEventListener('DOMContentLoaded', function () {
                   beep(200, 880, 1, 'sine');
                   clearInterval(interval);
                   resolve();
+                  setButtonsDisabled(false);
               }
           }, 1000);
       });
@@ -371,5 +373,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function resetPlayerVars() {
     resetBtn.click();
+  }
+
+  function setButtonsDisabled(disabled) {
+    playPauseBtn.disabled = disabled;
+    prevBtn.disabled = disabled;
+    nextBtn.disabled = disabled;
+    resetBtn.disabled = disabled;
   }
 });
