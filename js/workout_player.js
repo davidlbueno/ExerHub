@@ -110,32 +110,29 @@ document.addEventListener('DOMContentLoaded', function () {
   playPauseBtn.addEventListener('click', function () {
     const activeItem = document.querySelector('.workout-list li.active');
     const firstItem = document.querySelector('.workout-list li:first-child');
-
     if (activeItem) {
-        const initialDuration = parseInt(activeItem.dataset.initialDuration);
-
-        if (isTimerRunning) {
-            pauseCountdown();
-            isTimerRunning = false;
-            playPauseBtn.innerHTML = '<i class="material-icons">play_arrow</i>';
+      const initialDuration = parseInt(activeItem.dataset.initialDuration);
+      if (isTimerRunning) {
+        pauseCountdown();
+        isTimerRunning = false;
+        playPauseBtn.innerHTML = '<i class="material-icons">play_arrow</i>';
+      } else {
+        if (activeItem === firstItem && progressPercentage === 0) {
+          playPauseBtn.innerHTML = '<i class="material-icons">pause</i>'; // Set pause button before starting countdown
+          initialCountdown(5).then(() => {
+            const remainingTime = initialDuration - elapsedTime;
+            startCountdown(remainingTime, progressPercentage);
+            isTimerRunning = true;
+          });
         } else {
-            if (activeItem === firstItem && progressPercentage === 0) {
-                playPauseBtn.innerHTML = '<i class="material-icons">pause</i>'; // Set pause button before starting countdown
-                initialCountdown(5).then(() => {
-                    const remainingTime = initialDuration - elapsedTime;
-                    startCountdown(remainingTime, progressPercentage);
-                    isTimerRunning = true;
-                });
-            } else {
-                const remainingTime = initialDuration - elapsedTime;
-                startCountdown(remainingTime, progressPercentage);
-                isTimerRunning = true;
-                playPauseBtn.innerHTML = '<i class="material-icons">pause</i>';
-            }
+          const remainingTime = initialDuration - elapsedTime;
+          startCountdown(remainingTime, progressPercentage);
+          isTimerRunning = true;
+          playPauseBtn.innerHTML = '<i class="material-icons">pause</i>';
         }
+      }
     }
   });
-
 
   nextBtn.addEventListener('click', function () {
     const activeItem = document.querySelector('.workout-list li.active');
@@ -162,7 +159,16 @@ document.addEventListener('DOMContentLoaded', function () {
     } else {
       // Display workout complete message
       const workoutCompleteMessage = document.querySelector('.workout-complete-message');
+      const exerciseDetailsItems = document.querySelectorAll('.exercise-details');
+      exerciseDetailsItems.forEach(function (item) {
+        item.style.display = 'block';
+      });
       workoutCompleteMessage.style.display = 'block';
+      workoutItems.forEach(function (item) {
+        if (!item.classList.contains('rest') && !item.classList.contains('warmup')) {
+          item.style.marginBottom = '40px';
+        }
+      });      
       pauseCountdown();
       isTimerRunning = false;
       updatePlayPauseButton();
@@ -225,7 +231,6 @@ document.addEventListener('DOMContentLoaded', function () {
       console.log(`${exerciseType}, ${exerciseId}, ${exerciseReps}, ${itemStartTime}, ${itemStopTime}`);
     });
   });
-  
 
   function resetCountdown(item) {
     const progressBar = item.querySelector('.progress-bar');
