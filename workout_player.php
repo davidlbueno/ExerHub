@@ -47,36 +47,39 @@
           </div>
           <div>
           <ol class="workout-list">
-  <?php
-  while ($row = mysqli_fetch_assoc($result)) {
-    $exerciseId = $row['exercise_id'];
-    $exerciseName = $row['exercise_name'];
-    $exerciseType = $row['type'];
-    $seconds = $row['seconds'];
-    if ($exerciseType === 'Rest') {
-      echo "<li class='rest'><strong>Rest</strong> - ($seconds seconds)</li>";
-    } else {
-      if ($exerciseType === 'Warmup') {
-        ?>
-        <li class="exercise-list-item" data-exercise-id="<?= $exerciseId ?>">
-          <strong><?= $exerciseType ?></strong> - <?= $exerciseName ?> (<?= $seconds ?> seconds)
-        </li>
-        <?php
-      } else {
-        ?>
-        <li class="exercise-list-item" data-exercise-id="<?= $exerciseId ?>">
-          <strong><?= $exerciseType ?></strong> - <?= $exerciseName ?> (<?= $seconds ?> seconds)
-          <div class="exercise-details">
-            <input type="number" class="repsInput" max="999" placeholder="Reps" style="width: 70px; height: 30px">
-          </div>
-        </li>
-        <?php
-      }
-    }
-  }
-  ?>
-</ol>
-
+            <?php
+            while ($row = mysqli_fetch_assoc($result)) {
+              $exerciseId = $row['exercise_id'];
+              $exerciseName = $row['exercise_name'];
+              $exerciseType = $row['type'];
+              $seconds = $row['seconds'];
+              if ($exerciseType === 'Rest') {
+                echo "<li class='rest'><strong>Rest</strong> - ($seconds seconds)</li>";
+              } else {
+                if ($exerciseType === 'Warmup') {
+                  ?>
+                  <li class="exercise-list-item" data-exercise-id="<?= $exerciseId ?>">
+                    <strong><?= $exerciseType ?></strong> - <?= $exerciseName ?> (<?= $seconds ?> seconds)
+                  </li>
+                  <?php
+                } else {
+                  ?>
+                  <li class="exercise-list-item" data-exercise-id="<?= $exerciseId ?>">
+                    <strong><?= $exerciseType ?></strong> - <?= $exerciseName ?> (<?= $seconds ?> seconds)
+                    <div class="exercise-details">
+                      <input type="number" class="repsInput" max="999" placeholder="Reps" style="width: 70px; height: 30px">
+                    </div>
+                  </li>
+                  <?php
+                }
+              }
+            }
+            ?>
+          </ol>
+            <div class="workout-complete-message">
+              <h2>Workout Complete!</h2>
+              <p>Congratulations on completing your workout.</p>
+            </div>
           </div>
           <a href="workout.php?workout_id=<?= urlencode($workoutId) ?>&workout_name=<?= urlencode($workoutName) ?>" class="player-close-btn">
             <i class="material-icons">close</i>

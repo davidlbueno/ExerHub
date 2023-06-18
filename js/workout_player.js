@@ -159,6 +159,13 @@ document.addEventListener('DOMContentLoaded', function () {
         isTimerRunning = true;
         playPauseBtn.innerHTML = '<i class="material-icons">pause</i>';
       }
+    } else {
+      // Display workout complete message
+      const workoutCompleteMessage = document.querySelector('.workout-complete-message');
+      workoutCompleteMessage.style.display = 'block';
+      pauseCountdown();
+      isTimerRunning = false;
+      updatePlayPauseButton();
     }
   });
 
