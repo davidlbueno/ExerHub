@@ -25,17 +25,17 @@ document.addEventListener('DOMContentLoaded', function () {
     item.classList.add('active');
     const exerciseName = item.innerText.split('-')[1].trim();
     document.getElementById('currentExerciseName').textContent = exerciseName;
-
+  
     const exerciseDetails = activeItem.querySelector('.exercise-details');
     if (exerciseDetails) {
       exerciseDetails.style.display = 'none';
     }
-
+  
     const activeExerciseDetails = item.querySelector('.exercise-details');
     if (activeExerciseDetails) {
       activeExerciseDetails.style.display = 'block';
     }
-
+  
     // If the active item is a rest item, then show the previous items exercise details
     if (item.classList.contains('rest')) {
       const previousItem = item.previousElementSibling;
@@ -44,8 +44,19 @@ document.addEventListener('DOMContentLoaded', function () {
         previousExerciseDetails.style.display = 'block';
       }
     }
-  }
-
+  
+    // Hide exercise details for non-active and non-rest items
+    const listItems = document.querySelectorAll('.workout-list li');
+    listItems.forEach((li) => {
+      if (!li.classList.contains('active')) {
+        const exerciseDetails = li.querySelector('.exercise-details');
+        if (exerciseDetails) {
+          exerciseDetails.style.display = 'none';
+        }
+      }
+    });
+  }  
+  
   const workoutItems = document.querySelectorAll('ol li');
   workoutItems.forEach(function (item, index) {
     const listItem = item;
@@ -136,14 +147,28 @@ document.addEventListener('DOMContentLoaded', function () {
 
   nextBtn.addEventListener('click', function () {
     const activeItem = document.querySelector('.workout-list li.active');
+    const exerciseDetails = activeItem.querySelector('.exercise-details');
     const exerciseType = activeItem.querySelector('strong').textContent;
     const nextItem = activeItem.nextElementSibling;
 
     pauseCountdown();
-      if (!activeItem.dataset.itemStopTime) {
-        activeItem.dataset.itemStopTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    if (!activeItem.dataset.itemStopTime) {
+      activeItem.dataset.itemStopTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
+      const startTime = new Date(activeItem.dataset.itemStartTime);
+      const stopTime = new Date(activeItem.dataset.itemStopTime);
+      const actualSeconds = Math.round((stopTime - startTime) / 1000);
+  
+      if (exerciseDetails) {
+        const actualSecondsElement = exerciseDetails.querySelector('.actualSeconds');
+        if (actualSecondsElement) {
+          const startTime = activeItem.dataset.itemStartTime;
+          const stopTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
+          const actualSeconds = Math.round((new Date(stopTime) - new Date(startTime)) / 1000);
+          actualSecondsElement.textContent = actualSeconds.toString();
+        }
       }
-      console.log("Exercise Stop Time: " + activeItem.dataset.itemStopTime);
+    }
+  
     if (nextItem) {
       setActiveItem(nextItem);
       const nextSeconds = parseInt(nextItem.textContent.match(/\d+/));
@@ -168,12 +193,12 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!item.classList.contains('rest') && !item.classList.contains('warmup')) {
           item.style.marginBottom = '40px';
         }
-      });      
+      });
       pauseCountdown();
       isTimerRunning = false;
       updatePlayPauseButton();
     }
-  });
+  });  
 
   prevBtn.addEventListener('click', function () {
     const activeItem = document.querySelector('.workout-list li.active');
