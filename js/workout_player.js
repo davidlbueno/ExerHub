@@ -23,8 +23,14 @@ document.addEventListener('DOMContentLoaded', function () {
     const activeItem = document.querySelector('.workout-list li.active');
     activeItem.classList.remove('active');
     item.classList.add('active');
-    const exerciseName = item.innerText.split('-')[1].trim();
-    document.getElementById('currentExerciseName').textContent = exerciseName;
+  
+    const exerciseType = item.querySelector('strong').textContent.trim();
+    if (exerciseType === 'Rest') {
+      document.getElementById('currentExerciseName').textContent = 'Rest';
+    } else {
+      const exerciseName = item.innerText.split('-')[1].trim();
+      document.getElementById('currentExerciseName').textContent = exerciseName;
+    }
   
     const exerciseDetails = activeItem.querySelector('.exercise-details');
     if (exerciseDetails) {
@@ -36,7 +42,7 @@ document.addEventListener('DOMContentLoaded', function () {
       activeExerciseDetails.style.display = 'block';
     }
   
-    // If the active item is a rest item, then show the previous items exercise details
+    // If the active item is a rest item, then show the previous item's exercise details
     if (item.classList.contains('rest')) {
       const previousItem = item.previousElementSibling;
       const previousExerciseDetails = previousItem.querySelector('.exercise-details');
@@ -48,14 +54,14 @@ document.addEventListener('DOMContentLoaded', function () {
     // Hide exercise details for non-active and non-rest items
     const listItems = document.querySelectorAll('.workout-list li');
     listItems.forEach((li) => {
-      if (!li.classList.contains('active')) {
+      if (!li.classList.contains('active') && !li.classList.contains('rest')) {
         const exerciseDetails = li.querySelector('.exercise-details');
         if (exerciseDetails) {
           exerciseDetails.style.display = 'none';
         }
       }
     });
-  }  
+  }    
   
   const workoutItems = document.querySelectorAll('ol li');
   workoutItems.forEach(function (item, index) {
