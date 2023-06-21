@@ -299,7 +299,7 @@ li {
   transition: margin-top 0.3s ease;
 }
 
-li.active:not(.rest):not(.warmup) + li {
+li.active + li {
   margin-top: 40px; /* Adjust the spacing as needed */
 }
 
@@ -315,7 +315,7 @@ li.active + li {
 .workout-complete-message {
   display: none;
   text-align: center;
-  margin-top: 20px;
+  margin-top: 60px;
 }
 
 .workout-complete-message h2 {
