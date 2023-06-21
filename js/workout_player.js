@@ -10,7 +10,6 @@ document.addEventListener('DOMContentLoaded', function () {
   let workoutStartTime = null;
   let isTimerRunning = false;
   let progressPercentage = 0;
-  let countdownInterval;
   let startTime;
   let elapsedTime;
   let internalCall = false;
@@ -23,26 +22,20 @@ document.addEventListener('DOMContentLoaded', function () {
     const activeItem = document.querySelector('.workout-list li.active');
     activeItem.classList.remove('active');
     item.classList.add('active');
-  
+
     const exerciseType = item.querySelector('strong').textContent.trim();
-    if (exerciseType === 'Rest') {
-      document.getElementById('currentExerciseName').textContent = 'Rest';
-    } else {
-      const exerciseName = item.innerText.split('-')[1].trim();
-      document.getElementById('currentExerciseName').textContent = exerciseName;
-    }
-  
+    document.getElementById('currentExerciseName').textContent = exerciseType === 'Rest' ? 'Rest' : item.innerText.split('-')[1].trim();
+
     const exerciseDetails = activeItem.querySelector('.exercise-details');
     if (exerciseDetails) {
       exerciseDetails.style.display = 'none';
     }
-  
+
     const activeExerciseDetails = item.querySelector('.exercise-details');
     if (activeExerciseDetails) {
       activeExerciseDetails.style.display = 'block';
     }
-  
-    // If the active item is a rest item, then show the previous item's exercise details
+
     if (item.classList.contains('rest')) {
       const previousItem = item.previousElementSibling;
       const previousExerciseDetails = previousItem.querySelector('.exercise-details');
@@ -50,8 +43,7 @@ document.addEventListener('DOMContentLoaded', function () {
         previousExerciseDetails.style.display = 'block';
       }
     }
-  
-    // Hide exercise details for non-active and non-rest items
+
     const listItems = document.querySelectorAll('.workout-list li');
     listItems.forEach((li) => {
       if (!li.classList.contains('active') && !li.classList.contains('rest')) {
@@ -61,8 +53,8 @@ document.addEventListener('DOMContentLoaded', function () {
         }
       }
     });
-  }    
-  
+  }
+
   const workoutItems = document.querySelectorAll('ol li');
   workoutItems.forEach(function (item, index) {
     const listItem = item;
@@ -70,17 +62,17 @@ document.addEventListener('DOMContentLoaded', function () {
     progressBar.classList.add('progress-bar', 'positioned');
     listItem.appendChild(progressBar);
     workoutList.appendChild(listItem);
-    
+
     if (index === 0) {
       listItem.classList.add('active');
       setActiveItem(listItem);
     }
 
-    const exerciseType = item.querySelector('strong').textContent;    
+    const exerciseType = item.querySelector('strong').textContent;
     if (exerciseType === 'Rest') {
       listItem.classList.add('rest');
     }
-    
+
     if (exerciseType === 'Warmup') {
       listItem.classList.add('warmup');
     }
@@ -89,75 +81,81 @@ document.addEventListener('DOMContentLoaded', function () {
   const context = new AudioContext();
 
   function beep(duration, frequency, volume, type, callback) {
-      const oscillator = context.createOscillator();
-      const gainNode = context.createGain();
-  
-      oscillator.connect(gainNode);
-      gainNode.connect(context.destination);
-  
-      if (volume){gainNode.gain.value = volume;}
-      if (frequency){oscillator.frequency.value = frequency;}
-      if (type){oscillator.type = type;}
-      if (callback){oscillator.onended = callback;}
-  
-      oscillator.start(context.currentTime);
-      oscillator.stop(context.currentTime + ((duration || 1) / 1000));
+    const oscillator = context.createOscillator();
+    const gainNode = context.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(context.destination);
+
+    if (volume) {
+      gainNode.gain.value = volume;
+    }
+    if (frequency) {
+      oscillator.frequency.value = frequency;
+    }
+    if (type) {
+      oscillator.type = type;
+    }
+    if (callback) {
+      oscillator.onended = callback;
+    }
+
+    oscillator.start(context.currentTime);
+    oscillator.stop(context.currentTime + ((duration || 1) / 1000));
   }
-  
+
   function initialCountdown(time) {
     setButtonsDisabled(true);
-      return new Promise((resolve, reject) => {
-          let countdown = time;
-          countdownClock.textContent = formatTime(countdown);
-          const interval = setInterval(() => {
-              countdown--;
-              countdownClock.textContent = formatTime(countdown);
-              if (countdown > 0) {
-                  // normal beep
-                  beep(200, 520, 1, 'sine');
-              } else {
-                  // high pitched beep
-                  beep(200, 880, 1, 'sine');
-                  clearInterval(interval);
-                  resolve();
-                  setButtonsDisabled(false);
-              }
-          }, 1000);
-      });
+    return new Promise((resolve) => {
+      let countdown = time;
+      countdownClock.textContent = formatTime(countdown);
+      const interval = setInterval(() => {
+        countdown--;
+        countdownClock.textContent = formatTime(countdown);
+        if (countdown > 0) {
+          beep(200, 520, 1, 'sine');
+        } else {
+          beep(200, 880, 1, 'sine');
+          clearInterval(interval);
+          resolve();
+          setButtonsDisabled(false);
+        }
+      }, 1000);
+    });
   }
-  
+
   playPauseBtn.addEventListener('click', function () {
     const activeItem = document.querySelector('.workout-list li.active');
     const firstItem = document.querySelector('.workout-list li:first-child');
-    if (activeItem) {
-      const initialDuration = parseInt(activeItem.dataset.initialDuration);
-      if (isTimerRunning) {
-        pauseCountdown();
-        isTimerRunning = false;
-        playPauseBtn.innerHTML = '<i class="material-icons">play_arrow</i>';
+    if (!activeItem) return;
+
+    const initialDuration = parseInt(activeItem.dataset.initialDuration);
+
+    if (isTimerRunning) {
+      pauseCountdown();
+      isTimerRunning = false;
+      playPauseBtn.innerHTML = '<i class="material-icons">play_arrow</i>';
+    } else {
+      if (activeItem === firstItem && progressPercentage === 0) {
+        playPauseBtn.innerHTML = '<i class="material-icons">pause</i>';
+        initialCountdown(5).then(() => {
+          const remainingTime = initialDuration - elapsedTime;
+          startCountdown(remainingTime, progressPercentage);
+          isTimerRunning = true;
+        });
       } else {
-        if (activeItem === firstItem && progressPercentage === 0) {
-          playPauseBtn.innerHTML = '<i class="material-icons">pause</i>'; // Set pause button before starting countdown
-          initialCountdown(5).then(() => {
-            const remainingTime = initialDuration - elapsedTime;
-            startCountdown(remainingTime, progressPercentage);
-            isTimerRunning = true;
-          });
+        if (progressPercentage === 0) {
+          const remainingTime = initialDuration - elapsedTime;
+          activeItem.dataset.itemStartTime = '';
+          activeItem.dataset.itemStopTime = '';
+          startCountdown(remainingTime, progressPercentage);
+          isTimerRunning = true;
+          playPauseBtn.innerHTML = '<i class="material-icons">pause</i>';
         } else {
-          if (progressPercentage === 0) {
-            const remainingTime = initialDuration - elapsedTime;
-            //clear startTime and stopTime for the item
-            activeItem.dataset.itemStartTime = '';
-            activeItem.dataset.itemStopTime = '';
-            startCountdown(remainingTime, progressPercentage);
-            isTimerRunning = true;
-            playPauseBtn.innerHTML = '<i class="material-icons">pause</i>';
-          } else {
-            const remainingTime = initialDuration - elapsedTime;
-            startCountdown(remainingTime, progressPercentage);
-            isTimerRunning = true;
-            playPauseBtn.innerHTML = '<i class="material-icons">pause</i>';
-          } 
+          const remainingTime = initialDuration - elapsedTime;
+          startCountdown(remainingTime, progressPercentage);
+          isTimerRunning = true;
+          playPauseBtn.innerHTML = '<i class="material-icons">pause</i>';
         }
       }
     }
@@ -176,7 +174,7 @@ document.addEventListener('DOMContentLoaded', function () {
       const startTime = activeItem.dataset.itemStartTime;
       const stopTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
       let actualSeconds;
-    
+
       if (startTime) {
         actualSeconds = Math.round((new Date(stopTime) - new Date(startTime)) / 1000);
         if (actualSeconds < 1) {
@@ -185,11 +183,10 @@ document.addEventListener('DOMContentLoaded', function () {
       } else {
         actualSeconds = 0;
       }
-    
+
       actualSecondsElement.textContent = actualSeconds.toString();
     }
-    
-  
+
     if (nextItem) {
       setActiveItem(nextItem);
       const nextSeconds = parseInt(nextItem.textContent.match(/\d+/));
@@ -203,7 +200,6 @@ document.addEventListener('DOMContentLoaded', function () {
         playPauseBtn.innerHTML = '<i class="material-icons">pause</i>';
       }
     } else {
-      // Display workout complete message
       const workoutCompleteMessage = document.querySelector('.workout-complete-message');
       const exerciseDetailsItems = document.querySelectorAll('.exercise-details');
       exerciseDetailsItems.forEach(function (item) {
@@ -219,7 +215,7 @@ document.addEventListener('DOMContentLoaded', function () {
       isTimerRunning = false;
       updatePlayPauseButton();
     }
-  });  
+  });
 
   prevBtn.addEventListener('click', function () {
     const activeItem = document.querySelector('.workout-list li.active');
@@ -237,7 +233,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   resetBtn.addEventListener('click', function () {
     location.reload();
-  });  
+  });
 
   viewLogBtn.addEventListener('click', function () {
     workoutItems.forEach((item) => {
@@ -250,68 +246,63 @@ document.addEventListener('DOMContentLoaded', function () {
       let exerciseId = null;
       let exerciseReps = null;
       if (exerciseType !== 'Rest') {
-        exerciseId = item.dataset.exerciseId || null; // use null if not defined
-  
-        // Get reps value from input field inside the current item
+        exerciseId = item.dataset.exerciseId || null;
         const repsInput = item.querySelector('.repsInput');
         exerciseReps = repsInput ? repsInput.value : null;
       }
       const itemStartTime = item.dataset.itemStartTime ? Date.parse(item.dataset.itemStartTime) : 0;
       const itemStopTime = item.dataset.itemStopTime ? Date.parse(item.dataset.itemStopTime) : 0;
-      const exerciseTime = itemStartTime && itemStopTime ? Math.round((itemStopTime - itemStartTime) / 1000) : 0;     
+      const exerciseTime = itemStartTime && itemStopTime ? Math.round((itemStopTime - itemStartTime) / 1000) : 0;
       console.log(`${exerciseType}, ${exerciseId}, ${exerciseReps}, ${itemStartTime}, ${itemStopTime}, ${exerciseTime}`);
     });
   });
 
   saveWorkoutBtn.addEventListener('click', async function () {
-    // get workout stop time from stopTime of last item
     const lastItem = document.querySelector('.workout-list li:last-child');
-    const workoutEndTime = lastItem.dataset.itemStopTime || null; // use null if not defined
+    const workoutEndTime = lastItem.dataset.itemStopTime || null;
     console.log("Workout startTime: " + workoutStartTime + ", stopTime: " + workoutEndTime);
-    let workoutLogId; // Define workoutLogId in the higher scope
-  
+    let workoutLogId;
+
     try {
       const workoutLogResponse = await createWorkoutLogEntry(userId, workoutId, workoutStartTime, workoutEndTime);
       workoutLogId = workoutLogResponse;
       console.log("Workout Log ID: " + workoutLogId);
-  
-      // create workout log item entries
+
       for (const item of workoutItems) {
         const exerciseTypeElement = item.querySelector('strong');
         const exerciseType = exerciseTypeElement.textContent.trim();
         let exerciseId = null;
         let exerciseReps = 0;
         if (exerciseType !== 'Rest') {
-          exerciseId = item.dataset.exerciseId || null; // use null if not defined
+          exerciseId = item.dataset.exerciseId || null;
           const repsInput = item.querySelector('.repsInput');
           exerciseReps = repsInput.value || 0;
         }
         const itemStartTime = item.dataset.itemStartTime ? Date.parse(item.dataset.itemStartTime) : 0;
         const itemStopTime = item.dataset.itemStopTime ? Date.parse(item.dataset.itemStopTime) : 0;
         const exerciseTime = itemStartTime && itemStopTime ? Math.round((itemStopTime - itemStartTime) / 1000) : 0;
-  
+
         await createWorkoutLogItemEntry(userId, workoutLogId, exerciseType, exerciseId, exerciseTime, exerciseReps);
       }
     } catch (error) {
       console.error("Failed to create workout log entry:", error);
     }
   });
-  
+
   function createWorkoutLogEntry(userId, workoutId, workoutStartTime, workoutEndTime) {
     const query = "INSERT INTO workout_logs (user_id, workout_id, start_time, end_time) VALUES (?, ?, ?, ?)";
     const params = [userId, workoutId, workoutStartTime, workoutEndTime];
     console.log("Workout Start Time: " + workoutStartTime);
     console.log(query);
     console.log(params);
-  
-    // Return a Promise to allow the caller to await the result
+
     return new Promise((resolve, reject) => {
       $.post('php/db.php', { query, params })
         .done(resolve)
         .fail(reject);
     });
   }
-  
+
   function createWorkoutLogItemEntry(userId, workoutLogId, exerciseType, exerciseId, exerciseTime, exerciseReps) {
     let query;
     let params;
@@ -324,15 +315,13 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     console.log(query);
     console.log(params);
-  
-    // Return a Promise to allow the caller to await the result
+
     return new Promise((resolve, reject) => {
       $.post('php/db.php', { query, params })
         .done(resolve)
         .fail(reject);
     });
   }
-  
 
   function resetCountdown(item) {
     const progressBar = item.querySelector('.progress-bar');
@@ -347,13 +336,12 @@ document.addEventListener('DOMContentLoaded', function () {
     countdownClock.textContent = formatTime(seconds);
   }
 
-  let requestId; // Variable to store the request animation frame ID
+  let requestId;
 
   function startCountdown(seconds, progress) {
     const activeItem = document.querySelector('.workout-list li.active');
     const initialDuration = parseInt(activeItem.textContent.match(/\d+/));
     const exerciseType = activeItem.querySelector('strong').textContent;
-    const workoutName = activeItem.dataset.workoutName;
     activeItem.dataset.initialDuration = initialDuration;
 
     if (!workoutStartTime) {
@@ -365,7 +353,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     const exerciseId = activeItem.dataset.exerciseId || null;
     const repsInput = activeItem.querySelector('.repsInput');
-    const reps = repsInput ? repsInput.value : null; 
+    const reps = repsInput ? repsInput.value : null;
 
     startTime = performance.now() - (progress / 100) * initialDuration * 1000;
     elapsedTime = 0;
@@ -379,21 +367,21 @@ document.addEventListener('DOMContentLoaded', function () {
         countdownClock.textContent = formatTime(remainingTime);
         progressPercentage = (1 - remainingTime / initialDuration) * 100;
         activeItem.querySelector('.progress-bar').style.width = `${progressPercentage}%`;
-        requestId = requestAnimationFrame(updateCountdown); // Request the next animation frame
+        requestId = requestAnimationFrame(updateCountdown);
       } else {
         countdownClock.textContent = formatTime(0);
-        cancelAnimationFrame(requestId); // Cancel the animation frame
+        cancelAnimationFrame(requestId);
         internalCall = true;
         nextBtn.click();
       }
     }
 
     activeItem.classList.add('progress-bar');
-    requestId = requestAnimationFrame(updateCountdown); // Start the animation frame loop
+    requestId = requestAnimationFrame(updateCountdown);
   }
 
   function pauseCountdown() {
-    cancelAnimationFrame(requestId); // Cancel the animation frame
+    cancelAnimationFrame(requestId);
     isTimerRunning = false;
     updatePlayPauseButton();
   }
