@@ -54,12 +54,23 @@
               $exerciseType = $row['type'];
               $seconds = $row['seconds'];
               if ($exerciseType === 'Rest') {
-                echo "<li class='rest'><strong>Rest</strong> - ($seconds seconds)</li>";
+                ?>
+                <li class="rest">
+                    <strong>Rest</strong> - (<?= $seconds ?> seconds)
+                    <div class="exercise-details">
+                      Actual Seconds: <span class="actualSeconds">0</span>
+                    </div>
+                  </li>
+                <?php
               } else {
                 if ($exerciseType === 'Warmup') {
                   ?>
                   <li class="exercise-list-item" data-exercise-id="<?= $exerciseId ?>">
                     <strong><?= $exerciseType ?></strong> - <?= $exerciseName ?> (<?= $seconds ?> seconds)
+                    <div class="exercise-details">
+                      Actual Reps: <input type="number" class="repsInput" max="999" placeholder="Reps" style="width: 70px; height: 30px">
+                      Actual Seconds: <span class="actualSeconds">0</span>
+                    </div>
                   </li>
                   <?php
                 } else {

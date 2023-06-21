@@ -144,10 +144,20 @@ document.addEventListener('DOMContentLoaded', function () {
             isTimerRunning = true;
           });
         } else {
-          const remainingTime = initialDuration - elapsedTime;
-          startCountdown(remainingTime, progressPercentage);
-          isTimerRunning = true;
-          playPauseBtn.innerHTML = '<i class="material-icons">pause</i>';
+          if (progressPercentage === 0) {
+            const remainingTime = initialDuration - elapsedTime;
+            //clear startTime and stopTime for the item
+            activeItem.dataset.itemStartTime = '';
+            activeItem.dataset.itemStopTime = '';
+            startCountdown(remainingTime, progressPercentage);
+            isTimerRunning = true;
+            playPauseBtn.innerHTML = '<i class="material-icons">pause</i>';
+          } else {
+            const remainingTime = initialDuration - elapsedTime;
+            startCountdown(remainingTime, progressPercentage);
+            isTimerRunning = true;
+            playPauseBtn.innerHTML = '<i class="material-icons">pause</i>';
+          } 
         }
       }
     }
@@ -162,20 +172,23 @@ document.addEventListener('DOMContentLoaded', function () {
     pauseCountdown();
     if (!activeItem.dataset.itemStopTime) {
       activeItem.dataset.itemStopTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
-      const startTime = new Date(activeItem.dataset.itemStartTime);
-      const stopTime = new Date(activeItem.dataset.itemStopTime);
-      const actualSeconds = Math.round((stopTime - startTime) / 1000);
-  
-      if (exerciseDetails) {
-        const actualSecondsElement = exerciseDetails.querySelector('.actualSeconds');
-        if (actualSecondsElement) {
-          const startTime = activeItem.dataset.itemStartTime;
-          const stopTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
-          const actualSeconds = Math.round((new Date(stopTime) - new Date(startTime)) / 1000);
-          actualSecondsElement.textContent = actualSeconds.toString();
+      const actualSecondsElement = exerciseDetails.querySelector('.actualSeconds');
+      const startTime = activeItem.dataset.itemStartTime;
+      const stopTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
+      let actualSeconds;
+    
+      if (startTime) {
+        actualSeconds = Math.round((new Date(stopTime) - new Date(startTime)) / 1000);
+        if (actualSeconds < 1) {
+          actualSeconds = 0;
         }
+      } else {
+        actualSeconds = 0;
       }
+    
+      actualSecondsElement.textContent = actualSeconds.toString();
     }
+    
   
     if (nextItem) {
       setActiveItem(nextItem);
@@ -197,10 +210,10 @@ document.addEventListener('DOMContentLoaded', function () {
         item.style.display = 'block';
       });
       workoutCompleteMessage.style.display = 'block';
+      setButtonsDisabled(true);
+      resetBtn.disabled = false;
       workoutItems.forEach(function (item) {
-        if (!item.classList.contains('rest') && !item.classList.contains('warmup')) {
-          item.style.marginBottom = '40px';
-        }
+        item.style.marginBottom = '40px';
       });
       pauseCountdown();
       isTimerRunning = false;
@@ -223,24 +236,8 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   resetBtn.addEventListener('click', function () {
-    const activeItem = document.querySelector('.workout-list li.active');
-    const progressBarItems = document.querySelectorAll('.workout-list li .progress-bar');
-
-    progressBarItems.forEach(function (progressBarItem) {
-      progressBarItem.style.width = '0%';
-    });
-
-    const firstItem = document.querySelector('.workout-list li:first-child');
-    if (firstItem) {
-      setActiveItem(firstItem);
-      const firstSeconds = parseInt(firstItem.textContent.match(/\d+/));
-      pauseCountdown();
-      updateCountdown(firstSeconds);
-      isTimerRunning = false;
-      progressPercentage = 0;
-      updatePlayPauseButton();
-    }
-  });
+    location.reload();
+  });  
 
   viewLogBtn.addEventListener('click', function () {
     workoutItems.forEach((item) => {
@@ -259,52 +256,83 @@ document.addEventListener('DOMContentLoaded', function () {
         const repsInput = item.querySelector('.repsInput');
         exerciseReps = repsInput ? repsInput.value : null;
       }
-      const itemStartTime = item.dataset.itemStartTime ? Date.parse(item.dataset.itemStartTime) : null;
-      const itemStopTime = item.dataset.itemStopTime ? Date.parse(item.dataset.itemStopTime) : null;
-      const exerciseTime = itemStartTime && itemStopTime ? Math.round((itemStopTime - itemStartTime) / 1000) : null;     
+      const itemStartTime = item.dataset.itemStartTime ? Date.parse(item.dataset.itemStartTime) : 0;
+      const itemStopTime = item.dataset.itemStopTime ? Date.parse(item.dataset.itemStopTime) : 0;
+      const exerciseTime = itemStartTime && itemStopTime ? Math.round((itemStopTime - itemStartTime) / 1000) : 0;     
       console.log(`${exerciseType}, ${exerciseId}, ${exerciseReps}, ${itemStartTime}, ${itemStopTime}, ${exerciseTime}`);
     });
   });
 
-  saveWorkoutBtn.addEventListener('click', function () {
+  saveWorkoutBtn.addEventListener('click', async function () {
     // get workout stop time from stopTime of last item
     const lastItem = document.querySelector('.workout-list li:last-child');
     const workoutEndTime = lastItem.dataset.itemStopTime || null; // use null if not defined
     console.log("Workout startTime: " + workoutStartTime + ", stopTime: " + workoutEndTime);
     let workoutLogId; // Define workoutLogId in the higher scope
-
-    createWorkoutLogEntry(userId, workoutId, workoutStartTime, workoutEndTime)
-      .done(function (response) {
-        workoutLogId = response;
-        console.log("Workout Log ID: " + workoutLogId);
-        // create workout log item entries
-        workoutItems.forEach((item) => {
-          const exerciseTypeElement = item.querySelector('strong');
-          if (!exerciseTypeElement) {
-            console.error("Element 'strong' not found in item");
-            return;
-          }
-          const exerciseType = exerciseTypeElement.textContent.trim();
-          let exerciseId = null;
-          let exerciseReps = null;
-          if (exerciseType !== 'Rest') {
-            exerciseId = item.dataset.exerciseId || null; // use null if not defined
-
-            // Get reps value from input field inside the current item
-            const repsInput = item.querySelector('.repsInput');
-            exerciseReps = repsInput ? repsInput.value : null;
-          }
-          const itemStartTime = item.dataset.itemStartTime ? Date.parse(item.dataset.itemStartTime) : null;
-          const itemStopTime = item.dataset.itemStopTime ? Date.parse(item.dataset.itemStopTime) : null;
-          const exerciseTime = itemStartTime && itemStopTime ? Math.round((itemStopTime - itemStartTime) / 1000) : null;
-          // write to database
-          createWorkoutLogItemEntry(userId, workoutLogId, exerciseType, exerciseId, exerciseTime, exerciseReps);
-        });
-      })
-      .fail(function (error) {
-        console.error("Failed to create workout log entry:", error);
-      });
+  
+    try {
+      const workoutLogResponse = await createWorkoutLogEntry(userId, workoutId, workoutStartTime, workoutEndTime);
+      workoutLogId = workoutLogResponse;
+      console.log("Workout Log ID: " + workoutLogId);
+  
+      // create workout log item entries
+      for (const item of workoutItems) {
+        const exerciseTypeElement = item.querySelector('strong');
+        const exerciseType = exerciseTypeElement.textContent.trim();
+        let exerciseId = null;
+        let exerciseReps = 0;
+        if (exerciseType !== 'Rest') {
+          exerciseId = item.dataset.exerciseId || null; // use null if not defined
+          const repsInput = item.querySelector('.repsInput');
+          exerciseReps = repsInput.value || 0;
+        }
+        const itemStartTime = item.dataset.itemStartTime ? Date.parse(item.dataset.itemStartTime) : 0;
+        const itemStopTime = item.dataset.itemStopTime ? Date.parse(item.dataset.itemStopTime) : 0;
+        const exerciseTime = itemStartTime && itemStopTime ? Math.round((itemStopTime - itemStartTime) / 1000) : 0;
+  
+        await createWorkoutLogItemEntry(userId, workoutLogId, exerciseType, exerciseId, exerciseTime, exerciseReps);
+      }
+    } catch (error) {
+      console.error("Failed to create workout log entry:", error);
+    }
   });
+  
+  function createWorkoutLogEntry(userId, workoutId, workoutStartTime, workoutEndTime) {
+    const query = "INSERT INTO workout_logs (user_id, workout_id, start_time, end_time) VALUES (?, ?, ?, ?)";
+    const params = [userId, workoutId, workoutStartTime, workoutEndTime];
+    console.log("Workout Start Time: " + workoutStartTime);
+    console.log(query);
+    console.log(params);
+  
+    // Return a Promise to allow the caller to await the result
+    return new Promise((resolve, reject) => {
+      $.post('php/db.php', { query, params })
+        .done(resolve)
+        .fail(reject);
+    });
+  }
+  
+  function createWorkoutLogItemEntry(userId, workoutLogId, exerciseType, exerciseId, exerciseTime, exerciseReps) {
+    let query;
+    let params;
+    if (exerciseType === 'Rest' || exerciseType === 'Warmup') {
+      query = "INSERT INTO workout_log_items (workout_log_id, exercise_type, exercise_time) VALUES (?, ?, ?)";
+      params = [workoutLogId, exerciseType, exerciseTime];
+    } else {
+      query = "INSERT INTO workout_log_items (workout_log_id, exercise_type, exercise_id, exercise_time, reps) VALUES (?, ?, ?, ?, ?)";
+      params = [workoutLogId, exerciseType, exerciseId, exerciseTime, exerciseReps];
+    }
+    console.log(query);
+    console.log(params);
+  
+    // Return a Promise to allow the caller to await the result
+    return new Promise((resolve, reject) => {
+      $.post('php/db.php', { query, params })
+        .done(resolve)
+        .fail(reject);
+    });
+  }
+  
 
   function resetCountdown(item) {
     const progressBar = item.querySelector('.progress-bar');
@@ -368,32 +396,6 @@ document.addEventListener('DOMContentLoaded', function () {
     cancelAnimationFrame(requestId); // Cancel the animation frame
     isTimerRunning = false;
     updatePlayPauseButton();
-  }
-
-  function createWorkoutLogEntry(userId, workoutId, workoutStartTime, workoutEndTime) {
-    const query = "INSERT INTO workout_logs (user_id, workout_id, start_time, end_time) VALUES (?, ?, ?, ?)";
-    const params = [userId, workoutId, workoutStartTime, workoutEndTime];
-    console.log("Workout Start Time: " + workoutStartTime);
-    console.log(query);
-    console.log(params);
-  
-    // Return the jQuery Deferred object to allow chaining .done() and .fail() callbacks
-    return $.post('php/db.php', { query, params });
-  }
-
-  function createWorkoutLogItemEntry(userId, workoutLogId, exerciseType, exerciseId, exerciseTime, reps) {
-    let query;
-    let params;
-    if (exerciseType === 'Rest' || exerciseType === 'Warmup') {
-        query = "INSERT INTO workout_log_items (workout_log_id, exercise_type, exercise_time) VALUES (?, ?, ?)";
-        params = [workoutLogId, exerciseType, exerciseTime];
-    } else {
-        query = "INSERT INTO workout_log_items (workout_log_id, exercise_type, exercise_id, exercise_time, reps) VALUES (?, ?, ?, ?, ?)";
-        params = [workoutLogId, exerciseType, exerciseId, exerciseTime, reps];
-    }
-    console.log(query);
-    console.log(params);
-    return $.post('php/db.php', { query, params });
   }
 
   function formatTime(seconds) {
