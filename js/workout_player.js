@@ -259,10 +259,51 @@ document.addEventListener('DOMContentLoaded', function () {
         const repsInput = item.querySelector('.repsInput');
         exerciseReps = repsInput ? repsInput.value : null;
       }
-      const itemStartTime = item.dataset.itemStartTime || null; // use null if not defined
-      const itemStopTime = item.dataset.itemStopTime || null; // use null if not defined      
-      console.log(`${exerciseType}, ${exerciseId}, ${exerciseReps}, ${itemStartTime}, ${itemStopTime}`);
+      const itemStartTime = item.dataset.itemStartTime ? Date.parse(item.dataset.itemStartTime) : null;
+      const itemStopTime = item.dataset.itemStopTime ? Date.parse(item.dataset.itemStopTime) : null;
+      const exerciseTime = itemStartTime && itemStopTime ? Math.round((itemStopTime - itemStartTime) / 1000) : null;     
+      console.log(`${exerciseType}, ${exerciseId}, ${exerciseReps}, ${itemStartTime}, ${itemStopTime}, ${exerciseTime}`);
     });
+  });
+
+  saveWorkoutBtn.addEventListener('click', function () {
+    // get workout stop time from stopTime of last item
+    const lastItem = document.querySelector('.workout-list li:last-child');
+    const workoutEndTime = lastItem.dataset.itemStopTime || null; // use null if not defined
+    console.log("Workout startTime: " + workoutStartTime + ", stopTime: " + workoutEndTime);
+    let workoutLogId; // Define workoutLogId in the higher scope
+
+    createWorkoutLogEntry(userId, workoutId, workoutStartTime, workoutEndTime)
+      .done(function (response) {
+        workoutLogId = response;
+        console.log("Workout Log ID: " + workoutLogId);
+        // create workout log item entries
+        workoutItems.forEach((item) => {
+          const exerciseTypeElement = item.querySelector('strong');
+          if (!exerciseTypeElement) {
+            console.error("Element 'strong' not found in item");
+            return;
+          }
+          const exerciseType = exerciseTypeElement.textContent.trim();
+          let exerciseId = null;
+          let exerciseReps = null;
+          if (exerciseType !== 'Rest') {
+            exerciseId = item.dataset.exerciseId || null; // use null if not defined
+
+            // Get reps value from input field inside the current item
+            const repsInput = item.querySelector('.repsInput');
+            exerciseReps = repsInput ? repsInput.value : null;
+          }
+          const itemStartTime = item.dataset.itemStartTime ? Date.parse(item.dataset.itemStartTime) : null;
+          const itemStopTime = item.dataset.itemStopTime ? Date.parse(item.dataset.itemStopTime) : null;
+          const exerciseTime = itemStartTime && itemStopTime ? Math.round((itemStopTime - itemStartTime) / 1000) : null;
+          // write to database
+          createWorkoutLogItemEntry(userId, workoutLogId, exerciseType, exerciseId, exerciseTime, exerciseReps);
+        });
+      })
+      .fail(function (error) {
+        console.error("Failed to create workout log entry:", error);
+      });
   });
 
   function resetCountdown(item) {
@@ -289,7 +330,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (!workoutStartTime) {
       workoutStartTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
-      createWorkoutLogEntry(userId, workoutId, workoutStartTime);
     }
 
     if (!activeItem.dataset.itemStartTime && !elapsedTime) {
@@ -298,7 +338,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const exerciseId = activeItem.dataset.exerciseId || null;
     const repsInput = activeItem.querySelector('.repsInput');
     const reps = repsInput ? repsInput.value : null; 
-    createWorkoutLogItemEntry(userId, workoutId, exerciseId, activeItem.dataset.itemStartTime, reps);
 
     startTime = performance.now() - (progress / 100) * initialDuration * 1000;
     elapsedTime = 0;
@@ -331,28 +370,30 @@ document.addEventListener('DOMContentLoaded', function () {
     updatePlayPauseButton();
   }
 
-  function createWorkoutLogEntry(userId, workoutId, workoutStartTime) {
-    const query = "INSERT INTO workout_logs (user_id, workout_id, start_time) VALUES (?, ?, ?)";
-    const params = [userId, workoutId, workoutStartTime];
+  function createWorkoutLogEntry(userId, workoutId, workoutStartTime, workoutEndTime) {
+    const query = "INSERT INTO workout_logs (user_id, workout_id, start_time, end_time) VALUES (?, ?, ?, ?)";
+    const params = [userId, workoutId, workoutStartTime, workoutEndTime];
     console.log("Workout Start Time: " + workoutStartTime);
     console.log(query);
     console.log(params);
-    $.post('php/db.php', { query, params })
-      .done(function (response) {
-        const workoutLogId = response;
-        console.log("Workout Log ID: " + workoutLogId);
-      })
-      .fail(function (error) {
-        console.error("Failed to create workout log entry:", error);
-      });
+  
+    // Return the jQuery Deferred object to allow chaining .done() and .fail() callbacks
+    return $.post('php/db.php', { query, params });
   }
 
-  function createWorkoutLogItemEntry(userId, workoutId, exerciseId, itemStartTime, reps) {
-    const query = "INSERT INTO workout_log_items (workout_id, exercise_id, start_time, reps) VALUES (?, ?, ?, ?)";
-    const params = [workoutId, exerciseId, itemStartTime, reps];
-    console.log("Exercise Start Time: " + itemStartTime);
+  function createWorkoutLogItemEntry(userId, workoutLogId, exerciseType, exerciseId, exerciseTime, reps) {
+    let query;
+    let params;
+    if (exerciseType === 'Rest' || exerciseType === 'Warmup') {
+        query = "INSERT INTO workout_log_items (workout_log_id, exercise_type, exercise_time) VALUES (?, ?, ?)";
+        params = [workoutLogId, exerciseType, exerciseTime];
+    } else {
+        query = "INSERT INTO workout_log_items (workout_log_id, exercise_type, exercise_id, exercise_time, reps) VALUES (?, ?, ?, ?, ?)";
+        params = [workoutLogId, exerciseType, exerciseId, exerciseTime, reps];
+    }
     console.log(query);
     console.log(params);
+    return $.post('php/db.php', { query, params });
   }
 
   function formatTime(seconds) {
