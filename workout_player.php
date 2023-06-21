@@ -112,6 +112,6 @@
   const userId = <?php echo json_encode($userId); ?>;
   const workoutId = <?php echo json_encode($workoutId); ?>;
 </script>
-<script src="js/workout_player.js"></script>
+<script src="js/workout_player.js" type="module"></script>
 </body>
 </html>
