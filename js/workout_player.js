@@ -1,5 +1,5 @@
 // Import the helper functions
-import { beep, createWorkoutLogEntry, createWorkoutLogItemEntry, formatTime } from './utils.js';
+import { speak, beep, createWorkoutLogEntry, createWorkoutLogItemEntry, formatTime } from './utils.js';
 
 document.addEventListener('DOMContentLoaded', function () {
   const nextBtn = document.getElementById('nextBtn');
@@ -81,25 +81,28 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-  function initialCountdown(time) {
+  async function initialCountdown(time) {
     setButtonsDisabled(true);
+    // get the exercise name from the currentExerciseName element
+    const currentExerciseName = document.getElementById('currentExerciseName').textContent.split('(')[0].trim();
+    let countdown = time;
+    countdownClock.textContent = formatTime(countdown);
+    await speak(currentExerciseName + ' in ' + time + ' seconds');
     return new Promise((resolve) => {
-      let countdown = time;
-      countdownClock.textContent = formatTime(countdown);
-      const interval = setInterval(() => {
-        countdown--;
-        countdownClock.textContent = formatTime(countdown);
-        if (countdown > 0) {
-          beep(200, 520, 1, 'sine');
-        } else {
-          beep(200, 880, 1, 'sine');
-          clearInterval(interval);
-          resolve();
-          setButtonsDisabled(false);
-        }
-      }, 1000);
+        const interval = setInterval(() => {
+            countdown--;
+            countdownClock.textContent = formatTime(countdown);
+            if (countdown > 0) {
+                beep(200, 520, 1, 'sine');
+            } else {
+                beep(200, 880, 1, 'sine');
+                clearInterval(interval);
+                resolve();
+                setButtonsDisabled(false);
+            }
+        }, 1000);
     });
-  }
+}
 
   playPauseBtn.addEventListener('click', function () {
     const activeItem = document.querySelector('.workout-list li.active');
@@ -301,11 +304,45 @@ document.addEventListener('DOMContentLoaded', function () {
     startTime = performance.now() - (progress / 100) * initialDuration * 1000;
     elapsedTime = 0;
 
+    let nextExerciseName;
+
+    if (activeItem.nextElementSibling) {
+      if (activeItem.nextElementSibling.classList.contains('exercise-list-item')) {
+        let fullText = activeItem.nextElementSibling.textContent;
+        nextExerciseName = fullText.split('-')[1].split('(')[0].trim(); // This should return the exercise name
+        nextExerciseName = nextExerciseName + ' in 10 seconds';
+      } else {
+        nextExerciseName = "Rest in 10 seconds";
+      }
+    } else {
+      nextExerciseName = "Ten seconds left";
+    }
+
+    let verbalAlerts = [
+      { time: 10, message: nextExerciseName, hasSpoken: false },
+      { time: 15, message: '15 seconds remaining', hasSpoken: false },
+      { time: 30, message: '30 seconds remaining', hasSpoken: false },
+      { time: 60, message: '1 minute remaining', hasSpoken: false },
+      { time: 120, message: '2 minutes remaining', hasSpoken: false },
+      { time: 180, message: '3 minutes remaining', hasSpoken: false },
+      { time: 240, message: '4 minutes remaining', hasSpoken: false },
+      { time: 300, message: '5 minutes remaining', hasSpoken: false },
+    ];
+
     function updateCountdown() {
       const currentTime = performance.now();
       elapsedTime = (currentTime - startTime) / 1000;
 
       const remainingTime = initialDuration - elapsedTime;
+
+      for(let i = 0; i < verbalAlerts.length; i++) {
+        let alert = verbalAlerts[i];
+        if (remainingTime > alert.time - 1 && remainingTime < alert.time + 1 && !alert.hasSpoken && alert.time < initialDuration) {
+          speak(alert.message);
+          alert.hasSpoken = true; // Once the message has been spoken, mark it as such.
+        }
+      }
+
       if (remainingTime > 0) {
         countdownClock.textContent = formatTime(remainingTime);
         progressPercentage = (1 - remainingTime / initialDuration) * 100;
@@ -316,9 +353,14 @@ document.addEventListener('DOMContentLoaded', function () {
         cancelAnimationFrame(requestId);
         internalCall = true;
         nextBtn.click();
+        // Reset the alert flags when the countdown ends.
+        for(let alert of verbalAlerts) {
+          alert.hasSpoken = false;
+        }
       }
     }
 
+        
     activeItem.classList.add('progress-bar');
     requestId = requestAnimationFrame(updateCountdown);
   }
