@@ -25,7 +25,7 @@
 
     // Display the table of workout log items
     echo "<table>";
-    echo "<thead><tr><th>Name</th><th>Type</th><th>Seconds</th><th>Intensity</th><th>Muscles Worked</th></tr></thead>";
+    echo "<thead><tr><th>Name</th><th>Type</th><th>Seconds</th><th>Muscles and Intensity</th></tr></thead>";
     echo "<tbody>";
 
     while ($logItemRow = mysqli_fetch_assoc($logItemsResult)) {
@@ -36,37 +36,30 @@
       if ($exerciseType === 'Rest') {
         // Handle Rest type items without exercise IDs
         $exerciseName = 'Rest';
-        $exerciseType = 'Rest';
         $rowClass = 'rest';
-        $intensity = '-';
-        $musclesWorked = '-';
-      } elseif ($exerciseType === 'Warmup') {
-        $rowClass = 'warmup';
-        $intensity = '-';
-        $musclesWorked = '-';
+        $musclesIntensities = '-';
       } else {
-        // Retrieve exercise details including intensity and muscles worked
+        $rowClass = ($exerciseType === 'Warmup') ? 'warmup' : '';
+
         $exerciseQuery = "SELECT name, type FROM exercises WHERE id = $exerciseId";
         $exerciseResult = query($exerciseQuery);
         $exerciseRow = mysqli_fetch_assoc($exerciseResult);
         $exerciseName = $exerciseRow['name'];
         $exerciseType = $exerciseRow['type'];
-        $rowClass = '';
 
         // Retrieve intensity and muscles worked for the exercise
         $exerciseMusclesQuery = "SELECT intensity, muscles.name FROM exercise_muscles JOIN muscles ON exercise_muscles.muscle_id = muscles.id WHERE exercise_id = $exerciseId";
         $exerciseMusclesResult = query($exerciseMusclesQuery);
 
-        $intensity = '';
-        $musclesWorked = '';
+        $musclesIntensities = '';
 
         while ($muscleRow = mysqli_fetch_assoc($exerciseMusclesResult)) {
-          $intensity .= $muscleRow['intensity'] . ', ';
-          $musclesWorked .= $muscleRow['name'] . ', ';
+          $intensity = $muscleRow['intensity'];
+          $muscleName = $muscleRow['name'];
+          $musclesIntensities .= "$muscleName ($intensity), ";
         }
 
-        $intensity = rtrim($intensity, ', ');
-        $musclesWorked = rtrim($musclesWorked, ', ');
+        $musclesIntensities = rtrim($musclesIntensities, ', ');
 
         // Calculate total work time
         $totalWorkTime += $exerciseTime;
@@ -76,8 +69,7 @@
       echo "<td>$exerciseName</td>";
       echo "<td>$exerciseType</td>";
       echo "<td>$exerciseTime</td>";
-      echo "<td>$intensity</td>";
-      echo "<td>$musclesWorked</td>";
+      echo "<td>$musclesIntensities</td>";
       echo "</tr>";
     }
 
