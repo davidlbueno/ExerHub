@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>BWE - Workout Log</title>
+  <title>BWE - Workout Logs</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <link rel="stylesheet" href="style.css">
@@ -27,7 +27,7 @@
     echo "<h4>Workout: $workoutName</h4>";
 
     // Retrieve the workout logs from the database
-    $logsQuery = "SELECT start_time, end_time FROM workout_logs WHERE workout_id = $workoutId AND user_id = $userId";
+    $logsQuery = "SELECT id, start_time, end_time FROM workout_logs WHERE workout_id = $workoutId AND user_id = $userId";
     $logsResult = query($logsQuery);
 
     // Display the table of workout logs
@@ -35,15 +35,16 @@
     echo "<thead><tr><th>Date</th><th>Length</th></tr></thead>";
     echo "<tbody>";
     while ($logRow = mysqli_fetch_assoc($logsResult)) {
+      $logId = $logRow['id'];
       $startTime = $logRow['start_time'];
       $endTime = $logRow['end_time'];
-
+    
       // Calculate the duration of the workout
       $duration = strtotime($endTime) - strtotime($startTime);
       $length = gmdate("H:i:s", $duration);
-
-      echo "<tr><td>$startTime</td><td>$length</td></tr>";
-    }
+    
+      echo "<tr><td><a href='workout_log.php?log_id=$logId'>$startTime</a></td><td>$length</td></tr>";
+    }    
     echo "</tbody>";
     echo "</table>";
     ?>
@@ -54,7 +55,7 @@
 <script>
   const userId = <?php echo json_encode($userId); ?>;
   const workoutId = <?php echo json_encode($workoutId); ?>;
-  document.getElementById('closeBtn').href = document.referrer;
+  document.getElementById('closeBtn').href = "workout.php?user_id=" + userId + "&workout_id=" + workoutId;
 </script>
 </body>
 </html>

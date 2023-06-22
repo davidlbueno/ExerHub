@@ -171,11 +171,11 @@ li:hover {
   cursor: pointer;
 }
 
-li.rest {
+li.rest &, .rest {
   background-color: rgb(39, 91, 0);
 }
 
-li.warmup {
+li.warmup &, .warmup {
   background-color: rgb(47, 59, 200);
 }
 

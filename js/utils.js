@@ -15,7 +15,7 @@ function createWorkoutLogEntry(userId, workoutId, workoutStartTime, workoutEndTi
 function createWorkoutLogItemEntry(userId, workoutLogId, exerciseType, exerciseId, exerciseTime, exerciseReps) {
   let query;
   let params;
-  if (exerciseType === 'Rest' || exerciseType === 'Warmup') {
+  if (exerciseType === 'Rest') {
     query = "INSERT INTO workout_log_items (workout_log_id, exercise_type, exercise_time) VALUES (?, ?, ?)";
     params = [workoutLogId, exerciseType, exerciseTime];
   } else {
