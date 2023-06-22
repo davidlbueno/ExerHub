@@ -93,7 +93,7 @@
               <p>Congratulations on completing your workout.</p>
             </div>
           </div>
-          <a href="workout.php?workout_id=<?= urlencode($workoutId) ?>&workout_name=<?= urlencode($workoutName) ?>" class="player-close-btn">
+          <a href="workout.php?workout_id=<?= urlencode($workoutId) ?>&workout_name=<?= urlencode($workoutName) ?>" class="close-btn">
             <i class="material-icons">close</i>
           </a>
           <div class="footer" style="background-color: #252525; margin-top: 40px">

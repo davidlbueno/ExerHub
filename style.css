@@ -261,7 +261,7 @@ li.selected {
   font-size: 24px;
 }
 
-.player-close-btn {
+.close-btn {
   position: absolute;
   top: 15px;
   right: 15px;
@@ -326,4 +326,8 @@ li.active + li {
 .workout-complete-message p {
   font-size: 18px;
   margin-bottom: 0;
+}
+
+tr td {
+  color: #bebdbd !important;
 }
