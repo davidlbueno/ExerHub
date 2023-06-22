@@ -67,5 +67,15 @@ function beep(duration, frequency, volume, type, callback) {
   oscillator.stop(context.currentTime + ((duration || 1) / 1000));
 }
 
+function speak(text) {
+  // set speech synthesis voice to female english
+  const voices = window.speechSynthesis.getVoices();
+  const voice = voices.find(voice => voice.lang === 'en-US' && voice.name === 'Google US English');
+  window.speechSynthesis.voice = voice;
+  const utterance = new SpeechSynthesisUtterance(text);
+  window.speechSynthesis.speak(utterance);
+}
+
+
 // Export the helper functions
-export { beep, createWorkoutLogEntry, createWorkoutLogItemEntry, formatTime };
+export { speak, beep, createWorkoutLogEntry, createWorkoutLogItemEntry, formatTime };
