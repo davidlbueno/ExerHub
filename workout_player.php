@@ -20,7 +20,7 @@
       $result = query($query);
       $row = mysqli_fetch_assoc($result);
       $workoutName = $row['name'];
-      echo "<h1>$workoutName</h1>";
+      echo "<h4>$workoutName</h4>";
 
       $query = "SELECT ws.type, e.id AS exercise_id, e.name AS exercise_name, ws.seconds
                 FROM workout_sequences ws
