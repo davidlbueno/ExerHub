@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const resetBtn = document.getElementById('resetBtn');
   const workoutList = document.querySelector('.workout-list');
   const playPauseBtn = document.getElementById('playPauseBtn');
-  const playerCloseBtn = document.querySelector('.player-close-btn');
+  const playerCloseBtn = document.querySelector('.close-btn');
   const countdownClock = document.querySelector('.countdown-clock');
   const viewLogBtn = document.getElementById('viewLogBtn');
   let workoutStartTime = null;
@@ -216,25 +216,7 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   viewLogBtn.addEventListener('click', function () {
-    workoutItems.forEach((item) => {
-      const exerciseTypeElement = item.querySelector('strong');
-      if (!exerciseTypeElement) {
-        console.error("Element 'strong' not found in item");
-        return;
-      }
-      const exerciseType = exerciseTypeElement.textContent.trim();
-      let exerciseId = null;
-      let exerciseReps = null;
-      if (exerciseType !== 'Rest') {
-        exerciseId = item.dataset.exerciseId || null;
-        const repsInput = item.querySelector('.repsInput');
-        exerciseReps = repsInput ? repsInput.value : null;
-      }
-      const itemStartTime = item.dataset.itemStartTime ? Date.parse(item.dataset.itemStartTime) : 0;
-      const itemStopTime = item.dataset.itemStopTime ? Date.parse(item.dataset.itemStopTime) : 0;
-      const exerciseTime = itemStartTime && itemStopTime ? Math.round((itemStopTime - itemStartTime) / 1000) : 0;
-      console.log(`${exerciseType}, ${exerciseId}, ${exerciseReps}, ${itemStartTime}, ${itemStopTime}, ${exerciseTime}`);
-    });
+    window.location.href = 'workout_logs.php?workout_id=' + workoutId + '&user_id=' + userId;
   });
 
   saveWorkoutBtn.addEventListener('click', async function () {
