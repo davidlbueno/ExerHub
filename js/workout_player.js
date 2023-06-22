@@ -329,36 +329,58 @@ document.addEventListener('DOMContentLoaded', function () {
       { time: 300, message: '5 minutes remaining', hasSpoken: false },
     ];
 
-    function updateCountdown() {
-      const currentTime = performance.now();
-      elapsedTime = (currentTime - startTime) / 1000;
+    let previousSecondValue = -1; // Variable to store the previous second value
 
-      const remainingTime = initialDuration - elapsedTime;
+function updateCountdown() {
+  const currentTime = performance.now();
+  elapsedTime = (currentTime - startTime) / 1000;
 
-      for(let i = 0; i < verbalAlerts.length; i++) {
-        let alert = verbalAlerts[i];
-        if (remainingTime > alert.time - 1 && remainingTime < alert.time + 1 && !alert.hasSpoken && alert.time < initialDuration) {
-          speak(alert.message);
-          alert.hasSpoken = true; // Once the message has been spoken, mark it as such.
-        }
-      }
+  const remainingTime = initialDuration - elapsedTime;
 
-      if (remainingTime > 0) {
-        countdownClock.textContent = formatTime(remainingTime);
-        progressPercentage = (1 - remainingTime / initialDuration) * 100;
-        activeItem.querySelector('.progress-bar').style.width = `${progressPercentage}%`;
-        requestId = requestAnimationFrame(updateCountdown);
-      } else {
-        countdownClock.textContent = formatTime(0);
-        cancelAnimationFrame(requestId);
-        internalCall = true;
-        nextBtn.click();
-        // Reset the alert flags when the countdown ends.
-        for(let alert of verbalAlerts) {
-          alert.hasSpoken = false;
-        }
+  for (let i = 0; i < verbalAlerts.length; i++) {
+    let alert = verbalAlerts[i];
+    if (
+      remainingTime > alert.time - 1 &&
+      remainingTime < alert.time + 1 &&
+      !alert.hasSpoken &&
+      alert.time < initialDuration
+    ) {
+      speak(alert.message);
+      alert.hasSpoken = true; // Once the message has been spoken, mark it as such.
+    }
+  }
+
+  if (remainingTime > 0) {
+    countdownClock.textContent = formatTime(remainingTime);
+    progressPercentage = (1 - remainingTime / initialDuration) * 100;
+    activeItem.querySelector('.progress-bar').style.width = `${progressPercentage}%`;
+
+    // Check if remainingTime is less than 3 seconds
+    if (remainingTime < 3) {
+      const secondValue = Math.floor(remainingTime % 60);
+
+      // Check if the second value has changed
+      if (secondValue !== previousSecondValue) {
+        previousSecondValue = secondValue; // Update the previous second value
+        beep(200, 520, 1, 'sine'); // Play short beep for each second change
       }
     }
+
+    requestId = requestAnimationFrame(updateCountdown);
+  } else {
+    countdownClock.textContent = formatTime(0);
+    cancelAnimationFrame(requestId);
+    internalCall = true;
+    nextBtn.click();
+    // Play the final beep when the countdown hits zero
+    beep(200, 880, 1, 'sine'); // Play short beep at the end
+
+    // Reset the alert flags when the countdown ends.
+    for (let alert of verbalAlerts) {
+      alert.hasSpoken = false;
+    }
+  }
+}
 
         
     activeItem.classList.add('progress-bar');
