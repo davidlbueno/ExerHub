@@ -32,7 +32,7 @@
 
     // Display the table of workout logs
     echo "<table>";
-    echo "<thead><tr><th>Date</th><th>Length</th></tr></thead>";
+    echo "<thead><tr><th>Date</th><th>Length</th><th></th></tr></thead>";
     echo "<tbody>";
     while ($logRow = mysqli_fetch_assoc($logsResult)) {
       $logId = $logRow['id'];
@@ -43,7 +43,11 @@
       $duration = strtotime($endTime) - strtotime($startTime);
       $length = gmdate("H:i:s", $duration);
     
-      echo "<tr><td><a href='workout_log.php?log_id=$logId'>$startTime</a></td><td>$length</td></tr>";
+      echo "<tr>";
+      echo "<td><a href='workout_log.php?log_id=$logId'>$startTime</a></td>";
+      echo "<td>$length</td>";
+      echo "<td><a href='#' class='delete-btn' data-log-id='$logId'><i class='material-icons'>delete</i></a></td>";
+      echo "</tr>";
     }    
     echo "</tbody>";
     echo "</table>";
@@ -52,10 +56,44 @@
       <i class="material-icons">close</i>
     </a>
   </main>
-<script>
-  const userId = <?php echo json_encode($userId); ?>;
-  const workoutId = <?php echo json_encode($workoutId); ?>;
-  document.getElementById('closeBtn').href = "workout.php?user_id=" + userId + "&workout_id=" + workoutId;
-</script>
+  <script>
+    const userId = <?php echo json_encode($userId); ?>;
+    const workoutId = <?php echo json_encode($workoutId); ?>;
+    document.getElementById('closeBtn').href = "workout.php?user_id=" + userId + "&workout_id=" + workoutId;
+
+    // Add event listener for delete buttons
+    const deleteButtons = document.getElementsByClassName('delete-btn');
+    for (let i = 0; i < deleteButtons.length; i++) {
+      deleteButtons[i].addEventListener('click', function(event) {
+        event.preventDefault();
+        const logId = this.getAttribute('data-log-id');
+        deleteWorkoutLog(logId);
+      });
+    }
+
+    // Function to delete workout log
+    function deleteWorkoutLog(logId) {
+      if (confirm("Are you sure you want to delete this workout log?")) {
+        // Make an AJAX request to delete the workout log and log items
+        $.ajax({
+          url: 'php/delete_workout_log.php',
+          type: 'POST',
+          data: { log_id: logId },
+          success: function(response) {
+            // Handle the response from the server
+            if (response === 'success') {
+              // Reload the page to reflect the changes
+              location.reload();
+            } else {
+              alert('Failed to delete the workout log.');
+            }
+          },
+          error: function() {
+            alert('An error occurred while deleting the workout log.');
+          }
+        });
+      }
+    }
+  </script>
 </body>
 </html>
