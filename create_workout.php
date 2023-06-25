@@ -31,27 +31,35 @@
     </div>
   </div>
   <div class="row">
-    <div class="input-field col s3">
+    <div class="input-field col s2">
       <select name="type" id="type-select">
         <option value="" disabled selected>Item</option>
-        <option value="Push">Push</option>type
+        <option value="Push">Push</option>
         <option value="Pull">Pull</option>
         <option value="Legs">Legs</option>
-        <option value="Rest">Rest</option>
-        <option value="Warmup">Warmup</option>
+        <option value="Core">Core</option>
       </select>
     </div>
-  <div class="input-field col s5">
+  <div class="input-field col s4">
     <select name="exercise" id="exercise-select" disabled>
       <option value="" disabled selected>Exercise</option>
     </select>
   </div>
   <div class="input-field col s2">
-    <input type="number" name="seconds" min="0" max="300" step="15" placeholder="Seconds" style="width:100%;">
+    <input type="number" name="seconds" min="0" max="300" step="5" placeholder="Seconds" style="width:100%;">
   </div>
   <div class="input-field col s2">
-    <input type="number" name="sets" id="sets-select" min="0" max="10" step="1" placeholder="Sets" style="width:100%;">
+  <input type="number" name="sets" id="sets-select" min="0" max="10" step="1" placeholder="Sets" style="width:100%;">
   </div>
+  <div class="row">
+  <div class="input-field col s2" style="display: flex; align-items: center;">
+    <label>
+      <input type="checkbox" name="warmup" id="warmup" style="width:100%;">
+      <span>Warmup</span>
+    </label>
+  </div>
+</div>
+
   <div class="row">
     <div class="col s12">
       <button id="add-type-btn" class="btn">Add Item</button>

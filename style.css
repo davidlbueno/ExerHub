@@ -172,11 +172,11 @@ li:hover {
 }
 
 li.rest &, .rest {
-  background-color: rgb(39, 91, 0);
+  background-color: rgb(39, 91, 0) !important;
 }
 
 li.warmup &, .warmup {
-  background-color: rgb(47, 59, 200);
+  background-color: rgb(47, 59, 200) !important;
 }
 
 h4 {
@@ -184,7 +184,7 @@ h4 {
 }
 
 li.selected {
-  border-color: red;
+  border-color: red !important;
 }
 
 .hide {

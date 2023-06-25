@@ -7,6 +7,7 @@ const clearListBtn = document.getElementById("clear-list-btn");
 const typesList = document.getElementById("workout-list");
 const secondsInput = document.querySelector('input[name="seconds"]');
 const setsInput = document.querySelector('input[name="sets"]');
+const warmupInput = document.querySelector('input[name="warmup"]');
 const saveWorkoutBtn = document.getElementById("save-workout-btn");
 const workoutNameInput = document.getElementById("workout-name");
 
@@ -44,67 +45,62 @@ addItemBtn.addEventListener("click", () => {
   const $addItemBtn = $('#add-type-btn');
   const selectedListItem = $(".selected");
   const typesArray = [];
-  const newItem = document.createElement("li");
 
-  if (typeSelect.value === "Rest" && secondsInput.value) {
+  if ((typeSelect.value && exerciseSelect.value && secondsInput.value) || selectedListItem.length > 0) {    
     typesArray.push({
       type: typeSelect.value,
+      exercise: exerciseSelect.value,
       seconds: secondsInput.value,
+      sets: setsInput.value,
+      warmup: warmupInput.checked ? 'on' : 'off' // Use the checked property of the checkbox
     });
 
     if ($(".selected").length > 0) {
-      selectedListItem.html(`${typeSelect.value} - (${secondsInput.value}s)`);
-      selectedListItem.removeClass('selected');
-      selectedListItem.addClass('rest');
-    } else {
-      newItem.innerHTML = `${typeSelect.value} - (${secondsInput.value}s)`;
-      typesList.appendChild(newItem);
-      clearFields();
-      saveWorkoutBtn.disabled = false;
-    }
-    newItem.classList.add('rest');
-  } else {
-    exerciseSelect.disabled = false;
-    setsSelect.disabled = false;
-
-    if ((typeSelect.value && exerciseSelect.value && secondsInput.value) || selectedListItem.length > 0) {    
-      typesArray.push({
-        type: typeSelect.value,
-        exercise: exerciseSelect.value,
-        seconds: secondsInput.value,
-        sets: setsInput.value,
-      });
-    
-      if ($(".selected").length > 0) {
+      // Update existing list item
+      if (warmupInput.checked) {
+        selectedListItem.html(`${typeSelect.value} - ${exerciseSelect.value} (${secondsInput.value}s) - Warmup`);
+      } else {
         selectedListItem.html(`${typeSelect.value} - ${exerciseSelect.value} (${secondsInput.value}s)`);
         selectedListItem.css('background-color', '#3d3d3d');
-        selectedListItem.removeClass('selected');
-        if (typeSelect.value === "Warmup") {
-          selectedListItem.classList.add('warmup');
-        }
-      } else {
-        const newNumber = typesList.children.length + 1;
-        saveWorkoutBtn.disabled = false;
-        
-        for (let i = 0; i < setsInput.value; i++) {
-          const newItem = document.createElement('li');
-          newItem.innerHTML = `${typeSelect.value} - ${exerciseSelect.value} (${secondsInput.value}s)`;
-          newItem.setAttribute('value', newNumber);
-          typesList.appendChild(newItem);
-          if (typeSelect.value === "Warmup") {
-            newItem.classList.add('warmup');
-          }
-        }
       }
+      
+      // Add or remove 'warmup' class based on the warmupInput.checked
+      if (warmupInput.checked) {
+        selectedListItem.addClass('warmup');
+      } else {
+        selectedListItem.removeClass('warmup');
+      }
+
+      selectedListItem.removeClass('selected');
     } else {
-      alert("Please enter all required information.");
-    }    
+      // Add a new list item
+      const newNumber = typesList.children.length + 1;
+      saveWorkoutBtn.disabled = false;
+      
+      for (let i = 0; i < setsInput.value; i++) {
+        const newItem = document.createElement('li');
+        
+        newItem.setAttribute('value', newNumber);
+        typesList.appendChild(newItem);
+        if (warmupInput.checked) {
+          newItem.classList.add('warmup');
+          newItem.innerHTML = `${typeSelect.value} - ${exerciseSelect.value} (${secondsInput.value}s) - Warmup`;
+        } else {
+          newItem.innerHTML = `${typeSelect.value} - ${exerciseSelect.value} (${secondsInput.value}s)`;
+        }
+
+      }
+    }
+  } else {
+    alert("Please enter all required information.");
   }
 
   $addItemBtn.text('Add Item');
   clearFields();
   typeSelect.focus();
 });
+
+
 
 // Sortable functionality
 $(function() {
@@ -126,9 +122,8 @@ $(document).on('click', "#workout-list li", function(event) {
   const typeValue = typeText.split(' ')[0];
   const exerciseValue = typeText.split(' - ')[1].split(' (')[0];
   const secondsValue = parseInt(typeText.match(/\((\d+)s\)/)[1]);
-  console.log(typeText)
-  console.log(typeValue, exerciseValue, secondsValue);
-  
+  const warmupValue = this.classList.contains('warmup') ? 'on' : 'off';
+
   const $addItemBtn = $('#add-type-btn');
   const removeItemBtn = document.createElement('button');
   removeItemBtn.textContent = 'Del';
@@ -137,7 +132,6 @@ $(document).on('click', "#workout-list li", function(event) {
     this.parentElement.remove();
     clearFields();
     saveWorkoutBtn.disabled = false;
-    typeSelect.focus();
   });
 
   const exerciseSelect = document.querySelector('select[name="exercise"]');
@@ -149,6 +143,7 @@ $(document).on('click', "#workout-list li", function(event) {
     exerciseSelect.disabled = false;
     $addItemBtn.text('Add Item');
     $(this).find('.copy-del-btn').remove();
+    clearFields();
     saveWorkoutBtn.disabled = false;
   } else {
     $('.selected').removeClass('selected').find('.copy-del-btn').remove();
@@ -158,15 +153,6 @@ $(document).on('click', "#workout-list li", function(event) {
     duplicateItemBtn.classList.add('copy-del-btn');
     duplicateItemBtn.addEventListener('click', function() {
       const newItem = document.createElement("li");
-      if (typeValue === "Rest") {
-        newItem.classList.add('rest');
-        newItem.innerHTML = `${typeSelect.value} - (${secondsInput.value}s)`;
-      } else {
-        newItem.innerHTML = `${typeValue} - ${exerciseValue} (${secondsValue}s`;
-      }
-      if (typeValue === "Warmup") {
-        newItem.classList.add('warmup');
-      }
       const newNumber = typesList.children.length + 1;
       newItem.setAttribute('value', newNumber);
       typesList.appendChild(newItem);
@@ -176,19 +162,17 @@ $(document).on('click', "#workout-list li", function(event) {
     $addItemBtn.text('Update Item');
     typeSelect.value = typeValue;
     secondsInput.value = secondsValue;
+    warmupInput.checked = warmupValue === 'on'; // Update the Warmup checkbox state
 
-    if (typeValue === "Rest") {
-      exerciseSelect.disabled = true;
-    } else {
-      exerciseSelect.disabled = false;
-      updateExerciseSelect(typeValue);
-      updateExerciseSelect(typeSelect.value, function() {
-        exerciseSelect.value = exerciseValue;
-      });
-    }
+    exerciseSelect.disabled = false;
+    updateExerciseSelect(typeValue);
+    updateExerciseSelect(typeSelect.value, function() {
+      exerciseSelect.value = exerciseValue;
+    });
     saveWorkoutBtn.disabled = true;
   }
 });
+
 
 // Function to clear input fields
 function clearFields() {
@@ -196,7 +180,10 @@ function clearFields() {
   exerciseSelect.value = "";
   secondsInput.value = "";
   setsInput.value = "";
+  warmupInput.checked = false;
+  typeSelect.focus();
 }
+
 
 // Event listener for clearListBtn click
 clearListBtn.addEventListener("click", clearList);
