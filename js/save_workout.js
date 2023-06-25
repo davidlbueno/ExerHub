@@ -29,6 +29,8 @@ saveWorkoutBtn.addEventListener("click", () => {
     if (xhr.status === 200) {
       // Handle the response from the PHP script if needed
       console.log(xhr.responseText);
+      // Redirect to the workouts.php page
+      window.location.href = 'workouts.php';
     } else {
       // Handle errors
       console.error(xhr.responseText);
