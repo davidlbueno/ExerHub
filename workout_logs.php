@@ -60,7 +60,6 @@
     const userId = <?php echo json_encode($userId); ?>;
     const workoutId = <?php echo json_encode($workoutId); ?>;
     document.getElementById('closeBtn').href = "workout.php?user_id=" + userId + "&workout_id=" + workoutId;
-
     // Add event listener for delete buttons
     const deleteButtons = document.getElementsByClassName('delete-btn');
     for (let i = 0; i < deleteButtons.length; i++) {
@@ -71,27 +70,27 @@
       });
     }
 
-    // Function to delete workout log
     function deleteWorkoutLog(logId) {
-      if (confirm("Are you sure you want to delete this workout log?")) {
-        // Make an AJAX request to delete the workout log and log items
-        $.ajax({
-          url: 'php/delete_workout_log.php',
-          type: 'POST',
-          data: { log_id: logId },
-          success: function(response) {
-            // Handle the response from the server
-            if (response === 'success') {
-              // Reload the page to reflect the changes
-              location.reload();
-            } else {
-              alert('Failed to delete the workout log.');
-            }
-          },
-          error: function() {
-            alert('An error occurred while deleting the workout log.');
+      console.log(logId);
+      if (confirm(`Are you sure you want to delete this workout log?`)) {
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "php/delete_workout_log.php", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onload = () => {
+          if (xhr.status === 200) {
+            location.reload();
+            console.log(xhr.responseText);
+          } else {
+            console.error(xhr.responseText);
           }
-        });
+        };
+
+        console.log(logId);
+        const payload = {
+          log_Id: logId,
+        };
+
+        xhr.send(JSON.stringify(payload));
       }
     }
   </script>
