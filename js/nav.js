@@ -4,6 +4,7 @@ const sideNavItems = [
   { title: 'Progressions', href: '#' },
   { title: 'Exercises', href: 'exercises.php' },
   { title: 'Workouts', href: 'workouts.php' },
+  { title: 'Logs', href: 'logs.php' },
 ];
 let topNavItems = [
   { title: 'Log In', href: 'login.php' },
