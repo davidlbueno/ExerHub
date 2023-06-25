@@ -15,24 +15,20 @@ const workoutNameInput = document.getElementById("workout-name");
 saveWorkoutBtn.disabled = true;
 
 // Function to update exercise select options
-function updateExerciseSelect(selectedType, callback) {
-  const xhr = new XMLHttpRequest();
-  xhr.open("GET", `php/get_exercises.php?type=${selectedType}`, true);
-  xhr.onload = () => {
-    if (xhr.status === 200) {
-      const exercises = JSON.parse(xhr.responseText);
-      exerciseSelect.innerHTML = `
-        <option value="" disabled selected>Exercise</option>
-        ${exercises.map(exercise => `<option value="${exercise.name}">${exercise.name}</option>`).join('')}
-      `;
-      exerciseSelect.disabled = selectedType === 'Rest';
-      setsSelect.disabled = (selectedType === 'Rest') || $('.selected').length > 0;
-      if (callback) {
-        callback();
-      }
-    }
-  };
-  xhr.send();
+async function updateExerciseSelect(selectedType, callback) {
+  const response = await fetch(`php/get_exercises.php?type=${selectedType}`);
+  const exercises = await response.json();
+
+  exerciseSelect.innerHTML = `
+    <option value="" disabled selected>Exercise</option>
+    ${exercises.map(exercise => `<option value="${exercise.name}">${exercise.name}</option>`).join('')}
+  `;
+  exerciseSelect.disabled = selectedType === 'Rest';
+  setsSelect.disabled = (selectedType === 'Rest') || $('.selected').length > 0;
+
+  if (callback) {
+    callback();
+  }
 }
 
 // Event listener for typeSelect change
@@ -44,51 +40,36 @@ typeSelect.addEventListener("change", () => {
 addItemBtn.addEventListener("click", () => {
   const $addItemBtn = $('#add-type-btn');
   const selectedListItem = $(".selected");
-  const typesArray = [];
 
-  if ((typeSelect.value && exerciseSelect.value && secondsInput.value) || selectedListItem.length > 0) {    
+  if ((typeSelect.value && exerciseSelect.value && secondsInput.value) || selectedListItem.length > 0) {
+    const typesArray = [];
+
     typesArray.push({
       type: typeSelect.value,
       exercise: exerciseSelect.value,
       seconds: secondsInput.value,
       sets: setsInput.value,
-      warmup: warmupInput.checked ? 'on' : 'off' // Use the checked property of the checkbox
+      warmup: warmupInput.checked ? 'on' : 'off'
     });
 
     if ($(".selected").length > 0) {
       // Update existing list item
-      if (warmupInput.checked) {
-        selectedListItem.html(`${typeSelect.value} - ${exerciseSelect.value} (${secondsInput.value}s) - Warmup`);
-      } else {
-        selectedListItem.html(`${typeSelect.value} - ${exerciseSelect.value} (${secondsInput.value}s)`);
-        selectedListItem.css('background-color', '#3d3d3d');
-      }
-      
-      // Add or remove 'warmup' class based on the warmupInput.checked
-      if (warmupInput.checked) {
-        selectedListItem.addClass('warmup');
-      } else {
-        selectedListItem.removeClass('warmup');
-      }
-
+      selectedListItem.html(`${typeSelect.value} - ${exerciseSelect.value} (${secondsInput.value}s)${warmupInput.checked ? ' - Warmup' : ''}`);
+      selectedListItem.css('background-color', '#3d3d3d');
+      selectedListItem.toggleClass('warmup', warmupInput.checked);
       selectedListItem.removeClass('selected');
     } else {
       // Add a new list item
       const newNumber = typesList.children.length + 1;
       saveWorkoutBtn.disabled = false;
-      
+
       for (let i = 0; i < setsInput.value; i++) {
         const newItem = document.createElement('li');
-        
+
         newItem.setAttribute('value', newNumber);
         typesList.appendChild(newItem);
-        if (warmupInput.checked) {
-          newItem.classList.add('warmup');
-          newItem.innerHTML = `${typeSelect.value} - ${exerciseSelect.value} (${secondsInput.value}s) - Warmup`;
-        } else {
-          newItem.innerHTML = `${typeSelect.value} - ${exerciseSelect.value} (${secondsInput.value}s)`;
-        }
-
+        newItem.innerHTML = `${typeSelect.value} - ${exerciseSelect.value} (${secondsInput.value}s)${warmupInput.checked ? ' - Warmup' : ''}`;
+        newItem.classList.toggle('warmup', warmupInput.checked);
       }
     }
   } else {
@@ -100,20 +81,16 @@ addItemBtn.addEventListener("click", () => {
   typeSelect.focus();
 });
 
-
-
 // Sortable functionality
-$(function() {
-  $(".sortable").sortable({
-    revert: true,
-    update: function() {
-      const types = $(this).children();
-      types.each((index, element) => {
-        element.setAttribute('value', index + 1);
-      });
-      saveWorkoutBtn.disabled = false;
-    }
-  });
+$(".sortable").sortable({
+  revert: true,
+  update: function() {
+    const types = $(this).children();
+    types.each((index, element) => {
+      element.setAttribute('value', index + 1);
+    });
+    saveWorkoutBtn.disabled = false;
+  }
 });
 
 // Event delegation for selecting items in workout-list
@@ -162,17 +139,14 @@ $(document).on('click', "#workout-list li", function(event) {
     $addItemBtn.text('Update Item');
     typeSelect.value = typeValue;
     secondsInput.value = secondsValue;
-    warmupInput.checked = warmupValue === 'on'; // Update the Warmup checkbox state
-
+    warmupInput.checked = warmupValue === 'on';
     exerciseSelect.disabled = false;
-    updateExerciseSelect(typeValue);
-    updateExerciseSelect(typeSelect.value, function() {
+    updateExerciseSelect(typeValue, () => {
       exerciseSelect.value = exerciseValue;
     });
     saveWorkoutBtn.disabled = true;
   }
 });
-
 
 // Function to clear input fields
 function clearFields() {
@@ -183,7 +157,6 @@ function clearFields() {
   warmupInput.checked = false;
   typeSelect.focus();
 }
-
 
 // Event listener for clearListBtn click
 clearListBtn.addEventListener("click", clearList);
