@@ -53,8 +53,7 @@ foreach ($workoutData as $type) {
     die("Error creating workout type: " . mysqli_error($conn));
   }
 }
-  // Redirect the user to the success page or display a success message
-  header("Location: ../workouts.php"); // Replace "workout_success.php" with your actual success page URL
+  echo 'success';
   exit();
 } else {
   // Handle the error (e.g., display an error message, rollback changes, etc.)
