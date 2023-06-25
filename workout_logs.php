@@ -38,13 +38,17 @@
       $logId = $logRow['id'];
       $startTime = $logRow['start_time'];
       $endTime = $logRow['end_time'];
-    
+
+      // Get the day name of the start time
+      $dayName = date("l", strtotime($startTime));
+      $formattedStartTime = date("Y-m-d H:i:s", strtotime($startTime));
+
       // Calculate the duration of the workout
       $duration = strtotime($endTime) - strtotime($startTime);
       $length = gmdate("H:i:s", $duration);
-    
+
       echo "<tr>";
-      echo "<td><a href='workout_log.php?log_id=$logId'>$startTime</a></td>";
+      echo "<td><a href='workout_log.php?log_id=$logId'>$dayName, $formattedStartTime</a></td>";
       echo "<td>$length</td>";
       echo "<td><a href='#' class='delete-btn' data-log-id='$logId'><i class='material-icons'>delete</i></a></td>";
       echo "</tr>";
@@ -52,47 +56,8 @@
     echo "</tbody>";
     echo "</table>";
     ?>
-    <a href="#" id="closeBtn" class="close-btn">
-      <i class="material-icons">close</i>
-    </a>
-  </main>
-  <script>
-    const userId = <?php echo json_encode($userId); ?>;
-    const workoutId = <?php echo json_encode($workoutId); ?>;
-    document.getElementById('closeBtn').href = "workout.php?user_id=" + userId + "&workout_id=" + workoutId;
-    // Add event listener for delete buttons
-    const deleteButtons = document.getElementsByClassName('delete-btn');
-    for (let i = 0; i < deleteButtons.length; i++) {
-      deleteButtons[i].addEventListener('click', function(event) {
-        event.preventDefault();
-        const logId = this.getAttribute('data-log-id');
-        deleteWorkoutLog(logId);
-      });
-    }
-
-    function deleteWorkoutLog(logId) {
-      console.log(logId);
-      if (confirm(`Are you sure you want to delete this workout log?`)) {
-        const xhr = new XMLHttpRequest();
-        xhr.open("POST", "php/delete_workout_log.php", true);
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.onload = () => {
-          if (xhr.status === 200) {
-            location.reload();
-            console.log(xhr.responseText);
-          } else {
-            console.error(xhr.responseText);
-          }
-        };
-
-        console.log(logId);
-        const payload = {
-          log_Id: logId,
-        };
-
-        xhr.send(JSON.stringify(payload));
-      }
-    }
-  </script>
+    <a href="workout.php?workout_id=<?php echo $workoutId ?>&user_id=<?php echo $userId ?>" id="closeBtn" class="close-btn">
+      <i class="material-icons">close</i></a>
+</main>
 </body>
 </html>
