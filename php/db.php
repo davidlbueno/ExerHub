@@ -1,4 +1,7 @@
 <?php
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
 $host = "127.0.0.1";
 $user = "bwe";
 $password = "buendavi";
@@ -18,11 +21,13 @@ function query($query) {
   $result = mysqli_query($conn, $query);
 
   if (!$result) {
-    die("Query failed: " . mysqli_error($conn));
+    error_log("Query failed: " . mysqli_error($conn) . ". Query: " . $query);
+    die("An error occurred. Please check the server logs for more information.");
   }
 
   return $result;
 }
+
 
 $result = query('SELECT e.name AS exercise_name, e.type AS exercise_type, e.difficulty, m.name AS muscle_name, em.intensity
                  FROM exercises e

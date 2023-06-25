@@ -27,15 +27,26 @@ var data = {
   }),
   datasets: [
     {
+      label: 'Current Workout',
       data: graphData.map(function (o) {
         return o.reps;
       }),
       backgroundColor: 'rgba(75, 192, 192, 0.2)',
       borderColor: 'rgba(75, 192, 192, 1)',
       borderWidth: 1
+    },
+    {
+      label: 'Previous Workout',
+      data: prevGraphData.map(function (o) {
+        return o.reps;
+      }),
+      backgroundColor: 'rgba(192, 75, 75, 0.2)',
+      borderColor: 'rgba(192, 75, 75, 1)',
+      borderWidth: 1
     }
   ]
 };
+
 
 console.log(graphData);
 
