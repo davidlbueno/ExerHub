@@ -66,19 +66,25 @@
   </main>
   <script src="js/nav.js"></script>
   <script>
-    startWorkoutBtn.addEventListener('click', function () {
-      const workoutId = <?php echo json_encode($workoutId); ?>;
-      const userId = sessionVars.userId;
-      const workoutPlayerUrl = `workout_player.php?user_id=${userId}&workout_id=${workoutId}`;
-      window.location.href = workoutPlayerUrl;
-    });
-
-    editBtn.addEventListener('click', function () {
+    window.onload = function() {
       const workoutId = <?php echo json_encode($workoutId); ?>;
       const workoutName = <?php echo json_encode($workoutName); ?>;
-      const editUrl = `edit_workout.php?workout_id=${workoutId}&workout_name=${encodeURIComponent(workoutName)}`;
-      window.location.href = editUrl;
-    });
+      const userId = sessionVars.userId;
+
+      startWorkoutBtn.addEventListener('click', function () {
+        const workoutPlayerUrl = `workout_player.php?user_id=${userId}&workout_id=${workoutId}`;
+        window.location.href = workoutPlayerUrl;
+      });
+
+      editBtn.addEventListener('click', function () {
+        const editUrl = `edit_workout.php?workout_id=${workoutId}&workout_name=${encodeURIComponent(workoutName)}`;
+        window.location.href = editUrl;
+      });
+
+      viewLogBtn.addEventListener('click', function () {
+        window.location.href = 'workout_logs.php?workout_id=' + workoutId + '&user_id=' + userId;
+      });
+    };
   </script>
 </body>
 </html>
