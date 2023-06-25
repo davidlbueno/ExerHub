@@ -7,7 +7,7 @@
   <title>BWE - Workout Log</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.5.0/chart.min.js"></script>
   <link rel="stylesheet" href="style.css">
   <?php require_once 'php/db.php'; ?>
 </head>
@@ -39,37 +39,41 @@
 
       // Rest items handling
       if ($exerciseType === 'Rest') {
-        continue; // Skip Rest items
+        $rowClass = 'rest';
+        $exerciseName = 'Rest';
+        $exerciseType = 'Rest';
+        $difficulty = '-';
+        $musclesIntensities = '-';
+      } else {
+        $rowClass = ($exerciseType === 'Warmup') ? 'warmup' : '';
+
+        $exerciseQuery = "SELECT name, type, difficulty FROM exercises WHERE id = $exerciseId";
+        $exerciseResult = query($exerciseQuery);
+        $exerciseRow = mysqli_fetch_assoc($exerciseResult);
+        $exerciseName = $exerciseRow['name'];
+        $exerciseType = $exerciseRow['type'];
+        $difficulty = $exerciseRow['difficulty'];
+
+        // Retrieve intensity and muscles worked for the exercise
+        $exerciseMusclesQuery = "SELECT intensity, muscles.name FROM exercise_muscles JOIN muscles ON exercise_muscles.muscle_id = muscles.id WHERE exercise_id = $exerciseId";
+        $exerciseMusclesResult = query($exerciseMusclesQuery);
+
+        $musclesIntensities = '';
+
+        while ($muscleRow = mysqli_fetch_assoc($exerciseMusclesResult)) {
+          $intensity = $muscleRow['intensity'];
+          $muscleName = $muscleRow['name'];
+          $musclesIntensities .= "$muscleName ($intensity), ";
+        }
+
+        $musclesIntensities = rtrim($musclesIntensities, ', ');
+
+        $graphData[] = [
+          'name' => $exerciseName,
+          'reps' => $reps,
+          'duration' => (int) $exerciseTime,
+        ];
       }
-
-      $rowClass = ($exerciseType === 'Warmup') ? 'warmup' : '';
-
-      $exerciseQuery = "SELECT name, type, difficulty FROM exercises WHERE id = $exerciseId";
-      $exerciseResult = query($exerciseQuery);
-      $exerciseRow = mysqli_fetch_assoc($exerciseResult);
-      $exerciseName = $exerciseRow['name'];
-      $exerciseType = $exerciseRow['type'];
-      $difficulty = $exerciseRow['difficulty'];
-
-      // Retrieve intensity and muscles worked for the exercise
-      $exerciseMusclesQuery = "SELECT intensity, muscles.name FROM exercise_muscles JOIN muscles ON exercise_muscles.muscle_id = muscles.id WHERE exercise_id = $exerciseId";
-      $exerciseMusclesResult = query($exerciseMusclesQuery);
-
-      $musclesIntensities = '';
-
-      while ($muscleRow = mysqli_fetch_assoc($exerciseMusclesResult)) {
-        $intensity = $muscleRow['intensity'];
-        $muscleName = $muscleRow['name'];
-        $musclesIntensities .= "$muscleName ($intensity), ";
-      }
-
-      $musclesIntensities = rtrim($musclesIntensities, ', ');
-
-      $graphData[] = [
-        'name' => $exerciseName,
-        'reps' => $reps,
-        'duration' => (int) $exerciseTime,
-      ];
 
       // Calculate total work time
       $totalWorkTime += $exerciseTime;
@@ -94,9 +98,6 @@
 
     echo "</tbody>";
     echo "</table>";
-
-    // Create table for previous workout log items
-    echo "<h4>Previous Workout Log Items</h4>";
 
     // Retrieve the workout ID from the workout log ID
     $workoutIdQuery = "SELECT workout_id FROM workout_logs WHERE id = $logId";
@@ -106,81 +107,86 @@
     $prevLogIdQuery = "SELECT id FROM workout_logs WHERE workout_id = $workoutId AND id < $logId ORDER BY id DESC LIMIT 1";
     $prevLogIdResult = query($prevLogIdQuery);
     $prevLogIdRow = mysqli_fetch_assoc($prevLogIdResult);
-    $prevLogId = $prevLogIdRow['id'];
-    echo "<script>console.log('Previous Log ID: $prevLogId');</script>";
 
-    // Retrieve the workout log items from the database
-    $prevLogItemsQuery = "SELECT exercise_type, exercise_id, exercise_time, reps FROM workout_log_items WHERE workout_log_id = $prevLogId";
-    $prevLogItemsResult = query($prevLogItemsQuery);
+    if ($prevLogIdRow) {
+      $prevLogId = $prevLogIdRow['id'];
+      echo "<script>console.log('Previous Log ID: $prevLogId');</script>";
+      echo "<h4>Previous Workout Log Items</h4>";
 
-    // Display the table of workout log items
-    echo "<table>";
-    echo "<thead><tr><th>Name</th><th>Type</th><th>Seconds</th><th>Difficulty</th><th>Reps</th><th>Muscles and Intensity</th></tr></thead>";
-    echo "<tbody>";
+      $prevLogItemsQuery = "SELECT exercise_type, exercise_id, exercise_time, reps FROM workout_log_items WHERE workout_log_id = $prevLogId";
+      $prevLogItemsResult = query($prevLogItemsQuery);
 
-    while ($prevLogItemRow = mysqli_fetch_assoc($prevLogItemsResult)) {
-      $exerciseType = $prevLogItemRow['exercise_type'];
-      $exerciseId = $prevLogItemRow['exercise_id'];
-      $exerciseTime = $prevLogItemRow['exercise_time'];
-      $reps = $prevLogItemRow['reps'];
+      echo "<table>";
+      echo "<thead><tr><th>Name</th><th>Type</th><th>Seconds</th><th>Difficulty</th><th>Reps</th><th>Muscles and Intensity</th></tr></thead>";
+      echo "<tbody>";
 
-      // Rest items handling
-      if ($exerciseType === 'Rest') {
-        continue; // Skip Rest items
+      while ($prevLogItemRow = mysqli_fetch_assoc($prevLogItemsResult)) {
+        $exerciseType = $prevLogItemRow['exercise_type'];
+        $exerciseTime = $prevLogItemRow['exercise_time'];
+
+        if ($exerciseType === 'Rest') {
+          $rowClass = 'rest';
+          $exerciseName = 'Rest';
+          $exerciseType = 'Rest';
+          $difficulty = '-';
+          $musclesIntensities = '-';
+        } else {
+          $exerciseId = $prevLogItemRow['exercise_id'];
+          $reps = $prevLogItemRow['reps'];
+
+          $rowClass = ($exerciseType === 'Warmup') ? 'warmup' : '';
+
+          $exerciseQuery = "SELECT name, type, difficulty FROM exercises WHERE id = $exerciseId";
+          $exerciseResult = query($exerciseQuery);
+          $exerciseRow = mysqli_fetch_assoc($exerciseResult);
+          $exerciseName = $exerciseRow['name'];
+          $exerciseType = $exerciseRow['type'];
+          $difficulty = $exerciseRow['difficulty'];
+
+          $exerciseMusclesQuery = "SELECT intensity, muscles.name FROM exercise_muscles JOIN muscles ON exercise_muscles.muscle_id = muscles.id WHERE exercise_id = $exerciseId";
+          $exerciseMusclesResult = query($exerciseMusclesQuery);
+          $musclesIntensities = '';
+
+          while ($muscleRow = mysqli_fetch_assoc($exerciseMusclesResult)) {
+            $intensity = $muscleRow['intensity'];
+            $muscleName = $muscleRow['name'];
+            $musclesIntensities .= "$muscleName ($intensity), ";
+          }
+
+          $musclesIntensities = rtrim($musclesIntensities, ', ');
+
+          if ($exerciseType !== 'Rest') {
+            $prevGraphData[] = [
+              'name' => $exerciseName,
+              'reps' => $reps,
+              'duration' => (int) $exerciseTime,
+            ];
+          }
+        }
+
+        $totalWorkTime += $exerciseTime;
+
+        echo "<tr class='$rowClass'>";
+        echo "<td>$exerciseName</td>";
+        echo "<td>$exerciseType</td>";
+        echo "<td>$exerciseTime</td>";
+        echo "<td>$difficulty</td>";
+        echo "<td>$reps</td>";
+        echo "<td>$musclesIntensities</td>";
+        echo "</tr>";
       }
-
-      $rowClass = ($exerciseType === 'Warmup') ? 'warmup' : '';
-
-      $exerciseQuery = "SELECT name, type, difficulty FROM exercises WHERE id = $exerciseId";
-      $exerciseResult = query($exerciseQuery);
-      $exerciseRow = mysqli_fetch_assoc($exerciseResult);
-      $exerciseName = $exerciseRow['name'];
-      $exerciseType = $exerciseRow['type'];
-      $difficulty = $exerciseRow['difficulty'];
-
-      // Retrieve intensity and muscles worked for the exercise
-      $exerciseMusclesQuery = "SELECT intensity, muscles.name FROM exercise_muscles JOIN muscles ON exercise_muscles.muscle_id = muscles.id WHERE exercise_id = $exerciseId";
-      $exerciseMusclesResult = query($exerciseMusclesQuery);
-
-      $musclesIntensities = '';
-
-      while ($muscleRow = mysqli_fetch_assoc($exerciseMusclesResult)) {
-        $intensity = $muscleRow['intensity'];
-        $muscleName = $muscleRow['name'];
-        $musclesIntensities .= "$muscleName ($intensity), ";
-      }
-
-      $musclesIntensities = rtrim($musclesIntensities, ', ');
-
-      $prevGraphData[] = [
-        'name' => $exerciseName,
-        'reps' => $reps,
-        'duration' => (int) $exerciseTime,
-      ];
-
-      // Calculate total work time
-      $totalWorkTime += $exerciseTime;
-
-      echo "<tr class='$rowClass'>";
-      echo "<td>$exerciseName</td>";
-      echo "<td>$exerciseType</td>";
-      echo "<td>$exerciseTime</td>";
-      echo "<td>$difficulty</td>";
-      echo "<td>$reps</td>";
-      echo "<td>$musclesIntensities</td>";
+      echo "<tfoot>";
+      echo "<tr>";
+      echo "<td colspan='3' style='text-align: right;'><strong>Total Work Time:</strong></td>";
+      echo "<td colspan='2'><strong>$totalWorkTime</strong> seconds</td>";
       echo "</tr>";
+      echo "</tfoot>";
+      echo "</tbody>";
+      echo "</table>";
+    } else {
+      echo "<script>console.log('No previous log found.');</script>";
+      echo "<h4>No Previous Workout Log Found</h4>";
     }
-
-    // Display the bottom row with total work time
-    echo "<tfoot>";
-    echo "<tr>";
-    echo "<td colspan='3' style='text-align: right;'><strong>Total Work Time:</strong></td>";
-    echo "<td colspan='2'><strong>$totalWorkTime</strong> seconds</td>";
-    echo "</tr>";
-    echo "</tfoot>";
-
-    echo "</tbody>";
-    echo "</table>";
 
     // Render the graph
     echo "<canvas id='graphCanvas'></canvas>";
