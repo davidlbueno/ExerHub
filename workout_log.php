@@ -70,7 +70,7 @@
     
       $graphData[] = [
         'name' => $exerciseName,
-        'intensity' => ($exerciseType === 'Rest') ? 10 : calculateAverageIntensity($exerciseId),
+        'reps' => $reps,
         'duration' => (int) $exerciseTime,
       ];
     
@@ -103,9 +103,8 @@
 
     // Prepare the graph data as JSON
     $graphDataJson = json_encode($graphData);
-
-    echo "<script src='js/workout_graph.js'></script>";
     echo "<script>var graphData = $graphDataJson;</script>";
+    echo "<script src='js/workout_graph.js'></script>";
     echo "<script>var totalWorkTime = $totalWorkTime;</script>";
 
     // Function to calculate the average intensity for an exercise
