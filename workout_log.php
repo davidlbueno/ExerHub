@@ -15,18 +15,32 @@
   <main class="container">
     <?php
     $logId = $_GET['log_id'];
-    echo "<h4>Workout Log ID: $logId</h4>";
+
+    $workoutNameQuery = "SELECT workouts.name FROM workout_logs INNER JOIN workouts ON workout_logs.workout_id = workouts.id WHERE workout_logs.id = $logId";
+    $workoutNameResult = query($workoutNameQuery);
+    $workoutNameRow = mysqli_fetch_assoc($workoutNameResult);
+    $workoutName = $workoutNameRow['name'];
+
+    $startTimeQuery = "SELECT start_time FROM workout_logs WHERE id = $logId";
+    $startTimeResult = query($startTimeQuery);
+    $startTimeRow = mysqli_fetch_assoc($startTimeResult);
+    $startTime = $startTimeRow['start_time'];
+
+    echo "<div class='row'>";
+    echo "<div class='col s6'>";    
+    echo "<h4>$workoutName</h4>
+          </div>
+          </div>
+          <div style='text-align: right;'> Workout Date: $startTime</div>";
 
     // Retrieve the workout log items from the database
     $logItemsQuery = "SELECT exercise_type, exercise_id, exercise_time, reps FROM workout_log_items WHERE workout_log_id = $logId";
     $logItemsResult = query($logItemsQuery);
 
-    // Initialize total work time and data arrays for the graph
     $totalWorkTime = 0;
     $graphData = [];
     $prevGraphData = [];
 
-    // Display the table of workout log items
     echo "<table>";
     echo "<thead><tr><th>Name</th><th>Type</th><th>Seconds</th><th>Difficulty</th><th>Reps</th><th>Muscles and Intensity</th></tr></thead>";
     echo "<tbody>";
@@ -75,7 +89,6 @@
         ];
       }
 
-      // Calculate total work time
       $totalWorkTime += $exerciseTime;
 
       echo "<tr class='$rowClass'>";
@@ -88,7 +101,6 @@
       echo "</tr>";
     }
 
-    // Display the bottom row with total work time
     echo "<tfoot>";
     echo "<tr>";
     echo "<td colspan='3' style='text-align: right;'><strong>Total Work Time:</strong></td>";
@@ -99,7 +111,6 @@
     echo "</tbody>";
     echo "</table>";
 
-    // Retrieve the workout ID from the workout log ID
     $workoutIdQuery = "SELECT workout_id FROM workout_logs WHERE id = $logId";
     $workoutIdResult = query($workoutIdQuery);
     $workoutIdRow = mysqli_fetch_assoc($workoutIdResult);
@@ -107,11 +118,19 @@
     $prevLogIdQuery = "SELECT id FROM workout_logs WHERE workout_id = $workoutId AND id < $logId ORDER BY id DESC LIMIT 1";
     $prevLogIdResult = query($prevLogIdQuery);
     $prevLogIdRow = mysqli_fetch_assoc($prevLogIdResult);
-
+    
     if ($prevLogIdRow) {
       $prevLogId = $prevLogIdRow['id'];
       echo "<script>console.log('Previous Log ID: $prevLogId');</script>";
-      echo "<h4>Previous Workout Log Items</h4>";
+      $prevStartTimeQuery = "SELECT start_time FROM workout_logs WHERE id = $prevLogId";
+      $prevStartTimeResult = query($prevStartTimeQuery);
+      $prevStartTimeRow = mysqli_fetch_assoc($prevStartTimeResult);
+      $prevStartTime = $prevStartTimeRow['start_time'];
+      
+      echo "<div class='row'>";
+      echo "<div class='col s6'>";    
+      echo "<h4>Previous</h4></div></div>";
+      echo "<div style='text-align: right;'> Workout Date: $prevStartTime</div>";
 
       $prevLogItemsQuery = "SELECT exercise_type, exercise_id, exercise_time, reps FROM workout_log_items WHERE workout_log_id = $prevLogId";
       $prevLogItemsResult = query($prevLogItemsQuery);
