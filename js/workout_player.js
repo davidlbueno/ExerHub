@@ -141,7 +141,6 @@ document.addEventListener('DOMContentLoaded', function () {
   nextBtn.addEventListener('click', function () {
     const activeItem = document.querySelector('.workout-list li.active');
     const exerciseDetails = activeItem.querySelector('.exercise-details');
-    const exerciseType = activeItem.querySelector('strong').textContent;
     const nextItem = activeItem.nextElementSibling;
 
     pauseCountdown();
@@ -235,16 +234,19 @@ document.addEventListener('DOMContentLoaded', function () {
         const exerciseType = exerciseTypeElement.textContent.trim();
         let exerciseId = null;
         let exerciseReps = 0;
+        let warmup = 0;
         if (exerciseType !== 'Rest') {
           exerciseId = item.dataset.exerciseId || null;
           const repsInput = item.querySelector('.repsInput');
           exerciseReps = repsInput.value || 0;
+          warmup = item.classList.contains('warmup') ? 1 : 0;
         }
+
         const itemStartTime = item.dataset.itemStartTime ? Date.parse(item.dataset.itemStartTime) : 0;
         const itemStopTime = item.dataset.itemStopTime ? Date.parse(item.dataset.itemStopTime) : 0;
         const exerciseTime = itemStartTime && itemStopTime ? Math.round((itemStopTime - itemStartTime) / 1000) : 0;
 
-        await createWorkoutLogItemEntry(userId, workoutLogId, exerciseType, exerciseId, exerciseTime, exerciseReps);
+        await createWorkoutLogItemEntry(userId, workoutLogId, exerciseType, exerciseId, exerciseTime, exerciseReps, warmup);
       }
     } catch (error) {
       console.error("Failed to create workout log entry:", error);
@@ -291,7 +293,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (activeItem.nextElementSibling) {
       if (activeItem.nextElementSibling.classList.contains('exercise-list-item')) {
         let fullText = activeItem.nextElementSibling.textContent;
-        nextExerciseName = fullText.split('-')[1].split('(')[0].trim();
+        nextExerciseName = fullText.split(' - ')[1].split('(')[0].trim();
         nextExerciseName = nextExerciseName + ' in 10 seconds';
       } else {
         nextExerciseName = "Rest in 10 seconds";

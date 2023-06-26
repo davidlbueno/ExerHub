@@ -34,7 +34,7 @@
           <div style='text-align: right;'> Workout Date: $startTime</div>";
 
     // Retrieve the workout log items from the database
-    $logItemsQuery = "SELECT exercise_type, exercise_id, exercise_time, reps FROM workout_log_items WHERE workout_log_id = $logId";
+    $logItemsQuery = "SELECT exercise_type, exercise_id, exercise_time, reps, warmup FROM workout_log_items WHERE workout_log_id = $logId";
     $logItemsResult = query($logItemsQuery);
 
     $totalWorkTime = 0;
@@ -50,6 +50,7 @@
       $exerciseId = $logItemRow['exercise_id'];
       $exerciseTime = $logItemRow['exercise_time'];
       $reps = $logItemRow['reps'];
+      $warmup = $logItemRow['warmup'];
 
       // Rest items handling
       if ($exerciseType === 'Rest') {
@@ -59,7 +60,7 @@
         $difficulty = '-';
         $musclesIntensities = '-';
       } else {
-        $rowClass = ($exerciseType === 'Warmup') ? 'warmup' : '';
+        $rowClass = ($warmup === '1') ? 'warmup' : '';
 
         $exerciseQuery = "SELECT name, type, difficulty FROM exercises WHERE id = $exerciseId";
         $exerciseResult = query($exerciseQuery);
@@ -132,7 +133,7 @@
       echo "<h4>Previous</h4></div></div>";
       echo "<div style='text-align: right;'> Workout Date: $prevStartTime</div>";
 
-      $prevLogItemsQuery = "SELECT exercise_type, exercise_id, exercise_time, reps FROM workout_log_items WHERE workout_log_id = $prevLogId";
+      $prevLogItemsQuery = "SELECT exercise_type, exercise_id, exercise_time, reps, warmup FROM workout_log_items WHERE workout_log_id = $prevLogId";
       $prevLogItemsResult = query($prevLogItemsQuery);
 
       echo "<table>";
@@ -152,8 +153,8 @@
         } else {
           $exerciseId = $prevLogItemRow['exercise_id'];
           $reps = $prevLogItemRow['reps'];
-
-          $rowClass = ($exerciseType === 'Warmup') ? 'warmup' : '';
+          $warmup = $prevLogItemRow['warmup'];
+          $rowClass = ($warmup === '1') ? 'warmup' : '';
 
           $exerciseQuery = "SELECT name, type, difficulty FROM exercises WHERE id = $exerciseId";
           $exerciseResult = query($exerciseQuery);
