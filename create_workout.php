@@ -66,6 +66,7 @@
       <button id="add-type-btn" class="btn">Add Item</button>
       <button id="clear-list-btn" class="btn">Clear List</button>
       <button id="save-workout-btn" class="btn">Save Workout</button>
+      <button id="cancel-workout-btn" class="btn">Cancel</button>
     </div> 
   </div>
   </main>
