@@ -38,6 +38,7 @@
         <option value="Pull">Pull</option>
         <option value="Legs">Legs</option>
         <option value="Core">Core</option>
+        <option value="Rest">Rest</option>
       </select>
     </div>
   <div class="input-field col s4">
