@@ -10,6 +10,7 @@ const setsInput = document.querySelector('input[name="sets"]');
 const warmupInput = document.querySelector('input[name="warmup"]');
 const saveWorkoutBtn = document.getElementById("save-workout-btn");
 const workoutNameInput = document.getElementById("workout-name");
+const cancelWorkoutBtn = document.getElementById("cancel-workout-btn");
 
 // Disable saveWorkoutBtn initially
 saveWorkoutBtn.disabled = true;
@@ -136,10 +137,8 @@ $(document).on('click', "#workout-list li", function(event) {
     duplicateItemBtn.addEventListener('click', function() {
       const newListItem = this.parentElement.cloneNode(true);
       newListItem.classList.remove('selected');
-      newListItem.classList.add('rest');
       newListItem.setAttribute('value', typesList.children.length + 1);
       typesList.appendChild(newListItem);
-    
       // Remove the copy and delete buttons from the new list item
       const copyDelButtons = newListItem.querySelectorAll('.copy-del-btn');
       copyDelButtons.forEach(button => {
@@ -176,6 +175,12 @@ function clearFields() {
 
 // Event listener for clearListBtn click
 clearListBtn.addEventListener("click", clearList);
+
+cancelWorkoutBtn.addEventListener("click", () => {
+  const referringUrl = document.referrer;
+  const referringUri = referringUrl.split('/').slice(3).join('/');
+  window.location.href = referringUri;
+});
 
 // Function to clear the types list
 function clearList() {

@@ -1,10 +1,8 @@
 const urlParams = new URLSearchParams(window.location.search);
 const workoutId = urlParams.get('workout_id');
 const workoutName = urlParams.get('workout_name');
-const redirectUrl = `workout.php?workout_id=${workoutId}&workout_name=${encodeURIComponent(workoutName)}`;
 saveWorkoutBtn = document.getElementById("save-workout-btn");
 const deleteWorkoutBtn = document.getElementById("delete-workout-btn");
-const cancelWorkoutBtn = document.getElementById("cancel-workout-btn");
 
 saveWorkoutBtn = document.getElementById("save-workout-btn");
 saveWorkoutBtn.addEventListener("click", () => {
@@ -51,10 +49,6 @@ saveWorkoutBtn.addEventListener("click", () => {
   };
 
   xhr.send(JSON.stringify(payload));
-});
-
-cancelWorkoutBtn.addEventListener("click", () => {
-  window.location.href = redirectUrl;
 });
 
 deleteWorkoutBtn.addEventListener("click", () => {
