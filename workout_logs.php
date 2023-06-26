@@ -50,7 +50,7 @@
       echo "<tr>";
       echo "<td><a href='workout_log.php?log_id=$logId'>$dayName, $formattedStartTime</a></td>";
       echo "<td>$length</td>";
-      echo "<td><a href='#' class='delete-btn' data-log-id='$logId'><i class='material-icons'>delete</i></a></td>";
+      echo "<td><a href='#' class='delete-btn' log_id='$logId'><i class='material-icons'>delete</i></a></td>";
       echo "</tr>";
     }    
     echo "</tbody>";
@@ -59,5 +59,27 @@
     <a href="workout.php?workout_id=<?php echo $workoutId ?>&user_id=<?php echo $userId ?>" id="closeBtn" class="close-btn">
       <i class="material-icons">close</i></a>
 </main>
+<script>
+  $(document).ready(function() {
+    $('.delete-btn').click(function(e) {
+      e.preventDefault();
+      // Prompt for confirmation before deleting the workout log
+      if (!confirm('Are you sure you want to delete this workout log?')) {
+        return;
+      } else {  
+        const logId = $(this).attr('log_id');
+        $.ajax({
+          url: 'php/delete_workout_log.php',
+          type: 'POST',
+          data: JSON.stringify({ log_Id: logId }), // Send data as JSON
+          success: function(data) {
+            console.log(data); // Display the response in the console
+            location.reload();
+          }
+        });
+      }
+    });
+  });
+</script>
 </body>
 </html>

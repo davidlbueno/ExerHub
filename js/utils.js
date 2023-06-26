@@ -12,15 +12,15 @@ function createWorkoutLogEntry(userId, workoutId, workoutStartTime, workoutEndTi
   });
 }
 
-function createWorkoutLogItemEntry(userId, workoutLogId, exerciseType, exerciseId, exerciseTime, exerciseReps) {
+function createWorkoutLogItemEntry(userId, workoutLogId, exerciseType, exerciseId, exerciseTime, exerciseReps, warmup) {
   let query;
   let params;
   if (exerciseType === 'Rest') {
     query = "INSERT INTO workout_log_items (workout_log_id, exercise_type, exercise_time) VALUES (?, ?, ?)";
     params = [workoutLogId, exerciseType, exerciseTime];
   } else {
-    query = "INSERT INTO workout_log_items (workout_log_id, exercise_type, exercise_id, exercise_time, reps) VALUES (?, ?, ?, ?, ?)";
-    params = [workoutLogId, exerciseType, exerciseId, exerciseTime, exerciseReps];
+    query = "INSERT INTO workout_log_items (workout_log_id, exercise_type, exercise_id, exercise_time, reps, warmup) VALUES (?, ?, ?, ?, ?, ?)";
+    params = [workoutLogId, exerciseType, exerciseId, exerciseTime, exerciseReps, warmup];
   }
   console.log(query);
   console.log(params);
