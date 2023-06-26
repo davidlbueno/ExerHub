@@ -21,8 +21,7 @@
       $row = mysqli_fetch_assoc($result);
       $workoutName = $row['name'];
       echo "<h4>$workoutName</h4>";
-
-      $query = "SELECT ws.type, e.id AS exercise_id, e.name AS exercise_name, ws.seconds
+      $query = "SELECT ws.type, e.id AS exercise_id, e.name AS exercise_name, ws.seconds, ws.warmup
                 FROM workout_sequences ws
                 LEFT JOIN exercises e ON e.id = ws.exercise_id
                 WHERE ws.workout_id = $workoutId";
@@ -53,6 +52,7 @@
               $exerciseName = $row['exercise_name'];
               $exerciseType = $row['type'];
               $seconds = $row['seconds'];
+              $warmup = $row['warmup'];
               if ($exerciseType === 'Rest') {
                 ?>
                 <li class="rest">
@@ -63,10 +63,10 @@
                   </li>
                 <?php
               } else {
-                if ($exerciseType === 'Warmup') {
+                if ($warmup === '1') {
                   ?>
-                  <li class="exercise-list-item" data-exercise-id="<?= $exerciseId ?>">
-                    <strong><?= $exerciseType ?></strong> - <?= $exerciseName ?> (<?= $seconds ?> seconds)
+                  <li class="exercise-list-item warmup" data-exercise-id="<?= $exerciseId ?>">
+                    <strong><?= $exerciseType ?></strong> - <?= $exerciseName ?> (<?= $seconds ?> seconds) - Warmup
                     <div class="exercise-details">
                       Actual Reps: <input type="number" class="repsInput" max="999" placeholder="Reps" style="width: 70px; height: 30px">
                       Actual Seconds: <span class="actualSeconds">0</span>
@@ -96,7 +96,7 @@
           <a href="workout.php?workout_id=<?= urlencode($workoutId) ?>&workout_name=<?= urlencode($workoutName) ?>" class="close-btn">
             <i class="material-icons">close</i>
           </a>
-          <div class="footer" style="background-color: #252525; margin-top: 40px">
+          <div class="footer" style="background-color: #252525;">
             <button id="saveWorkoutBtn" class="btn" >Save Workout</button>
             <button id="viewLogBtn" class="btn" >View Log</button>
           </div>

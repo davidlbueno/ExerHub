@@ -13,11 +13,13 @@ saveWorkoutBtn.addEventListener("click", () => {
     const exerciseValue = typeText.split(' - ')[1].split(' (')[0];
     const secondsText = typeText.match(/\((\d+)s\)/)[1];
     const secondsValue = parseInt(secondsText, 10);
-
+    const warmupValue = types[i].classList.contains('warmup') ? 1 : 0;
+    
     workoutData.push({
       type: typeValue,
       exercise: exerciseValue,
       seconds: secondsValue,
+      warmup: warmupValue,
     });
   }
 
@@ -38,8 +40,8 @@ saveWorkoutBtn.addEventListener("click", () => {
   };
 
   const payload = {
-    workoutName: workoutName, // Correct property name
-    workoutData: workoutData, // Correct property name
+    workoutName: workoutName,
+    workoutData: workoutData, 
   };
 
   xhr.send(JSON.stringify(payload));

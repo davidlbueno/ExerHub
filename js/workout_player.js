@@ -26,36 +26,33 @@ document.addEventListener('DOMContentLoaded', function () {
     activeItem.classList.remove('active');
     item.classList.add('active');
 
-    const exerciseType = item.querySelector('strong').textContent.trim();
-    document.getElementById('currentExerciseName').textContent = exerciseType === 'Rest' ? 'Rest' : item.innerText.split('-')[1].trim();
-
-    const exerciseDetails = activeItem.querySelector('.exercise-details');
-    if (exerciseDetails) {
-      exerciseDetails.style.display = 'none';
-    }
-
-    const activeExerciseDetails = item.querySelector('.exercise-details');
-    if (activeExerciseDetails) {
-      activeExerciseDetails.style.display = 'block';
-    }
-
-    if (item.classList.contains('rest')) {
-      const previousItem = item.previousElementSibling;
-      const previousExerciseDetails = previousItem.querySelector('.exercise-details');
-      if (previousExerciseDetails) {
-        previousExerciseDetails.style.display = 'block';
-      }
-    }
-
     const listItems = document.querySelectorAll('.workout-list li');
     listItems.forEach((li) => {
-      if (!li.classList.contains('active') && !li.classList.contains('rest')) {
+      if (!li.classList.contains('active')) {
         const exerciseDetails = li.querySelector('.exercise-details');
         if (exerciseDetails) {
           exerciseDetails.style.display = 'none';
         }
       }
     });
+
+    const exerciseType = item.querySelector('strong').textContent.trim();
+    document.getElementById('currentExerciseName').textContent = exerciseType === 'Rest' ? 'Rest' : item.innerText.split('-')[1].trim();
+
+    const exerciseDetails = activeItem.querySelector('.exercise-details');
+
+    if (item != firstItem && item.previousElementSibling) {
+      item.classList.add('show-prev-details');
+      const previousItem = item.previousElementSibling;
+      const previousExerciseDetails = previousItem.querySelector('.exercise-details');
+      previousItem.classList.remove('show-prev-details');
+      
+      previousExerciseDetails.style.display = 'block';
+    }
+
+    if (item != firstItem && item.previousElementSibling) {
+      
+    }
   }
 
   const workoutItems = document.querySelectorAll('ol li');
@@ -203,6 +200,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (prevItem) {
       pauseCountdown();
+      activeItem.classList.remove('show-prev-details');
+      const exerciseDetails = prevItem.querySelector('.exercise-details');
+      exerciseDetails.style.display = 'none';
       setActiveItem(prevItem);
       const prevSeconds = parseInt(prevItem.textContent.match(/\d+/));
       resetCountdown(prevItem);
