@@ -27,14 +27,13 @@
       </div>
       <div class="col s12">
         <ol id="workout-list" class="sortable">
-          <?php
-          require_once 'php/db.php';
+          <?php require_once 'php/db.php';
 
           // Get the workout ID from the URL parameter
           $workoutId = $_GET['workout_id'];
 
           // Retrieve the workout sequence items from the database
-          $query = "SELECT ws.type, e.name AS exercise_name, ws.seconds 
+          $query = "SELECT ws.type, e.name AS exercise_name, ws.seconds, ws.warmup 
                     FROM workout_sequences ws
                     LEFT JOIN exercises e ON ws.exercise_id = e.id
                     WHERE ws.workout_id = $workoutId
@@ -43,15 +42,16 @@
 
           // Create the list items based on the retrieved data
           while ($row = mysqli_fetch_assoc($result)) {
-            $type = $row['type'];
+            $exerciseType = $row['type'];
             $exerciseName = $row['exercise_name'];
             $seconds = $row['seconds'];
+            $warmup = $row['warmup'];
 
-            if ($type === "Rest") {
+            if ($exerciseType === "Rest") {
               echo "<li class='rest'><strong>Rest</strong> - ({$seconds}s)</li>";
             } else {
-              if ($type === "Warmup") {
-                echo "<li class='warmup'><strong>Warmup</strong> - $exerciseName ({$seconds}s)</li>";
+              if ($warmup === '1') {
+                echo "<li class='warmup'><strong>$exerciseType</strong> - $exerciseName ({$seconds}s) - Warmup</li>";
               } else {
                 $exerciseType = $exercises[$exerciseName]['type'];
                 echo "<li ><strong>$exerciseType</strong> - $exerciseName ({$seconds}s)</li>";
@@ -63,56 +63,63 @@
       </div>
     </div>
     <div class="row">
-      <div class="input-field col s3">
+      <div class="input-field col s2">
         <select name="type" id="type-select">
           <option value="" disabled selected>Item</option>
           <option value="Push">Push</option>
           <option value="Pull">Pull</option>
           <option value="Legs">Legs</option>
+          <option value="Core">Core</option>
           <option value="Rest">Rest</option>
-          <option value="Warmup">Warmup</option>
         </select>
       </div>
-      <div class="input-field col s5">
-        <select name="exercise" id="exercise-select" disabled>
-          <option value="" disabled selected>Exercise</option>
-        </select>
-      </div>
-      <div class="input-field col s2">
-        <input type="number" name="seconds" min="0" max="300" step="15" placeholder="Seconds" style="width:100%;">
-      </div>
-      <div class="input-field col s2">
-        <input type="number" name="sets" id="sets-select" min="0" max="10" step="1" placeholder="Sets" style="width:100%;">
-      </div>
+    <div class="input-field col s4">
+      <select name="exercise" id="exercise-select" disabled>
+        <option value="" disabled selected>Exercise</option>
+      </select>
+    </div>
+    <div class="input-field col s2">
+      <input type="number" name="seconds" min="0" max="300" step="5" placeholder="Seconds" style="width:100%;">
+    </div>
+    <div class="input-field col s2">
+    <input type="number" name="sets" id="sets-select" min="0" max="10" step="1" placeholder="Sets" style="width:100%;">
     </div>
     <div class="row">
-      <div class="col s12">
-        <button id="add-type-btn" class="btn">Add Item</button>
-        <button id="clear-list-btn" class="btn">Clear List</button>
-        <button id="save-workout-btn" class="btn">Update Workout</button>
-        <button id="delete-workout-btn" class="btn">Delete Workout</button>
-        <button id="cancel-workout-btn" class="btn">Cancel</button>
-      </div>
+    <div class="input-field col s2" style="display: flex; align-items: center;">
+      <label>
+        <input type="checkbox" name="warmup" id="warmup" style="width:100%;">
+        <span>Warmup</span>
+      </label>
     </div>
-  </main>
-  <script src="js/nav.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      var script = document.createElement('script');
-      script.src = 'js/create_workout.js';
-      document.head.appendChild(script);
-    });
-  </script>
-  <script src="js/update_workout.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      var urlParams = new URLSearchParams(window.location.search);
-      var workoutName = urlParams.get('workout_name');
+  </div>
+  <div class="row">
+    <div class="col s12">
+      <button id="add-type-btn" class="btn">Add Item</button>
+      <button id="clear-list-btn" class="btn">Clear List</button>
+      <button id="save-workout-btn" class="btn">Update Workout</button>
+      <button id="delete-workout-btn" class="btn">Delete Workout</button>
+      <button id="cancel-workout-btn" class="btn">Cancel</button>
+    </div>
+  </div>
+</main>
+<script src="js/nav.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var script = document.createElement('script');
+    script.src = 'js/create_workout.js';
+    document.head.appendChild(script);
+  });
+</script>
+<script src="js/update_workout.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var urlParams = new URLSearchParams(window.location.search);
+    var workoutName = urlParams.get('workout_name');
 
-      if (workoutName) {
-        document.getElementById('workout-name').value = workoutName;
-      }
-    });
-  </script>
+    if (workoutName) {
+      document.getElementById('workout-name').value = workoutName;
+    }
+  });
+</script>
 </body>
 </html>

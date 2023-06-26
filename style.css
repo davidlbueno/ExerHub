@@ -160,6 +160,7 @@ li {
   margin-bottom: 5px;
   background-color: #3d3d3d;
   border: 1px solid #5c5b5b;
+  transition: margin-top 0.3s ease;
 }
 
 li:nth-child(even) {
@@ -205,16 +206,12 @@ li.selected {
   background-color: rgb(39, 91, 0);
 }
 
-.workout-list li.warmup {
-  background-color: rgb(47, 59, 200);
-}
-
 .workout-list li.rest.active {
-  background-color: rgb(43, 160, 0);
+  background-color: rgb(43, 160, 0) !important;
 }
 
 .workout-list li.warmup.active {
-  background-color: rgb(0, 115, 255);
+  background-color: rgb(0, 115, 255) !important;
 }
 
 .progress-bar {
@@ -294,21 +291,8 @@ li.selected {
   align-items: left;  
 }
 
-li {
-  /* Define initial transition properties */
-  transition: margin-top 0.3s ease;
-}
-
-li.active + li {
-  margin-top: 40px; /* Adjust the spacing as needed */
-}
-
-li.rest.active or li.warmup.active + li {
+.show-prev-details {
   margin-top: 40px;
-}
-
-/* Add the transition property for the active state */
-li.active + li {
   transition: margin-top 0.3s ease;
 }
 

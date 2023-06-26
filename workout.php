@@ -29,7 +29,7 @@
       $workoutName = $row['name'];
       echo "<h1>$workoutName</h1>";
 
-      $query = "SELECT ws.type, e.id AS exercise_id, e.name AS exercise_name, ws.seconds
+      $query = "SELECT ws.type, e.id AS exercise_id, e.name AS exercise_name, ws.seconds, ws.warmup
                 FROM workout_sequences ws
                 LEFT JOIN exercises e ON e.id = ws.exercise_id
                 WHERE ws.workout_id = $workoutId";
@@ -41,11 +41,12 @@
         $type = $row['type'];
         $exerciseName = $row['exercise_name'];
         $seconds = $row['seconds'];
+        $warmup = $row['warmup'];
 
         if ($type === "Rest") {
           echo "<li class='rest'><strong>Rest</strong> - ({$seconds}s)</li>";
         } else {
-          if ($type === "Warmup") {
+          if ($warmup === '1') {
             echo "<li class='warmup'><strong>Warmup</strong> - $exerciseName ({$seconds}s)</li>";
           } else {
             $exerciseType = $exercises[$exerciseName]['type'];

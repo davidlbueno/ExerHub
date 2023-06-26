@@ -6,38 +6,28 @@ saveWorkoutBtn = document.getElementById("save-workout-btn");
 const deleteWorkoutBtn = document.getElementById("delete-workout-btn");
 const cancelWorkoutBtn = document.getElementById("cancel-workout-btn");
 
-
+saveWorkoutBtn = document.getElementById("save-workout-btn");
 saveWorkoutBtn.addEventListener("click", () => {
   const workoutName = document.getElementById("workout-name").value;
   const workoutList = document.getElementById("workout-list");
   const types = workoutList.children;
+
+  // Create an array to store the exercise data
   const workoutData = [];
 
   for (let i = 0; i < types.length; i++) {
     const typeText = types[i].textContent;
     const typeValue = typeText.split(' ')[0];
-
-    if (typeValue === 'Rest') {
-      const secondsText = typeText.match(/\((\d+)s\)/)[1];
-      const secondsValue = parseInt(secondsText, 10);
-
-      workoutData.push({
-        type: typeValue,
-        exercise: 'Rest',
-        seconds: secondsValue,
-      });
-
-      continue;
-    }
-
-    const exerciseValue = typeText.split(' - ')[1].split(' (')[0];
+    const exerciseValue = typeValue === 'rest' ? null : typeText.split(' - ')[1].split(' (')[0];  
     const secondsText = typeText.match(/\((\d+)s\)/)[1];
     const secondsValue = parseInt(secondsText, 10);
-
+    const warmupValue = types[i].classList.contains('warmup') ? 1 : 0;
+    
     workoutData.push({
       type: typeValue,
       exercise: exerciseValue,
       seconds: secondsValue,
+      warmup: warmupValue,
     });
   }
 

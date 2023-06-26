@@ -1,13 +1,11 @@
 <?php
 include 'db.php';
 
-// Retrieve data from the AJAX request
 $data = json_decode(file_get_contents("php://input"), true);
-$workoutId = $data['workoutId']; // Use correct property name
-$workoutName = $data['workoutName']; // Update variable name
-$workoutData = $data['workoutData']; // Update variable name
+$workoutId = $data['workoutId'];
+$workoutName = $data['workoutName'];
+$workoutData = $data['workoutData'];
 
-// Initialize the response array
 $response = array();
 
 try {
@@ -17,7 +15,6 @@ try {
   if (!$queryResult) {
     throw new Exception("Failed to update workout name: " . mysqli_error($conn));
   }
-
   $response['message'][] = "Workout name updated successfully!";
 
   // Delete existing workout sequence items
@@ -26,7 +23,6 @@ try {
   if (!$queryResult) {
     throw new Exception("Failed to delete existing workout sequence items: " . mysqli_error($conn));
   }
-
   $response['message'][] = "Deleted existing workout sequence items!";
 
   // Insert updated workout sequence items
@@ -35,8 +31,8 @@ try {
     $type = $item['type'];
     $exercise = $item['exercise'];
     $seconds = $item['seconds'];
+    $warmup = $item['warmup'];
 
-    // Handle Rest items with null exercise value
     if ($type === 'Rest') {
       $exerciseId = 'NULL';
     } else {
@@ -50,11 +46,12 @@ try {
       $exerciseId = $row['id'];
 
       if (!$exerciseId) {
-        //throw new Exception("Exercise '$exercise' not found!");
+        throw new Exception("Exercise '$exercise' not found!");
       }
     }
+    
     // Insert workout sequence item
-    $query = "INSERT INTO workout_sequences (workout_id, type, exercise_id, seconds) VALUES ($workoutId, '$type', $exerciseId, $seconds)";
+    $query = "INSERT INTO workout_sequences (workout_id, type, exercise_id, seconds, warmup) VALUES ($workoutId, '$type', $exerciseId, $seconds, $warmup)";
     $queryResult = query($query);
     if (!$queryResult) {
       throw new Exception("Failed to insert workout sequence item: " . mysqli_error($conn));
