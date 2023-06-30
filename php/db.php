@@ -24,21 +24,31 @@ function query($query) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $query = $_POST['query'];
   $params = $_POST['params'];
-  // Prepare the statement
+
   $stmt = mysqli_prepare($conn, $query);
-  // Bind the parameters
+  
   mysqli_stmt_bind_param($stmt, str_repeat('s', count($params)), ...$params);
-  // Execute the statement
+  
   mysqli_stmt_execute($stmt);
-  // Get the newly inserted id
-  $id = mysqli_insert_id($conn);
-  // Check for errors
+
+  if (isset($_POST['update_session'])) {
+    session_start();
+    $_SESSION['user_name'] = $params[0];
+  }
+
   if (mysqli_stmt_errno($stmt)) {
     echo "SQL Command Failed: " . mysqli_stmt_error($stmt);
   } else {
-    echo $id;
+    $queryType = strtoupper(strtok(trim($query), " "));
+
+    if ($queryType === 'INSERT') {
+      echo mysqli_insert_id($conn);
+    } else if ($queryType === 'UPDATE' || $queryType === 'DELETE') {
+      echo "success";
+    } else {
+      echo "success";
+    }
   }
-  // Close the statement
   mysqli_stmt_close($stmt);
 }
 ?>

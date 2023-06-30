@@ -126,21 +126,14 @@
   document.getElementById("name-change-btn").addEventListener("click", function() {
     var name = document.getElementById("name").value;
     var userId = "<?php echo $userId ?>";
-    $.ajax({
-      type: "POST",
-      url: "php/update_account.php",
-      data: {
-        name: name,
-        userId: userId
-      },
-      success: function(data) {
-        console.log('"' + data + '"'); // Surround data with quotes to reveal any unexpected leading/trailing spaces or invisible characters.
-        if (data === "success") {
-          document.getElementById("name-change-btn").disabled = true;
-          alert("Name successfully changed");
-        } else {
-          alert("There was an error updating your name");
-        }
+    var params = [name, userId];
+    var query = "UPDATE users SET name = ? WHERE id = ?";
+    $.post("php/db.php", {query: query, params: params, update_session: true}, function(data) {
+      if (data === "success") {
+        alert("Name successfully updated");
+        window.location.reload();
+      } else {
+        alert("Name update failed");
       }
     });
   });
