@@ -42,7 +42,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
       $queryType = strtoupper(strtok(trim($query), " "));
 
-      if ($queryType === 'INSERT') {
+      if ($queryType === 'SELECT') {
+        // Fetch and store the query results
+        $result = mysqli_stmt_get_result($stmt);
+        $rows = mysqli_fetch_all($result, MYSQLI_ASSOC);
+        
+        // Convert the results to JSON format
+        $jsonData = json_encode($rows);
+        
+        // Set the response content type to JSON
+        header('Content-Type: application/json');
+        
+        // Output the JSON data
+        echo $jsonData;
+      } else if ($queryType === 'INSERT') {
         echo mysqli_insert_id($conn);
       } else if ($queryType === 'UPDATE' || $queryType === 'DELETE') {
         echo "success";
