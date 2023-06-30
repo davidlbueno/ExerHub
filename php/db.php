@@ -21,7 +21,6 @@ function query($query) {
   return $result;
 }
 
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   if (isset($_POST['query']) && isset($_POST['params'])) {
     $query = $_POST['query'];
@@ -54,5 +53,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     mysqli_stmt_close($stmt);
   }
 }
-
 ?>
