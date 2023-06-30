@@ -35,7 +35,7 @@ saveWorkoutBtn.addEventListener("click", () => {
   xhr.setRequestHeader("Content-Type", "application/json");
   xhr.onload = () => {
     if (xhr.status === 200) {
-      window.location.href = redirectUrl;
+      window.location.href = '../workouts.php';
       console.log(xhr.responseText);
     } else {
       console.error(xhr.responseText);

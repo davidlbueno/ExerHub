@@ -61,15 +61,29 @@ function updateNavigation(sessionVars) {
     li.appendChild(a);
     sideNav.appendChild(li);
   });
+
+ // Add username to sideNav
+ if (sessionVars.userName) {
+  const usernameLink = document.createElement('a');
+  usernameLink.textContent = 'My Account';
+  usernameLink.style.display = 'block';
+  usernameLink.className = 'btn';
+  usernameLink.href = 'account.php';
+  sideNav.appendChild(usernameLink);
+}
+
   // Add items to topNav
   topNavItems.forEach((item) => {
-    const li = document.createElement('li');
     const a = document.createElement('a');
+    // Add materialize class to topNav buttons
+    a.className = 'btn';
     a.textContent = item.title;
     a.href = item.href;
-    li.appendChild(a);
-    topNav.appendChild(li);
+    a.style.marginLeft = '10px'; // Add margin between buttons if desired
+    topNav.appendChild(a);
   });
+  // Add CSS style to align the buttons to the right
+  topNav.style.textAlign = 'right';
   // Make top-nav always visible
   topNav.classList.remove('hide');
 }

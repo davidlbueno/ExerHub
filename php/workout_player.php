@@ -46,6 +46,7 @@
         }
       }
       echo "</ol>";
+    }
     ?>
     <div class="container" style="display: flex; flex-direction: column;">
       <div class="upper-row" style="display: flex;">
