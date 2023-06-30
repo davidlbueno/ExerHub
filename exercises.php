@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>BWE - Exercises</title>
+  <title>ExerHub - Exercises</title>
   <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
   <script type="text/javascript" src="//code.jquery.com/jquery-3.6.0.min.js"></script>
   <script type="text/javascript" src="//cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
@@ -36,7 +36,7 @@
 <body class="dark">
   <nav>
     <div class="nav-wrapper">
-    <span class="brand-logo" style="margin-left: 60px"><a href="index.html">BWE/</a><span class="sub-page-name">Exercises</span></span>
+    <span class="brand-logo" style="margin-left: 60px"><a href="index.html"><i class="material-icons">home</i>/</a><span class="sub-page-name">Exercises</span></span>
       <a href="index.html" data-target="side-nav" class="show-on-large sidenav-trigger"><i class="material-icons">menu</i></a>
       <ul class="right" id="top-nav"></ul>
     </div>
