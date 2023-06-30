@@ -50,7 +50,7 @@
 
       echo "<tr>";
       echo "<td><a href='workout_log.php?log_id=$logId'>$workoutName</a></td>";
-      echo "<td><a href='workout_log.php?log_id=$logId'>$dayName $formattedStartTime</a></td>";
+      echo "<td><a href='workout_log.php?log_id=$logId'>$dayName, $formattedStartTime</a></td>";
       echo "<td><a href='workout_log.php?log_id=$logId'>$length</a></td>";
       echo "<td><a href='#' class='delete-btn' data-log-id='$logId'><i class='material-icons'>delete</i></a></td>";
       echo "</tr>";
