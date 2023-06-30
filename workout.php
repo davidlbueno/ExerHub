@@ -49,8 +49,7 @@
           if ($warmup === '1') {
             echo "<li class='warmup'><strong>Warmup</strong> - $exerciseName ({$seconds}s)</li>";
           } else {
-            $exerciseType = $exercises[$exerciseName]['type'];
-            echo "<li ><strong>$exerciseType</strong> - $exerciseName ({$seconds}s)</li>";
+            echo "<li ><strong>$type</strong> - $exerciseName ({$seconds}s)</li>";
           }
         }
       }
