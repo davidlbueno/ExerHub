@@ -18,19 +18,34 @@
 </nav>
   <ul class="sidenav" id="side-nav"></ul>
   <main class="container">
-  <div class="row">
-    <div class="col s8">
-    </div>
-    <div class="col s2" style="width: 174px; align-items: center; margin-top: 10px;">
-      <a href="create_workout.php" class="btn btn-floating waves-effect waves-light"><i class="material-icons">add</i></a><span style="margin-left: 5px;">Create Workout</span>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col s12">
-    <div class="col s8">
-    
-    </div>
-  </main>
-  <script src="../js/nav.js"></script>
+  <button class="btn" id="pushBtn">Push</button>
+  <button class="btn" id="pullBtn">Pull</button>
+  <button class="btn" id="legsBtn">Legs</button>
+  <div id="main"></div>
+</main>
+  <script src="js/nav.js"></script>
+  <script>
+  document.getElementById("pushBtn").addEventListener("click", () => fetchData('Push'));
+  document.getElementById("pullBtn").addEventListener("click", () => fetchData('Pull'));
+  document.getElementById("legsBtn").addEventListener("click", () => fetchData('Legs'));
+  function fetchData(type) {
+    const query = "SELECT name, difficulty FROM exercises WHERE type = ? ORDER BY CAST(difficulty AS UNSIGNED) ASC";
+    const params = [type];
+    $.post('php/db.php', { query, params }, null, 'json')
+      .done((data) => {
+        console.log(data);
+        // Display a table for the results
+        let table = "<table><thead><tr><th>Name</th><th>Difficulty</th></tr></thead><tbody>";
+        data.forEach((exercise) => {
+          table += "<tr><td>" + exercise.name + "</td><td>" + exercise.difficulty + "</td></tr>";
+        });
+        table += "</tbody></table>";
+        document.getElementById("main").innerHTML = table;
+      })
+      .fail((err) => {
+        console.log(err);
+      });
+  }
+</script>
 </body>
 </html>
