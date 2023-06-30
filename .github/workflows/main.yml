@@ -21,4 +21,4 @@ jobs:
           aws-region: us-east-1
 
       - name: Sync files to S3 bucket
-        run: aws s3 sync . s3:/bwe-site --delete
+        run: aws s3 sync . s3://bwe-site --delete
