@@ -50,6 +50,7 @@
     <div>
       <label for="current-password">Current Password:</label>
       <input type="password" id="current-password" name="current-password" required>
+      <span id="incorrect-password" style="color: red;"></span>
     </div>
     <div>
       <label for="new-password">New Password:</label>
@@ -134,6 +135,31 @@
         window.location.reload();
       } else {
         alert("Name update failed");
+      }
+    });
+  });
+
+  // create event listener for password change button
+  document.getElementById("update-password-btn").addEventListener("click", function() {
+  var currentPassword = document.getElementById("current-password").value;
+  var newPassword = document.getElementById("new-password").value;
+  var userId = "<?php echo $userId ?>";
+  var params = {currentPassword: currentPassword, newPassword: newPassword, userId: userId};
+    
+    $.post("php/update_password.php", params, function(data) {
+      if (data === "success") {
+        alert("Password successfully updated");
+        window.location.reload();
+      } else if (data === "Current password is incorrect") {
+        // Reset form fields
+        document.getElementById("current-password").value = "";
+        document.getElementById("new-password").value = "";
+        document.getElementById("confirm-new-password").value = "";
+        
+        // Display error message
+        document.getElementById("incorrect-password").innerHTML = "Incorrect password";
+      } else {
+        alert("Password update failed: " + data);
       }
     });
   });
