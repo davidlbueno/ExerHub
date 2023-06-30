@@ -26,35 +26,27 @@
 </main>
   <script src="js/nav.js"></script>
   <script>
-  document.getElementById("pushBtn").addEventListener("click", push);
-  document.getElementById("pullBtn").addEventListener("click", pull);
-  document.getElementById("legsBtn").addEventListener("click", legs);
-    function push() {
+  document.getElementById("pushBtn").addEventListener("click", () => fetchData('Push'));
+  document.getElementById("pullBtn").addEventListener("click", () => fetchData('Pull'));
+  document.getElementById("legsBtn").addEventListener("click", () => fetchData('Legs'));
+  function fetchData(type) {
     const query = "SELECT name, difficulty FROM exercises WHERE type = ? ORDER BY CAST(difficulty AS UNSIGNED) ASC";
-    const params = ['Push'];
+    const params = [type];
     $.post('php/db.php', { query, params }, null, 'json')
       .done((data) => {
         console.log(data);
         // Display a table for the results
         let table = "<table><thead><tr><th>Name</th><th>Difficulty</th></tr></thead><tbody>";
-        for (let i = 0; i < data.length; i++) {
-          table += "<tr><td>" + data[i].name + "</td><td>" + data[i].difficulty + "</td></tr>";
-        }
+        data.forEach((exercise) => {
+          table += "<tr><td>" + exercise.name + "</td><td>" + exercise.difficulty + "</td></tr>";
+        });
         table += "</tbody></table>";
         document.getElementById("main").innerHTML = table;
-
       })
       .fail((err) => {
         console.log(err);
       });
   }
-  function pull(){
-    alert("pull");
-  }
-  function legs(){
-    alert("legs");
-  }
-  </script>
-
+</script>
 </body>
 </html>
