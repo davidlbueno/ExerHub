@@ -1,7 +1,7 @@
 // Define separate arrays for sideNav and topNav items
 const sideNavItems = [
   { title: 'Method', href: '#' },
-  { title: 'Progressions', href: '#' },
+  { title: 'Progressions', href: 'progressions.php' },
   { title: 'Exercises', href: 'exercises.php' },
   { title: 'Workouts', href: 'workouts.php' },
   { title: 'Logs', href: 'logs.php' },

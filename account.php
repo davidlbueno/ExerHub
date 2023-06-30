@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="stylesheet" href="style.css">
-  <title>BWE - Login</title>
+  <title>ExerHub - Login</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <?php require_once 'php/db.php'; ?>
@@ -22,7 +22,7 @@
 <body class="dark">
 <nav>
   <div class="nav-wrapper">
-    <span class="brand-logo" style="margin-left: 60px"><a href="index.html">BWE</a><span class="sub-page-name"><a href="workouts.php">/</a>Account</span></span>
+    <span class="brand-logo" style="margin-left: 60px"><a href="index.html"><i class="material-icons">home</i></a><span class="sub-page-name"><a href="workouts.php">/</a>Account</span></span>
     <a href="index.html" data-target="side-nav" class="show-on-large sidenav-trigger"><i class="material-icons">menu</i></a>
     <ul class="right" id="top-nav"></ul>
   </div>

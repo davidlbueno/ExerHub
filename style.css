@@ -22,18 +22,42 @@ body.dark p {
 /* Navigation bar */
 nav {
   background-color: #a10000;
+  height: 48px;
+  line-height: 48px;
+  
 }
 
 nav a {
+  height: 48px !important;
+  line-height: 48px !important;
   color: #ffffff;
 }
 
+nav i{
+  height: 48px !important;
+  line-height: 48px !important;
+  margin-right: 2px !important;
+}
+
+.top-left {
+  float: left;
+  position: relative;
+  z-index: 1;
+  height: 48px;
+  margin: 0 18px;
+}
+
+
+
 .brand-logo a {
   text-align: left;
+  font-size: 20px;
   display: inline;
 }
 
 nav .brand-logo {
+  height: 48px;
+  font-size: 20px;
   left: auto !important;
   transform: none !important;
 }
@@ -63,6 +87,8 @@ nav .brand-logo {
 .btn {
   background-color: #424242;
   color: #ffffff;
+  height: 36px !important;
+  line-height: 36px !important;
 }
 
 #save-workout-btn.btn[disabled] {
