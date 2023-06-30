@@ -30,7 +30,7 @@ function fetchSessionVars() {
         }
       }
     };
-    xhr.open('GET', 'php/get_session_vars.php', true);
+    xhr.open('GET', '/php/get_session_vars.php', true);
     xhr.send();
   });
 }
