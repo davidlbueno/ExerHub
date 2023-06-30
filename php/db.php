@@ -16,39 +16,43 @@ function query($query) {
   $result = mysqli_query($conn, $query);
   if (!$result) {
     error_log("Query failed: " . mysqli_error($conn) . ". Query: " . $query);
-    die("An error occurred. Please check the server logs for more information.");
+    die("An error occurred: " . mysqli_error($conn));
   }
   return $result;
 }
 
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  $query = $_POST['query'];
-  $params = $_POST['params'];
+  if (isset($_POST['query']) && isset($_POST['params'])) {
+    $query = $_POST['query'];
+    $params = $_POST['params'];
 
-  $stmt = mysqli_prepare($conn, $query);
+    $stmt = mysqli_prepare($conn, $query);
   
-  mysqli_stmt_bind_param($stmt, str_repeat('s', count($params)), ...$params);
+    mysqli_stmt_bind_param($stmt, str_repeat('s', count($params)), ...$params);
   
-  mysqli_stmt_execute($stmt);
+    mysqli_stmt_execute($stmt);
 
-  if (isset($_POST['update_session'])) {
-    session_start();
-    $_SESSION['user_name'] = $params[0];
-  }
-
-  if (mysqli_stmt_errno($stmt)) {
-    echo "SQL Command Failed: " . mysqli_stmt_error($stmt);
-  } else {
-    $queryType = strtoupper(strtok(trim($query), " "));
-
-    if ($queryType === 'INSERT') {
-      echo mysqli_insert_id($conn);
-    } else if ($queryType === 'UPDATE' || $queryType === 'DELETE') {
-      echo "success";
-    } else {
-      echo "success";
+    if (isset($_POST['update_session'])) {
+      session_start();
+      $_SESSION['user_name'] = $params[0];
     }
+
+    if (mysqli_stmt_errno($stmt)) {
+      echo "SQL Command Failed: " . mysqli_stmt_error($stmt);
+    } else {
+      $queryType = strtoupper(strtok(trim($query), " "));
+
+      if ($queryType === 'INSERT') {
+        echo mysqli_insert_id($conn);
+      } else if ($queryType === 'UPDATE' || $queryType === 'DELETE') {
+        echo "success";
+      } else {
+        echo "success";
+      }
+    }
+    mysqli_stmt_close($stmt);
   }
-  mysqli_stmt_close($stmt);
 }
+
 ?>
