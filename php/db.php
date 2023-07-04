@@ -22,13 +22,20 @@ function query($query) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  if (isset($_POST['query']) && isset($_POST['params'])) {
+  if (isset($_POST['query'])) {
     $query = $_POST['query'];
-    $params = $_POST['params'];
+    $params = isset($_POST['params']) ? $_POST['params'] : [];
 
     $stmt = mysqli_prepare($conn, $query);
-  
-    mysqli_stmt_bind_param($stmt, str_repeat('s', count($params)), ...$params);
+
+    if ($stmt === false) {
+      echo "Failed to prepare statement: " . mysqli_error($conn);
+      exit();
+    }
+
+    if (count($params) > 0) {
+      mysqli_stmt_bind_param($stmt, str_repeat('s', count($params)), ...$params);
+    }
   
     mysqli_stmt_execute($stmt);
 
