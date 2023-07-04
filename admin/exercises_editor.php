@@ -140,6 +140,9 @@
         var exerciseData = <?php echo json_encode($exercises); ?>;
         var muscles = exerciseData[exerciseName].muscles;
 
+        // Reset all sliders to zero
+        $('.slider-container input[type="range"]').val(0);
+
         for (var muscleName in muscles) {
           if (muscles.hasOwnProperty(muscleName)) {
             var intensity = muscles[muscleName];
