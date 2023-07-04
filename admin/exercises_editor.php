@@ -102,8 +102,8 @@
     <div class="right-column">
       <?php foreach ($muscles as $muscle): ?>
         <div class="slider-container">
-          <label for="<?= $muscle['name'] ?>"><?= $muscle['name'] ?>:</label>
-          <input type="range" id="<?= $muscle['name'] ?>" name="<?= $muscle['name'] ?>" min="0" max="10" value="<?= isset($muscle['intensity']) ? $muscle['intensity'] : '0' ?>">
+          <label for="slider-<?= $muscle['name'] ?>"><?= $muscle['name'] ?>: <span id="slider-value-<?= $muscle['name'] ?>"></span></label>
+          <input type="range" id="slider-<?= $muscle['name'] ?>" name="<?= $muscle['name'] ?>" min="0" max="10" value="<?= isset($muscle['intensity']) ? $muscle['intensity'] : '0' ?>">
         </div>
       <?php endforeach; ?>
     </div>
@@ -143,9 +143,17 @@
         for (var muscleName in muscles) {
           if (muscles.hasOwnProperty(muscleName)) {
             var intensity = muscles[muscleName];
-            $('#' + muscleName).val(intensity);
+            $('#slider-' + muscleName).val(intensity);
+            $('#slider-value-' + muscleName).text(intensity);
           }
         }
+      });
+
+      // Update muscle name labels with slider values
+      $('.slider-container input[type="range"]').on('input', function() {
+        var muscleName = $(this).attr('name');
+        var intensity = $(this).val();
+        $('#slider-value-' + muscleName).text(intensity);
       });
     });
   </script>
