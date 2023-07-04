@@ -138,6 +138,7 @@
     // Update muscle sliders when exercise is clicked
     $('#exercise-table tbody').on('click', 'tr', function() {
       var $this = $(this);
+      $this.siblings().removeClass('selected');
       $this.toggleClass('selected', !$this.hasClass('selected'));
       var exerciseName = $this.find('td:first-child').text();
       var muscles = exerciseData[exerciseName].muscles;
@@ -187,7 +188,20 @@
           update_session: false
         },
         success: function(response) {
-          window.location.reload();
+          // Update the exercise data in the table for the selected exercise
+          var exerciseRow = $('#exercise-table tbody tr.selected');
+          var exerciseName = exerciseRow.find('td:first-child').text();
+          var exerciseData = exerciseRow.find('td:last-child').html();
+          var newExerciseData = '';
+          for (var i = 0; i < updates.length; i++) {
+            var update = updates[i];
+            newExerciseData += '<span>' + update.muscle + '</span> (' + update.intensity + ')<br>';
+          }
+          exerciseRow.find('td:last-child').html(newExerciseData);
+          exerciseData[exerciseName].muscles = updates.reduce(function(acc, update) {
+            acc[update.muscle] = update.intensity;
+            return acc;
+          }, {});
         },
         error: function(xhr, status, error) {
           console.error(error);
