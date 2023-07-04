@@ -59,7 +59,28 @@
     }
 
     .slider-container {
-      margin-top: 20px;
+      margin-top: 10px;
+    }
+
+    .slider-container .muscle-label {
+      position: relative;
+    }
+
+    .slider-container .muscle-label:before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: -8px;
+      transform: translate(-50%, -50%);
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: red;
+      display: none;
+    }
+
+    .slider-container .muscle-label.dot:before {
+      display: block;
     }
   </style>
 </head>
@@ -101,9 +122,9 @@
     </div>
     <div class="right-column">
       <?php foreach ($muscles as $muscle): ?>
-        <div class="slider-container">
-          <label for="slider-<?= $muscle['name'] ?>"><?= $muscle['name'] ?>: <span id="slider-value-<?= $muscle['name'] ?>"></span></label>
-          <input type="range" id="slider-<?= $muscle['name'] ?>" name="<?= $muscle['name'] ?>" min="0" max="10" value="<?= isset($muscle['intensity']) ? $muscle['intensity'] : '0' ?>">
+        <div class="slider-container" style="line-height: 1">
+          <label for="slider-<?= $muscle['name'] ?>" class="muscle-label"><?= $muscle['name'] ?>: <span id="slider-value-<?= $muscle['name'] ?>"></span></label>
+          <input type="range" style="margin: 0 0 0 0"id="slider-<?= $muscle['name'] ?>" name="<?= $muscle['name'] ?>" min="0" max="10" value="<?= isset($muscle['intensity']) ? $muscle['intensity'] : '0' ?>">
         </div>
       <?php endforeach; ?>
     </div>
@@ -136,27 +157,52 @@
 
       // Update muscle sliders when exercise is clicked
       $('#exercise-table tbody').on('click', 'tr', function() {
-        var exerciseName = $(this).find('td:first-child').text();
-        var exerciseData = <?php echo json_encode($exercises); ?>;
-        var muscles = exerciseData[exerciseName].muscles;
+    var exerciseName = $(this).find('td:first-child').text();
+    var exerciseData = <?php echo json_encode($exercises); ?>;
+    var muscles = exerciseData[exerciseName].muscles;
 
-        // Reset all sliders to zero
-        $('.slider-container input[type="range"]').val(0);
+    // Reset all sliders and labels to zero
+    $('.slider-container input[type="range"]').val(0).prev('.muscle-label').removeClass('dot').find('span').text(0);
 
-        for (var muscleName in muscles) {
-          if (muscles.hasOwnProperty(muscleName)) {
-            var intensity = muscles[muscleName];
-            $('#slider-' + muscleName).val(intensity);
-            $('#slider-value-' + muscleName).text(intensity);
-          }
+    for (var muscleName in muscles) {
+      if (muscles.hasOwnProperty(muscleName)) {
+        var intensity = muscles[muscleName];
+        $('#slider-' + muscleName).val(intensity);
+        $('#slider-value-' + muscleName).text(intensity);
+
+        if (intensity > 0) {
+          $('#slider-' + muscleName).prev('.muscle-label').addClass('dot');
         }
+      }
+    }
+});
+
+
+      // Set initial slider values
+      $('.slider-container input[type="range"]').each(function() {
+          var muscleName = $(this).attr('name');
+          var intensity = $(this).val();
+          $('#slider-value-' + muscleName).text(intensity);
+
+          if (intensity > 0) {
+              $(this).prev('.muscle-label').addClass('dot');
+          } else {
+              $(this).prev('.muscle-label').removeClass('dot');
+          }
       });
+
 
       // Update muscle name labels with slider values
       $('.slider-container input[type="range"]').on('input', function() {
         var muscleName = $(this).attr('name');
         var intensity = $(this).val();
         $('#slider-value-' + muscleName).text(intensity);
+
+        if (intensity > 0) {
+          $(this).prev('.muscle-label').addClass('dot');
+        } else {
+          $(this).prev('.muscle-label').removeClass('dot');
+        }
       });
     });
   </script>
