@@ -194,7 +194,44 @@
         });
       }
     });
+    
+    // Create the AJAX request
+    $.ajax({
+      url: '../php/db.php',
+      type: 'POST',
+      data: {
+        query: 'UPDATE exercise_muscles SET intensity = CASE muscle_id ' + generateCaseStatements(updates) + ' ELSE intensity END WHERE exercise_id = (SELECT id FROM exercises WHERE name = ?)',
+        params: generateParams(exerciseName, updates),
+        update_session: false
+      },
+      success: function(response) {
+        window.location.reload();
+      },
+      error: function(xhr, status, error) {
+        console.error(error);
+        alert('An error occurred while updating exercise muscles.');
+      }
+    });
     console.log(updates);
+
+    // Helper function to generate the CASE statements for the SQL query
+    function generateCaseStatements(updates) {
+      var caseStatements = '';
+      updates.forEach(function(update) {
+        caseStatements += ' WHEN (SELECT id FROM muscles WHERE name = ?) THEN ' + update.intensity;
+      });
+      return caseStatements;
+    }
+
+    // Helper function to generate the parameter array for the SQL query
+    function generateParams(exerciseName, updates) {
+      var params = [];
+      updates.forEach(function(update) {
+        params.push(update.muscle);
+      });
+      params.push(exerciseName); // Add exercise name parameter
+      return params;
+    }
   });
 });
 </script>
