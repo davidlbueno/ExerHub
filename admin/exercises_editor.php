@@ -37,25 +37,15 @@
   <style>
     .container {
       display: flex;
+      height: calc(100vh - 60px); /* Subtract the height of your navbar here */
     }
 
-    .left-column {
-      flex: 1;
-      padding-right: 20px;
-    }
-
+    .left-column,
     .right-column {
       flex: 1;
-    }
-
-    #exercise-table th:first-child,
-    #exercise-table td:first-child {
-      width: 40%;
-    }
-
-    #exercise-table th.type,
-    #exercise-table td.type {
-      width: 20%;
+      padding: 18px;
+      overflow-y: auto;
+      height: 100%;
     }
 
     .slider-container {
@@ -107,12 +97,12 @@
         <tbody>
           <?php foreach ($exercises as $exerciseName => $exerciseData): ?>
             <tr>
-              <td><?= $exerciseName ?></td>
-              <td><?= $exerciseData['type'] ?></td>
-              <td><?= $exerciseData['difficulty'] ?></td>
+              <td><?= htmlspecialchars($exerciseName) ?></td>
+              <td><?= htmlspecialchars($exerciseData['type']) ?></td>
+              <td><?= htmlspecialchars($exerciseData['difficulty']) ?></td>
               <td>
                 <?php foreach ($exerciseData['muscles'] as $muscleName => $intensity): ?>
-                  <span><?= $muscleName ?></span> (<?= $intensity ?>)<br>
+                  <span><?= htmlspecialchars($muscleName) ?></span> (<?= htmlspecialchars($intensity) ?>)<br>
                 <?php endforeach; ?>
               </td>
             </tr>
@@ -155,54 +145,31 @@
 
       $('.dataTables_filter').hide();
 
-      // Update muscle sliders when exercise is clicked
+      var exerciseData = <?php echo json_encode($exercises); ?>;
+
       $('#exercise-table tbody').on('click', 'tr', function() {
-    var exerciseName = $(this).find('td:first-child').text();
-    var exerciseData = <?php echo json_encode($exercises); ?>;
-    var muscles = exerciseData[exerciseName].muscles;
+        var exerciseName = $(this).find('td:first-child').text();
+        var muscles = exerciseData[exerciseName].muscles;
 
-    // Reset all sliders and labels to zero
-    $('.slider-container input[type="range"]').val(0).prev('.muscle-label').removeClass('dot').find('span').text(0);
-
-    for (var muscleName in muscles) {
-      if (muscles.hasOwnProperty(muscleName)) {
-        var intensity = muscles[muscleName];
-        $('#slider-' + muscleName).val(intensity);
-        $('#slider-value-' + muscleName).text(intensity);
-
-        if (intensity > 0) {
-          $('#slider-' + muscleName).prev('.muscle-label').addClass('dot');
-        }
-      }
-    }
-});
-
-
-      // Set initial slider values
-      $('.slider-container input[type="range"]').each(function() {
+        $('.slider-container input[type="range"]').each(function() {
           var muscleName = $(this).attr('name');
-          var intensity = $(this).val();
-          $('#slider-value-' + muscleName).text(intensity);
-
-          if (intensity > 0) {
-              $(this).prev('.muscle-label').addClass('dot');
-          } else {
-              $(this).prev('.muscle-label').removeClass('dot');
-          }
+          var intensity = muscles.hasOwnProperty(muscleName) ? muscles[muscleName] : 0;
+          updateSlider($(this), intensity);
+        });
       });
 
-
-      // Update muscle name labels with slider values
-      $('.slider-container input[type="range"]').on('input', function() {
-        var muscleName = $(this).attr('name');
-        var intensity = $(this).val();
-        $('#slider-value-' + muscleName).text(intensity);
-
+      function updateSlider($slider, intensity) {
+        $slider.val(intensity);
+        $slider.next('span').text(intensity);
         if (intensity > 0) {
-          $(this).prev('.muscle-label').addClass('dot');
+          $slider.parent().find('.muscle-label').addClass('dot');
         } else {
-          $(this).prev('.muscle-label').removeClass('dot');
+          $slider.parent().find('.muscle-label').removeClass('dot');
         }
+      }
+
+      $('.slider-container input[type="range"]').each(function() {
+        updateSlider($(this), $(this).val());
       });
     });
   </script>
