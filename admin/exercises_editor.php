@@ -186,19 +186,15 @@
     $('.slider-container input[type="range"]').each(function() {
       var muscleName = $(this).attr('name');
       var intensity = $(this).val();
-      updates.push({
-        exercise: exerciseName,
-        muscle: muscleName,
-        intensity: intensity
-      });
-    });
-    $.post('exercises_editor.php', {updates: updates}, function(response) {
-      if (response.success) {
-        alert('Successfully updated.');
-      } else {
-        alert('An error occurred while updating.');
+      if (intensity > 0) {
+        updates.push({
+          exercise: exerciseName,
+          muscle: muscleName,
+          intensity: intensity
+        });
       }
-    }, 'json');
+    });
+    console.log(updates);
   });
 });
 </script>
