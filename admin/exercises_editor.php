@@ -9,12 +9,35 @@
   <script type="text/javascript" src="//cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <link rel="stylesheet" href="../style.css">
-  <?php require_once '../php/db.php'; ?>
-  <?php
+  <link rel="stylesheet" href="admin.css">
+  <?php 
+    require_once '../php/db.php'; 
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $exerciseName = $_POST['exercise'];
+        $muscleIntensities = $_POST['muscleIntensities'];
+
+        $exerciseId = findExerciseIdByName($exerciseName);
+
+        foreach ($muscleIntensities as $muscleName => $intensity) {
+            $muscleId = findMuscleIdByName($muscleName);
+
+            // If intensity is zero, delete the record
+            if ($intensity == 0) {
+                $query = "DELETE FROM exercise_muscles WHERE exercise_id = $exerciseId AND muscle_id = $muscleId";
+                query($query);
+            } else {
+                // If record exists, update it; otherwise, insert new record
+                $query = "INSERT INTO exercise_muscles (exercise_id, muscle_id, intensity)
+                    VALUES ($exerciseId, $muscleId, $intensity)
+                    ON DUPLICATE KEY UPDATE intensity = $intensity";
+                query($query);
+            }
+        }
+    }
     $result = query('SELECT e.name AS exercise_name, e.type AS exercise_type, e.difficulty, m.name AS muscle_name, em.intensity
-    FROM exercises e
-    JOIN exercise_muscles em ON e.id = em.exercise_id
-    JOIN muscles m ON m.id = em.muscle_id');
+      FROM exercises e
+      JOIN exercise_muscles em ON e.id = em.exercise_id
+      JOIN muscles m ON m.id = em.muscle_id');
     $exercises = array();
     while ($row = mysqli_fetch_assoc($result)) {
       $exerciseName = $row['exercise_name'];
@@ -31,48 +54,8 @@
       }
       $exercises[$exerciseName]['muscles'][$muscleName] = $intensity;
     }
-
     $muscles = query('SELECT * FROM muscles');
   ?>
-  <style>
-    .container {
-      display: flex;
-      height: calc(100vh - 60px); /* Subtract the height of your navbar here */
-    }
-
-    .left-column,
-    .right-column {
-      flex: 1;
-      padding: 18px;
-      overflow-y: auto;
-      height: 100%;
-    }
-
-    .slider-container {
-      margin-top: 10px;
-    }
-
-    .slider-container .muscle-label {
-      position: relative;
-    }
-
-    .slider-container .muscle-label:before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: -8px;
-      transform: translate(-50%, -50%);
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background-color: red;
-      display: none;
-    }
-
-    .slider-container .muscle-label.dot:before {
-      display: block;
-    }
-  </style>
 </head>
 <body class="dark">
   <nav>
@@ -96,7 +79,7 @@
         </thead>
         <tbody>
           <?php foreach ($exercises as $exerciseName => $exerciseData): ?>
-            <tr>
+            <tr style="background-color: #1e1e1e">
               <td><?= htmlspecialchars($exerciseName) ?></td>
               <td><?= htmlspecialchars($exerciseData['type']) ?></td>
               <td><?= htmlspecialchars($exerciseData['difficulty']) ?></td>
@@ -116,62 +99,108 @@
           <label for="slider-<?= $muscle['name'] ?>" class="muscle-label"><?= $muscle['name'] ?>: <span id="slider-value-<?= $muscle['name'] ?>"></span></label>
           <input type="range" style="margin: 0 0 0 0"id="slider-<?= $muscle['name'] ?>" name="<?= $muscle['name'] ?>" min="0" max="10" value="<?= isset($muscle['intensity']) ? $muscle['intensity'] : '0' ?>">
         </div>
-      <?php endforeach; ?>
+      <?php endforeach; ?><br>
+      <button class="btn waves-effect waves-light" id="update-button">Update</button>
     </div>
   </main>
   <script src="../js/nav.js"></script>
   <script>
-    $(document).ready(function() {
-      var exerciseTable = $('#exercise-table').DataTable({
-        paging: false,
-        searching: true,
-        columnDefs: [
-          { orderable: false, targets: [1] }
-        ]
-      });
+  $(document).ready(function() {
+  var exerciseTable = $('#exercise-table').DataTable({
+    paging: false,
+    searching: true,
+    columnDefs: [
+      { orderable: false, targets: [1] }
+    ]
+  });
+  
+  exerciseTable.column(1).every(function() {
+    var column = this;
+    var typeFilter = $(this.header()).find('select');
+    typeFilter.on('change', function() {
+      column.search($(this).val()).draw();
+    });
+    column.data().unique().sort().each(function(d) {
+      typeFilter.append('<option value="' + d + '">' + d + '</option>');
+    });
+  });
 
-      exerciseTable.column(1).every(function() {
-        var column = this;
-        var typeFilter = $(this.header()).find('select');
+  $('.dataTables_filter').hide();
+  var exerciseData = <?php echo json_encode($exercises); ?>;
 
-        typeFilter.on('change', function() {
-          column.search($(this).val()).draw();
-        });
+  // Set initial slider values
+  $('.slider-container input[type="range"]').each(function() {
+    var muscleName = $(this).attr('name');
+    var intensity = $(this).val();
+    $('#slider-value-' + muscleName).text(intensity); // Set initial value for the intensity span
+    if (intensity > 0) {
+      $(this).prev('.muscle-label').addClass('dot');
+    } else {
+      $(this).prev('.muscle-label').removeClass('dot');
+    }
+  });
 
-        column.data().unique().sort().each(function(d) {
-          typeFilter.append('<option value="' + d + '">' + d + '</option>');
-        });
-      });
-
-      $('.dataTables_filter').hide();
-
-      var exerciseData = <?php echo json_encode($exercises); ?>;
-
-      $('#exercise-table tbody').on('click', 'tr', function() {
-        var exerciseName = $(this).find('td:first-child').text();
-        var muscles = exerciseData[exerciseName].muscles;
-
-        $('.slider-container input[type="range"]').each(function() {
-          var muscleName = $(this).attr('name');
-          var intensity = muscles.hasOwnProperty(muscleName) ? muscles[muscleName] : 0;
-          updateSlider($(this), intensity);
-        });
-      });
-
-      function updateSlider($slider, intensity) {
-        $slider.val(intensity);
-        $slider.next('span').text(intensity);
+  // Update muscle sliders when exercise is clicked
+  $('#exercise-table tbody').on('click', 'tr', function() {
+    if ($(this).hasClass('selected')) {
+      $(this).removeClass('selected');
+    } else {
+      $('#exercise-table tbody tr.selected').removeClass('selected');
+      $(this).addClass('selected');
+    }
+    var exerciseName = $(this).find('td:first-child').text();
+    var muscles = exerciseData[exerciseName].muscles;
+    // Reset all sliders and labels to zero
+    $('.slider-container input[type="range"]').val(0).prev('.muscle-label').removeClass('dot').find('span').text(0); // Reset value for the intensity span
+    for (var muscleName in muscles) {
+      if (muscles.hasOwnProperty(muscleName)) {
+        var intensity = muscles[muscleName];
+        $('#slider-' + muscleName).val(intensity);
+        $('#slider-value-' + muscleName).text(intensity); // Set new value for the intensity span
         if (intensity > 0) {
-          $slider.parent().find('.muscle-label').addClass('dot');
-        } else {
-          $slider.parent().find('.muscle-label').removeClass('dot');
+          $('#slider-' + muscleName).prev('.muscle-label').addClass('dot');
         }
       }
+    }
+  });
 
-      $('.slider-container input[type="range"]').each(function() {
-        updateSlider($(this), $(this).val());
+  // Update muscle name labels with slider values
+  $('.slider-container input[type="range"]').on('input', function() {
+    var muscleName = $(this).attr('name');
+    var intensity = $(this).val();
+    $('#slider-value-' + muscleName).text(intensity); // Update value for the intensity span
+    if (intensity > 0) {
+      $(this).prev('.muscle-label').addClass('dot');
+    } else {
+      $(this).prev('.muscle-label').removeClass('dot');
+    }
+  });
+  
+  $('#update-button').click(function() {
+    var exerciseName = $('#exercise-table tbody tr.selected td:first-child').text();
+    if (!exerciseName) {
+      alert('Please select an exercise.');
+      return;
+    }
+    var updates = [];
+    $('.slider-container input[type="range"]').each(function() {
+      var muscleName = $(this).attr('name');
+      var intensity = $(this).val();
+      updates.push({
+        exercise: exerciseName,
+        muscle: muscleName,
+        intensity: intensity
       });
     });
-  </script>
+    $.post('exercises_editor.php', {updates: updates}, function(response) {
+      if (response.success) {
+        alert('Successfully updated.');
+      } else {
+        alert('An error occurred while updating.');
+      }
+    }, 'json');
+  });
+});
+</script>
 </body>
 </html>
