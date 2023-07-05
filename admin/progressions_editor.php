@@ -95,7 +95,7 @@
   </main>
   <script src="../js/nav.js"></script>
   <script>
-    $(document).ready(function() {
+  $(document).ready(function() {
     let addingExercise = false;
     let exerciseTable = $('#exercise-table').DataTable({
       paging: false,
@@ -149,6 +149,8 @@
       $('#cancel-add-item').css('display', 'block');
       $('#cancel-btn').css('display', 'none');
       $('#add-btn').css('display', 'none');
+      // Remove previous event bindings
+      $('#exercise-table tbody').off('click', 'tr', handleExerciseTableClick);
       $('#exercise-table tbody').on('click', 'tr', function() {
         if (addingExercise) {
           let exerciseName = exerciseTable.row(this).data()[0];
@@ -164,7 +166,10 @@
       addingExercise = false;
       $('#cancel-add-item').css('display', 'none');
       $('#cancel-btn').css('display', 'inline-block');
-      $('#exercise-table tbody').off('click', 'tr', handleExerciseTableClick);
+      // Remove the newly added event bindings
+      $('#exercise-table tbody').off('click', 'tr');
+      // Rebind the click event for 'tr'
+      $('#exercise-table tbody').on('click', 'tr', handleExerciseTableClick);
       $('#add-btn').css('display', 'inline-block');
     });
 
@@ -184,10 +189,13 @@
       $('#add-btn').css('display', 'none');
       addingExercise = false;
 
+      // Remove all event bindings
+      $('#exercise-table tbody').off('click', 'tr');
+
       // Rebind the click event for 'tr'
       $('#exercise-table tbody').on('click', 'tr', handleExerciseTableClick);
     });
   });
-  </script>
+</script>
 </body>
 </html>
