@@ -194,11 +194,13 @@ $(document).ready(function() {
   }
 
   // Helper function to generate the parameter array for the SQL query
-  function generateParams(exerciseName, updates, isUpdate) {
+    function generateParams(exerciseName, updates, isUpdate) {
     if (isUpdate) {
-      return updates.map(function(update) {
+      var params = updates.map(function(update) {
         return update.muscle;
-      }).concat(exerciseName);
+      });
+      params.push(exerciseName);
+      return params;
     } else {
       var params = [];
       updates.forEach(function(update) {
