@@ -12,24 +12,6 @@
   <link rel="stylesheet" href="admin.css">
   <?php 
     require_once '../php/db.php'; 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $exerciseName = $_POST['exercise'];
-        $muscleIntensities = $_POST['muscleIntensities'];
-        $exerciseId = findExerciseIdByName($exerciseName);
-        foreach ($muscleIntensities as $muscleName => $intensity) {
-            $muscleId = findMuscleIdByName($muscleName);
-            // If intensity is zero, delete the record
-            if ($intensity == 0) {
-                $query = "DELETE FROM exercise_muscles WHERE exercise_id = $exerciseId AND muscle_id = $muscleId";
-            } else {
-                // If record exists, update it; otherwise, insert new record
-                $query = "INSERT INTO exercise_muscles (exercise_id, muscle_id, intensity)
-                    VALUES ($exerciseId, $muscleId, $intensity)
-                    ON DUPLICATE KEY UPDATE intensity = $intensity";
-            }
-            query($query);
-        }
-    }
     $exercises = queryExercises();
     $muscles = query('SELECT * FROM muscles');
     function queryExercises() {
