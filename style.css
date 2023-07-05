@@ -81,6 +81,18 @@ nav .brand-logo {
   background-color: #1e1d1d;
 }
 
+select {
+  /* Styles for all select elements */
+  background-color: #262626;
+  color: #848484;
+  border: 1px solid #1e1e1e;
+}
+
+select:disabled {
+  background-color: #858484;
+  border: 1px solid #444444;
+}
+
 /* Button styles */
 .btn {
   background-color: #424242;
