@@ -77,4 +77,8 @@ tbody tr:hover {
 table.dataTable tbody tr {
   background-color: #1e1e1e;
  }
+
+table.dataTable tbody tr:hover {
+  background-color: #616161;
+}
  
