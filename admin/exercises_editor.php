@@ -223,34 +223,35 @@ $(document).ready(function() {
   }
 
   function updateExerciseMuscles(exerciseName, isUpdate, successCallback) {
-    var updates = [];
-    $('.slider-container input[type="range"]').each(function() {
-      var muscleName = $(this).attr('name');
-      var intensity = $(this).val();
-      if (intensity > 0) {
-        updates.push({
-          exercise: exerciseName,
-          muscle: muscleName,
-          intensity: intensity
-        });
-      }
-    });
-
-    if (!updates.length) {
-      alert('Please set at least one muscle intensity.');
-      return;
+  var updates = [];
+  $('.slider-container input[type="range"]').each(function() {
+    var muscleName = $(this).attr('name');
+    var intensity = $(this).val();
+    if (intensity > 0) {
+      updates.push({
+        exercise: exerciseName,
+        muscle: muscleName,
+        intensity: intensity
+      });
     }
+  });
 
-    var query = isUpdate 
-    ? 'UPDATE exercise_muscles SET intensity = CASE muscle_id ' + generateCaseStatements(updates) + ' ELSE intensity END WHERE exercise_id = (SELECT id FROM exercises WHERE name = ?)'
-    : 'INSERT INTO exercise_muscles (exercise_id, muscle_id, intensity) SELECT (SELECT id FROM exercises WHERE name = ?), (SELECT id FROM muscles WHERE name = ?), ? FROM dual';
+  if (!updates.length) {
+    alert('Please set at least one muscle intensity.');
+    return;
+  }
 
-    $.ajax({
+  var ajaxRequests = updates.map(update => {
+    var query = isUpdate
+      ? 'UPDATE exercise_muscles SET intensity = CASE muscle_id WHEN (SELECT id FROM muscles WHERE name = ?) THEN ? ELSE intensity END WHERE exercise_id = (SELECT id FROM exercises WHERE name = ?)'
+      : 'INSERT INTO exercise_muscles (exercise_id, muscle_id, intensity) SELECT (SELECT id FROM exercises WHERE name = ?), (SELECT id FROM muscles WHERE name = ?), ? FROM dual';
+
+    return $.ajax({
       url: '../php/db.php',
       type: 'POST',
       data: {
         query: query,
-        params: generateParams(exerciseName, updates, isUpdate),
+        params: isUpdate ? [update.muscle, update.intensity, exerciseName] : [exerciseName, update.muscle, update.intensity]
       },
       success: function(response) {
         if (typeof successCallback === 'function') {
@@ -262,7 +263,17 @@ $(document).ready(function() {
         alert('An error occurred while updating exercise muscles.');
       }
     });
-  } 
+  });
+
+  $.when.apply($, ajaxRequests)
+    .then(function() {
+      console.log("All updates have been processed successfully.");
+    })
+    .fail(function() {
+      console.log("An error occurred while processing the updates.");
+    });
+}
+ 
 
   $('#update-button').click(function() {
     var exerciseName = $('#exercise-table tbody tr.selected td:first-child').text();
