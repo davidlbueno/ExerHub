@@ -240,45 +240,31 @@ $(document).ready(function() {
     }
 
     var query = isUpdate 
-    ? 'UPDATE exercise_muscles SET intensity = CASE muscle_id ' + generateCaseStatements(updates) + ' ELSE intensity END WHERE exercise_id = (SELECT id FROM exercises WHERE name = ?)'
-    : 'INSERT INTO exercise_muscles (exercise_id, muscle_id, intensity) SELECT (SELECT id FROM exercises WHERE name = ?), (SELECT id FROM muscles WHERE name = ?), ? FROM dual';
+      ? 'UPDATE exercise_muscles SET intensity = CASE muscle_id ' + generateCaseStatements(updates) + ' ELSE intensity END WHERE exercise_id = (SELECT id FROM exercises WHERE name = ?)'
+      : 'INSERT INTO exercise_muscles (exercise_id, muscle_id, intensity) SELECT (SELECT id FROM exercises WHERE name = ?), (SELECT id FROM muscles WHERE name = ?), ? FROM dual';
 
-    $.ajax({
-      url: '../php/db.php',
-      type: 'POST',
-      data: {
-        query: query,
-        params: generateParams(exerciseName, updates, isUpdate),
-      },
-      success: function(response) {
-        if (typeof successCallback === 'function') {
-          successCallback(response, updates);
+    // Loop over each update and make an AJAX request for each one
+    updates.forEach(function(update) {
+      $.ajax({
+        url: '../php/db.php',
+        type: 'POST',
+        data: {
+          query: query,
+          params: [exerciseName, update.muscle, update.intensity],
+        },
+        success: function(response) {
+          if (typeof successCallback === 'function') {
+            successCallback(response, updates);
+          }
+        },
+        error: function(xhr, status, error) {
+          console.error(error);
+          alert('An error occurred while updating exercise muscles.');
         }
-      },
-      error: function(xhr, status, error) {
-        console.error(error);
-        alert('An error occurred while updating exercise muscles.');
-      }
+      });
     });
-  } 
+  }
 
-  $('#update-button').click(function() {
-    var exerciseName = $('#exercise-table tbody tr.selected td:first-child').text();
-    if (!exerciseName || !isMuscleIntensitySet()) {
-      alert('Please select an exercise.');
-      return;
-    }
-
-    updateExerciseMuscles(exerciseName, true, function(response, updates) {
-      var exerciseRow = $('#exercise-table tbody tr.selected');
-      var newExerciseData = '';
-      for (var i = 0; i < updates.length; i++) {
-        var update = updates[i];
-        newExerciseData += '<span>' + update.muscle + '</span> (' + update.intensity + ')<br>';
-      }
-      exerciseRow.find('td:last-child').html(newExerciseData);
-    });
-  });
 
   $('#add-button').click(function() {
     var exerciseName = $('#new-exercise-name').val();
@@ -312,6 +298,10 @@ $(document).ready(function() {
       alert('Please select an exercise.');
       return;
     }
+    // prompt the user to confirm the deletion
+    if (!confirm('Are you sure you want to delete the exercise "' + exerciseName + '"?')) {
+      return;
+    }
     // Create the AJAX request
     $.ajax({
       url: '../php/db.php',
@@ -330,6 +320,8 @@ $(document).ready(function() {
             params: [exerciseName],
           },
           success: function(response) {
+            // clear all sliders and labels
+            $('.slider-container input[type="range"]').val(0).prev('.muscle-label').removeClass('dot').find('span').text(0);
             // After the exercise record is deleted, we remove the exercise from the table
             $('#exercise-table tbody tr.selected').remove();
           },
