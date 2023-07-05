@@ -29,47 +29,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt = mysqli_prepare($conn, $query);
 
     if ($stmt === false) {
-      echo "Failed to prepare statement: " . mysqli_error($conn);
+      echo json_encode(['error' => 'Failed to prepare statement: ' . mysqli_error($conn)]);
       exit();
     }
 
-    if (count($params) > 0) {
+    if (!empty($params)) {
       mysqli_stmt_bind_param($stmt, str_repeat('s', count($params)), ...$params);
     }
-  
-    mysqli_stmt_execute($stmt);
 
-    if (isset($_POST['update_session'])) {
-      session_start();
-      $_SESSION['user_name'] = $params[0];
+    $executed = mysqli_stmt_execute($stmt);
+
+    if (!$executed) {
+      echo json_encode(['error' => 'SQL Command Failed: ' . mysqli_stmt_error($stmt)]);
+      exit();
     }
 
-    if (mysqli_stmt_errno($stmt)) {
-      echo "SQL Command Failed: " . mysqli_stmt_error($stmt);
-    } else {
-      $queryType = strtoupper(strtok(trim($query), " "));
+    $queryType = strtoupper(strtok(trim($query), " "));
 
-      if ($queryType === 'SELECT') {
-        // Fetch and store the query results
+    switch($queryType) {
+      case 'SELECT':
         $result = mysqli_stmt_get_result($stmt);
         $rows = mysqli_fetch_all($result, MYSQLI_ASSOC);
-        
-        // Convert the results to JSON format
-        $jsonData = json_encode($rows);
-        
-        // Set the response content type to JSON
-        header('Content-Type: application/json');
-        
-        // Output the JSON data
-        echo $jsonData;
-      } else if ($queryType === 'INSERT') {
-        echo mysqli_insert_id($conn);
-      } else if ($queryType === 'UPDATE' || $queryType === 'DELETE') {
-        echo "success";
-      } else {
-        echo "success";
-      }
+        echo json_encode($rows);
+        break;
+      case 'INSERT':
+        echo json_encode(['insert_id' => mysqli_insert_id($conn)]);
+        break;
+      case 'UPDATE':
+      case 'DELETE':
+      default:
+        echo json_encode(['success' => true]);
+        break;
     }
+
     mysqli_stmt_close($stmt);
   }
 }
