@@ -6,6 +6,8 @@
   <title>ExerHub - Admin: Progressions Editor</title>
   <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
   <script type="text/javascript" src="//code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
   <script type="text/javascript" src="//cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <link rel="stylesheet" href="../style.css">
@@ -84,7 +86,7 @@
         <div>
           <h4 id="selected-exercise-name" style="text-align: center; width: 100%; margin: 0;"></h4>
           <hr style="width: 100%; margin: 0;">
-          <ul id="exercise-items"></ul>
+          <ol id="exercise-items"></ol>
           <div style="text-align: center;">
             <button class="btn" id="add-btn" style="display: none;">Add Exercise</button>
             <button class="btn" id="cancel-btn" style="display: none;">Cancel</button>
@@ -96,106 +98,110 @@
   <script src="../js/nav.js"></script>
   <script>
   $(document).ready(function() {
-    let addingExercise = false;
-    let exerciseTable = $('#exercise-table').DataTable({
-      paging: false,
-      searching: true,
-      columnDefs: [{ orderable: false, targets: [1] }]
-    });
+  let addingExercise = false;
+  let exerciseTable = $('#exercise-table').DataTable({
+    paging: false,
+    searching: true,
+    columnDefs: [{ orderable: false, targets: [1] }]
+  });
 
-    exerciseTable.column(1).every(function() {
-      let column = this;
-      $(this.header()).find('select').on('change', function() {
-        column.search($(this).val()).draw();
-      }).append(column.data().unique().sort().toArray().map(d => '<option value="' + d + '">' + d + '</option>'));
-    });
+  exerciseTable.column(1).every(function() {
+    let column = this;
+    $(this.header()).find('select').on('change', function() {
+      column.search($(this).val()).draw();
+    }).append(column.data().unique().sort().toArray().map(d => '<option value="' + d + '">' + d + '</option>'));
+  });
 
-    $('.dataTables_filter').hide();
-    let exerciseData = <?php echo json_encode($exercises); ?>;
+  $('.dataTables_filter').hide();
+  let exerciseData = <?php echo json_encode($exercises); ?>;
 
-    function handleExerciseTableClick() {
-      if (!addingExercise) {
+  function handleExerciseTableClick() {
+    if (!addingExercise) {
+      let exerciseName = exerciseTable.row(this).data()[0];
+      let exerciseId = $(this).find('input[name="exercise_id"]').val();
+      $('#add-btn').css('display', 'inline-block');
+      $('#cancel-btn').css('display', 'inline-block');
+      $('#selected-exercise-name').text(exerciseName);
+      let query = "SELECT p.id, e.name FROM progressions p JOIN exercises e ON p.exercise_id = e.id WHERE p.exercise_id = ?";
+      let params = [exerciseId];
+      $.post('../php/db.php', { query, params }, null, 'json')
+        .done((data) => {
+          let exerciseItems = "";
+          data.forEach((progression) => { 
+            exerciseItems += "<li class='exercise-item'>" + progression.name + "<button class='delete-btn' data-progression-id='" + progression.id + "'>Delete</button></li>";
+          });
+          $('#exercise-items').html(exerciseItems);
+          if (data.length === 0) {
+            $('#exercise-items').html("<span>There are no progressions for this exercise.</span>");
+          }
+        })
+        .fail((err) => {
+          console.log(err);
+        });
+    }
+  }
+
+  // Bind the click event for 'tr'
+  $('#exercise-table tbody').on('click', 'tr', handleExerciseTableClick);
+
+  $('#add-btn').click(function() {
+    $('#exercise-table').css('border', '2px solid red');
+    addingExercise = true;
+    $('#cancel-add-item').css('display', 'block');
+    $('#cancel-btn').css('display', 'none');
+    $('#add-btn').css('display', 'none');
+    // Remove previous event bindings
+    $('#exercise-table tbody').off('click', 'tr', handleExerciseTableClick);
+    $('#exercise-table tbody').on('click', 'tr', function() {
+      if (addingExercise) {
         let exerciseName = exerciseTable.row(this).data()[0];
         let exerciseId = $(this).find('input[name="exercise_id"]').val();
-        // show the add item button
-        $('#add-btn').css('display', 'inline-block');
-        $('#cancel-btn').css('display', 'inline-block');
-        $('#selected-exercise-name').text(exerciseName);
-        let query = "SELECT p.id, e.name FROM progressions p JOIN exercises e ON p.exercise_id = e.id WHERE p.exercise_id = ?";
-        let params = [exerciseId];
-        $.post('../php/db.php', { query, params }, null, 'json')
-          .done((data) => {
-            let exerciseItems = "";
-            data.forEach((progression) => { 
-              exerciseItems += "<li>" + progression.name + "<button class='delete-btn' data-progression-id='" + progression.id + "'>Delete</button></li>";
-            });
-            $('#exercise-items').html(exerciseItems);
-            if (data.length === 0) {
-              $('#exercise-items').html("<li>There are no progressions for this exercise.</li>");
-            }
-          })
-          .fail((err) => {
-            console.log(err);
-          });
+        $('#exercise-items').append("<li class='exercise-item'>" + exerciseName + "<button class='delete-btn' data-exercise-id='" + exerciseId + "'>Delete</button></li>");
+        $('#exercise-items span:contains("There are no progressions for this exercise.")').remove();
       }
-    }
-
-    // Bind the click event for 'tr'
-    $('#exercise-table tbody').on('click', 'tr', handleExerciseTableClick);
-
-    $('#add-btn').click(function() {
-      $('#exercise-table').css('border', '2px solid red');
-      addingExercise = true;
-      $('#cancel-add-item').css('display', 'block');
-      $('#cancel-btn').css('display', 'none');
-      $('#add-btn').css('display', 'none');
-      // Remove previous event bindings
-      $('#exercise-table tbody').off('click', 'tr', handleExerciseTableClick);
-      $('#exercise-table tbody').on('click', 'tr', function() {
-        if (addingExercise) {
-          let exerciseName = exerciseTable.row(this).data()[0];
-          let exerciseId = $(this).find('input[name="exercise_id"]').val();
-          $('#exercise-items').append("<li>" + exerciseName + "<button class='delete-btn' data-exercise-id='" + exerciseId + "'>Delete</button></li>");
-          $('#exercise-items li:contains("There are no progressions for this exercise.")').remove();
-        }
-      });
-    });
-
-    $('#cancel-add-item button').click(function() {
-      $('#exercise-table').css('border', 'none');
-      addingExercise = false;
-      $('#cancel-add-item').css('display', 'none');
-      $('#cancel-btn').css('display', 'inline-block');
-      // Remove the newly added event bindings
-      $('#exercise-table tbody').off('click', 'tr');
-      // Rebind the click event for 'tr'
-      $('#exercise-table tbody').on('click', 'tr', handleExerciseTableClick);
-      $('#add-btn').css('display', 'inline-block');
-    });
-
-    // remove Progression list item from the list only when its delete button is clicked
-    $('#exercise-items').on('click', '.delete-btn', function() {
-      $(this).parent().remove();
-      if ($('#exercise-items').children().length === 0) {
-        $('#exercise-items').html("<li>There are no progressions for this exercise.</li>");
-      }
-    });
-
-    // cancel button removes the selected exercises from the list, resets the selected exercise name, and hides the cancel button
-    $('#cancel-btn').click(function() {
-      $('#exercise-items').html("");
-      $('#selected-exercise-name').text("");
-      $('#cancel-btn').css('display', 'none');
-      $('#add-btn').css('display', 'none');
-      addingExercise = false;
-
-      // Remove all event bindings
-      $('#exercise-table tbody').off('click', 'tr');
-
-      // Rebind the click event for 'tr'
-      $('#exercise-table tbody').on('click', 'tr', handleExerciseTableClick);
     });
   });
+
+  $('#cancel-add-item button').click(function() {
+    $('#exercise-table').css('border', 'none');
+    addingExercise = false;
+    $('#cancel-add-item').css('display', 'none');
+    $('#cancel-btn').css('display', 'inline-block');
+    // Remove the newly added event bindings
+    $('#exercise-table tbody').off('click', 'tr');
+    // Rebind the click event for 'tr'
+    $('#exercise-table tbody').on('click', 'tr', handleExerciseTableClick);
+    $('#add-btn').css('display', 'inline-block');
+  });
+
+  // remove Progression list item from the list only when its delete button is clicked
+  $('#exercise-items').on('click', '.delete-btn', function() {
+    $(this).parent().remove();
+    if ($('#exercise-items').children().length === 0) {
+      $('#exercise-items').html("<li>There are no progressions for this exercise.</li>");
+    }
+  });
+
+  // cancel button removes the selected exercises from the list, resets the selected exercise name, and hides the cancel button
+  $('#cancel-btn').click(function() {
+    $('#exercise-items').html("");
+    $('#selected-exercise-name').text("");
+    $('#cancel-btn').css('display', 'none');
+    $('#add-btn').css('display', 'none');
+    addingExercise = false;
+
+    // Remove all event bindings
+    $('#exercise-table tbody').off('click', 'tr');
+
+    // Rebind the click event for 'tr'
+    $('#exercise-table tbody').on('click', 'tr', handleExerciseTableClick);
+  });
+
+  $('#exercise-items').sortable({
+    axis: 'y',
+    containment: 'parent'
+  });
+});
 </script>
 </body>
 </html>
