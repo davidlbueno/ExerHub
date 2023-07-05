@@ -119,6 +119,7 @@
       <?php endforeach; ?><br>
       <button class="btn waves-effect waves-light" style="height: 40px !important; display: none;" id="update-button">Update Exercise</button>
       <button class="btn waves-effect waves-light" style="height: 40px !important;" id="add-button">Add Exercise</button>
+      <button class="btn waves-effect waves-light" style="height: 40px !important; margin-left: 10px; display: none;" id="delete-button">Delete Exercise</button>
     </div>
   </div>
 </main>
@@ -165,6 +166,7 @@ $(document).ready(function() {
     // if a row is selected, selected show the update-button and hide the add-button. Otherwise, show the add-button and hide the update-button.
     $('#update-button').toggle($this.hasClass('selected'));
     $('#add-button').toggle(!$this.hasClass('selected'));
+    $('#delete-button').toggle($this.hasClass('selected'));
     // if no row is selected, reset all sliders and labels to zero
     if (!$this.hasClass('selected')) {
       $('.slider-container input[type="range"]').val(0).prev('.muscle-label').removeClass('dot').find('span').text(0);
@@ -206,6 +208,17 @@ $(document).ready(function() {
     }
   }
 
+  // Helper function to check if at least one muscle intensity is set
+  function isMuscleIntensitySet() {
+    var isSet = false;
+    $('.slider-container input[type="range"]').each(function() {
+      if ($(this).val() > 0) {
+        isSet = true;
+        return false;
+      }
+    });
+    return isSet;
+  }
 
   function updateExerciseMuscles(exerciseName, isUpdate, successCallback) {
     var updates = [];
@@ -252,7 +265,7 @@ $(document).ready(function() {
 
   $('#update-button').click(function() {
     var exerciseName = $('#exercise-table tbody tr.selected td:first-child').text();
-    if (!exerciseName) {
+    if (!exerciseName || !isMuscleIntensitySet()) {
       alert('Please select an exercise.');
       return;
     }
@@ -273,8 +286,8 @@ $(document).ready(function() {
     var exerciseName = $('#new-exercise-name').val();
     var exerciseType = $('#new-exercise-type').val();
     var exerciseDifficulty = $('#new-exercise-difficulty').val();
-    if (!exerciseName || !exerciseType || !exerciseDifficulty) {
-      alert('Please enter an exercise name, type and difficulty.');
+    if (!exerciseName || !exerciseType || !exerciseDifficulty  || !isMuscleIntensitySet()) { 
+      alert('Please enter an exercise name, type and difficulty and at least one muscle intensity.');
       return;
     }
 
@@ -293,6 +306,47 @@ $(document).ready(function() {
       error: function(xhr, status, error) {
         console.error(error);
         alert('An error occurred while adding a new exercise.');
+      }
+    });
+  });
+
+  // Delete the records in the exercise_muscles table for the selected exercise
+  $('#delete-button').click(function() {
+    var exerciseName = $('#exercise-table tbody tr.selected td:first-child').text();
+    if (!exerciseName) {
+      alert('Please select an exercise.');
+      return;
+    }
+    // Create the AJAX request
+    $.ajax({
+      url: '../php/db.php',
+      type: 'POST',
+      data: {
+        query: 'DELETE FROM exercise_muscles WHERE exercise_id = (SELECT id FROM exercises WHERE name = ?)',
+        params: [exerciseName],
+      },
+      success: function(response) {
+        // After the records are deleted, we delete the exercise record
+        $.ajax({
+          url: '../php/db.php',
+          type: 'POST',
+          data: {
+            query: 'DELETE FROM exercises WHERE name = ?',
+            params: [exerciseName],
+          },
+          success: function(response) {
+            // After the exercise record is deleted, we remove the exercise from the table
+            $('#exercise-table tbody tr.selected').remove();
+          },
+          error: function(xhr, status, error) {
+            console.error(error);
+            alert('An error occurred while deleting the exercise.');
+          }
+        });
+      },
+      error: function(xhr, status, error) {
+        console.error(error);
+        alert('An error occurred while deleting the exercise muscles.');
       }
     });
   });
