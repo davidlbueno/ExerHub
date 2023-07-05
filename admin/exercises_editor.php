@@ -243,7 +243,6 @@ $(document).ready(function() {
     ? 'UPDATE exercise_muscles SET intensity = CASE muscle_id ' + generateCaseStatements(updates) + ' ELSE intensity END WHERE exercise_id = (SELECT id FROM exercises WHERE name = ?)'
     : 'INSERT INTO exercise_muscles (exercise_id, muscle_id, intensity) SELECT (SELECT id FROM exercises WHERE name = ?), (SELECT id FROM muscles WHERE name = ?), ? FROM dual';
 
-    // Create the AJAX request
     $.ajax({
       url: '../php/db.php',
       type: 'POST',
@@ -271,7 +270,6 @@ $(document).ready(function() {
     }
 
     updateExerciseMuscles(exerciseName, true, function(response, updates) {
-      // Update the exercise data in the table for the selected exercise
       var exerciseRow = $('#exercise-table tbody tr.selected');
       var newExerciseData = '';
       for (var i = 0; i < updates.length; i++) {
@@ -291,7 +289,6 @@ $(document).ready(function() {
       return;
     }
 
-    // Create the AJAX request
     $.ajax({
       url: '../php/db.php',
       type: 'POST',
@@ -300,7 +297,6 @@ $(document).ready(function() {
         params: [exerciseName, exerciseType, exerciseDifficulty],
       },
       success: function(response) {
-        // After the new exercise is added, we add muscle records
         updateExerciseMuscles(exerciseName, false);
       },
       error: function(xhr, status, error) {
@@ -310,7 +306,6 @@ $(document).ready(function() {
     });
   });
 
-  // Delete the records in the exercise_muscles table for the selected exercise
   $('#delete-button').click(function() {
     var exerciseName = $('#exercise-table tbody tr.selected td:first-child').text();
     if (!exerciseName) {
