@@ -69,41 +69,57 @@
     </div>
   </nav>
   <ul class="sidenav" id="side-nav"></ul>
-  <main class="container">
-    <div class="left-column">
-      <table id="exercise-table">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Type:&nbsp;<select title="Filter by Type"><option value="">All Types</option></select></th>
-            <th>Difficulty</th>
-            <th>Muscles (Intensity)</th>
-          </tr>
-        </thead>
-        <tbody>
-          <?php foreach ($exercises as $exerciseName => $exerciseData): ?>
-            <tr style="background-color: #1e1e1e">
-              <td><?= htmlspecialchars($exerciseName) ?></td>
-              <td><?= htmlspecialchars($exerciseData['type']) ?></td>
-              <td><?= htmlspecialchars($exerciseData['difficulty']) ?></td>
-              <td>
-                <?php foreach ($exerciseData['muscles'] as $muscleName => $intensity): ?>
-                  <span><?= htmlspecialchars($muscleName) ?></span> (<?= htmlspecialchars($intensity) ?>)<br>
-                <?php endforeach; ?>
-              </td>
-            </tr>
-          <?php endforeach; ?>
-        </tbody>
-      </table>
+  <main class="container" style="display: flex; flex-direction: column;">
+    <div id="top-form" style="display: flex; align-items: center;">
+      <label for="name" id="new-exercise-label" style="margin-right: 10px;">New Exercise: </label>
+      <input type="text" id="new-exercise-name" name="new-exercise-name" placeholder="New Exercise Name" style="flex: 1; margin-right: 10px; height: 40px;">
+      <select id="new-exercise-type" name="type" style="flex: 0 0 15%; margin-right: 10px; height: 40px;">
+          <option value="" disabled selected>Type</option>
+          <option value="push">Push</option>
+          <option value="pull">Pull</option>
+          <option value="legs">Legs</option>
+          <option value="core">Core</option>
+      </select>
+      <input type="number" id="new-exercise-difficulty" name="difficulty" placeholder="Difficulty" style="flex: 0 0 10%; margin-right: 10px; height: 40px;">
     </div>
-    <div class="right-column">
-      <?php foreach ($muscles as $muscle): ?>
-        <div class="slider-container" style="line-height: 1">
-          <label for="slider-<?= $muscle['name'] ?>" class="muscle-label"><?= $muscle['name'] ?>: <span id="slider-value-<?= $muscle['name'] ?>"></span></label>
-          <input type="range" style="margin: 0 0 0 0"id="slider-<?= $muscle['name'] ?>" name="<?= $muscle['name'] ?>" min="0" max="10" value="<?= isset($muscle['intensity']) ? $muscle['intensity'] : '0' ?>">
-        </div>
-      <?php endforeach; ?><br>
-      <button class="btn waves-effect waves-light" id="update-button">Update</button>
+    <div style="display: flex; width: 100%;">
+      <div class="left-column" style="height: 80vh; width: 50%; box-sizing: border-box; overflow-y: auto;">
+        <table id="exercise-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Type:&nbsp;<select title="Filter by Type"><option value="">All Types</option></select></th>
+              <th>Difficulty</th>
+              <th>Muscles (Intensity)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php foreach ($exercises as $exerciseName => $exerciseData): ?>
+              <tr style="background-color: #1e1e1e">
+                <td><?= htmlspecialchars($exerciseName) ?></td>
+                <td><?= htmlspecialchars($exerciseData['type']) ?></td>
+                <td><?= htmlspecialchars($exerciseData['difficulty']) ?></td>
+                <td>
+                  <?php foreach ($exerciseData['muscles'] as $muscleName => $intensity): ?>
+                    <span><?= htmlspecialchars($muscleName) ?></span> (<?= htmlspecialchars($intensity) ?>)<br>
+                  <?php endforeach; ?>
+                </td>
+              </tr>
+            <?php endforeach; ?>
+          </tbody>
+        </table>
+      </div>
+      <div class="right-column" style="height: 80vh; width: 50%; box-sizing: border-box; overflow-y: auto;">
+        <?php foreach ($muscles as $muscle): ?>
+          <div class="slider-container" style="line-height: 1">
+            <label for="slider-<?= $muscle['name'] ?>" class="muscle-label"><?= $muscle['name'] ?>: <span id="slider-value-<?= $muscle['name'] ?>"></span></label>
+            <input type="range" style="margin: 0 0 0 0" id="slider-<?= $muscle['name'] ?>" name="<?= $muscle['name'] ?>" min="0" max="10" value="<?= isset($muscle['intensity']) ? $muscle['intensity'] : '0' ?>">
+
+          </div>
+        <?php endforeach; ?><br>
+        <button class="btn waves-effect waves-light" style="height: 40px !important; display: none;" id="update-button">Update Exercise</button>
+        <button class="btn waves-effect waves-light" style="height: 40px !important;" id="add-button">Add Exercise</button>
+      </div>
     </div>
   </main>
   <script src="../js/nav.js"></script>
@@ -116,6 +132,7 @@
         { orderable: false, targets: [1] }
       ]
     });
+    
     exerciseTable.column(1).every(function() {
       var column = this;
       var typeFilter = $(this.header()).find('select');
@@ -126,8 +143,10 @@
         typeFilter.append('<option value="' + d + '">' + d + '</option>');
       });
     });
+
     $('.dataTables_filter').hide();
     var exerciseData = <?php echo json_encode($exercises); ?>;
+    
     // Set initial slider values
     $('.slider-container input[type="range"]').each(function() {
       var muscleName = $(this).attr('name');
@@ -135,11 +154,22 @@
       $('#slider-value-' + muscleName).text(intensity); // Set initial value for the intensity span
       $(this).prev('.muscle-label').toggleClass('dot', intensity > 0);
     });
+
     // Update muscle sliders when exercise is clicked
     $('#exercise-table tbody').on('click', 'tr', function() {
       var $this = $(this);
       $this.siblings().removeClass('selected');
       $this.toggleClass('selected', !$this.hasClass('selected'));
+      // if a row is selected, hide the top-form div. Otherwise, show it.
+      $('#top-form').toggle(!$this.hasClass('selected'));
+      // if a row is selected, selected show the update-button and hide the add-button. Otherwise, show the add-button and hide the update-button.
+      $('#update-button').toggle($this.hasClass('selected'));
+      $('#add-button').toggle(!$this.hasClass('selected'));
+      // if no row is selected, reset all sliders and labels to zero
+      if (!$this.hasClass('selected')) {
+        $('.slider-container input[type="range"]').val(0).prev('.muscle-label').removeClass('dot').find('span').text(0);
+        return;
+      }
       var exerciseName = $this.find('td:first-child').text();
       var muscles = exerciseData[exerciseName].muscles;
       // Reset all sliders and labels to zero
@@ -153,6 +183,7 @@
         }
       }
     });
+
     // Update muscle name labels with slider values
     $('.slider-container input[type="range"]').on('input', function() {
       var muscleName = $(this).attr('name');
@@ -160,6 +191,7 @@
       $('#slider-value-' + muscleName).text(intensity); // Update value for the intensity span
       $(this).prev('.muscle-label').toggleClass('dot', intensity > 0);
     });
+
     $('#update-button').click(function() {
       var exerciseName = $('#exercise-table tbody tr.selected td:first-child').text();
       if (!exerciseName) {
