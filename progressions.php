@@ -12,7 +12,7 @@
 <body class="dark">
 <nav>
 <div class="nav-wrapper">
-  <span class="brand-logo" style="margin-left: 60px"><a href="index.html"><i class="material-icons">home</i>/</a><span class="sub-page-name">Progressions</span></span>
+  <span class="brand-logo" style="margin-left: 60px"><a href="../index.html"><i class="material-icons">home</i>/</a><span class="sub-page-name">Progressions</span></span>
     <a href="index.html" data-target="side-nav" class="show-on-large sidenav-trigger"><i class="material-icons">menu</i></a>
     <ul class="right" id="top-nav"></ul>
 </div>
