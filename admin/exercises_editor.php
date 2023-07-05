@@ -255,6 +255,19 @@ $(document).ready(function() {
         success: function(response) {
           if (typeof successCallback === 'function') {
             successCallback(response, updates);
+            // add the new exercise to the the datatable and select it
+            var exerciseType = $('#new-exercise-type').val();
+            var exerciseDifficulty = $('#new-exercise-difficulty').val();
+            var exerciseRow = '<tr style="background-color: #1e1e1e"><td>' + exerciseName + '</td><td>' + exerciseType + '</td><td>' + exerciseDifficulty + '</td><td>';
+            updates.forEach(function(update) {
+              exerciseRow += '<span>' + update.muscle + '</span> (' + update.intensity + ')<br>';
+            });
+            exerciseRow += '</td></tr>';
+            $('#exercise-table tbody').append(exerciseRow);
+            
+            // select and scroll to the new exercise
+            $('#exercise-table tbody tr:last-child').click();
+            $('#exercise-table tbody').scrollTop($('#exercise-table tbody')[0].scrollHeight);
           }
         },
         error: function(xhr, status, error) {
@@ -264,6 +277,24 @@ $(document).ready(function() {
       });
     });
   }
+
+  $('#update-button').click(function() {
+    var exerciseName = $('#exercise-table tbody tr.selected td:first-child').text();
+    if (!exerciseName || !isMuscleIntensitySet()) {
+      alert('Please select an exercise.');
+      return;
+    }
+
+    updateExerciseMuscles(exerciseName, true, function(response, updates) {
+      var exerciseRow = $('#exercise-table tbody tr.selected');
+      var newExerciseData = '';
+      for (var i = 0; i < updates.length; i++) {
+        var update = updates[i];
+        newExerciseData += '<span>' + update.muscle + '</span> (' + update.intensity + ')<br>';
+      }
+      exerciseRow.find('td:last-child').html(newExerciseData);
+    });
+  });
 
 
   $('#add-button').click(function() {
@@ -284,6 +315,10 @@ $(document).ready(function() {
       },
       success: function(response) {
         updateExerciseMuscles(exerciseName, false);
+        // clear the new exercise form
+        $('#new-exercise-name').val('');
+        $('#new-exercise-type').val('');
+        $('#new-exercise-difficulty').val('');
       },
       error: function(xhr, status, error) {
         console.error(error);
