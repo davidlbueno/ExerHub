@@ -75,10 +75,10 @@
       <input type="text" id="new-exercise-name" name="new-exercise-name" placeholder="New Exercise Name" style="flex: 1; margin-right: 10px; height: 40px;">
       <select id="new-exercise-type" name="type" style="flex: 0 0 15%; margin-right: 10px; height: 40px;">
           <option value="" disabled selected>Type</option>
-          <option value="push">Push</option>
-          <option value="pull">Pull</option>
-          <option value="legs">Legs</option>
-          <option value="core">Core</option>
+          <option value="Push">Push</option>
+          <option value="Pull">Pull</option>
+          <option value="Legs">Legs</option>
+          <option value="Core">Core</option>
       </select>
       <input type="number" id="new-exercise-difficulty" name="difficulty" placeholder="Difficulty" style="flex: 0 0 10%; margin-right: 10px; height: 40px;">
     </div>
@@ -252,6 +252,38 @@
           return update.muscle;
         }).concat(exerciseName);
       }
+    });
+
+    // create function for add button to add new exercise to the database then get the exerise ID for the new exercise.
+    $('#add-button').click(function() {
+      var exerciseName = $('#new-exercise-name').val();
+      var exerciseType = $('#new-exercise-type').val();
+      var exerciseDifficulty = $('#new-exercise-difficulty').val();
+      if (!exerciseName) {
+        alert('Please enter an exercise name.');
+        return;
+      }
+      if (!exerciseType) {
+        alert('Please select an exercise type.');
+        return;
+      }
+      if (!exerciseDifficulty) {
+        alert('Please enter an exercise difficulty.');
+        return;
+      }
+      // Create the AJAX request
+      $.ajax({
+        url: '../php/db.php',
+        type: 'POST',
+        data: {
+          query: 'INSERT INTO exercises (name, type, difficulty) VALUES (?, ?, ?)',
+          params: [exerciseName, exerciseType, exerciseDifficulty],
+        },
+        success: function(response) {
+          // write the new exercise Id to the console
+          console.log(response);
+        }
+      });
     });
   });
   </script>
