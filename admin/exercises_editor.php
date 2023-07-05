@@ -283,9 +283,7 @@ $(document).ready(function() {
           query: 'DELETE FROM exercises WHERE name = ?',
           params: [exerciseName]
         }, function(response) {
-          $('#exercise-table tbody tr.selected').remove();
-          $('.slider-container input[type="range"]').val(0).prev('.muscle-label').removeClass('dot').find('span').text(0);
-          $('#top-form, #add-button').show();
+          window.location.reload();
         }, function(error) {
           console.error(error);
           alert('An error occurred while deleting the exercise.');
@@ -313,18 +311,7 @@ $(document).ready(function() {
     }, function(response) {
       updateExerciseMuscles(exerciseName, false, function(err, updates) {
         if (!err) {
-          var newExerciseData = '';
-          for (var i = 0; i < updates.length; i++) {
-            var update = updates[i];
-            newExerciseData += '<span>' + update.muscle + '</span> (' + update.intensity + ')<br>';
-          }
-
-          exerciseTable.row.add([
-            exerciseName,
-            exerciseType,
-            exerciseDifficulty,
-            newExerciseData
-          ]).draw(false);
+          window.location.reload();
         }
       });
     }, function(error) {
@@ -334,7 +321,6 @@ $(document).ready(function() {
   });
 
 });
-
 </script>
 </body>
 </html>
