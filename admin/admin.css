@@ -73,3 +73,8 @@ tbody tr:hover {
 .slider-container .muscle-label.dot:before {
   display: block;
 }
+
+table.dataTable tbody tr {
+  background-color: #1e1e1e;
+ }
+ 

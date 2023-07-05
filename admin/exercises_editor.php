@@ -95,7 +95,7 @@
         </thead>
         <tbody>
           <?php foreach ($exercises as $exerciseName => $exerciseData): ?>
-            <tr style="background-color: #1e1e1e">
+            <tr>
               <td><?= htmlspecialchars($exerciseName) ?></td>
               <td><?= htmlspecialchars($exerciseData['type']) ?></td>
               <td><?= htmlspecialchars($exerciseData['difficulty']) ?></td>
@@ -264,7 +264,6 @@ $(document).ready(function() {
         newExerciseData += '<span>' + update.muscle + '</span> (' + update.intensity + ')<br>';
       }
       exerciseRow.find('td:last-child').html(newExerciseData);
-
     });
   });
 
@@ -300,28 +299,40 @@ $(document).ready(function() {
 
   $('#add-button').click(function() {
     var exerciseName = $('#new-exercise-name').val();
-    if (!exerciseName || !isMuscleIntensitySet()) {
-      alert('Please enter an exercise name and set at least one muscle intensity.');
+    var exerciseType = $('#new-exercise-type').val();
+    var exerciseDifficulty = $('#new-exercise-difficulty').val();
+
+    if (!exerciseName || !exerciseType || !exerciseDifficulty  || !isMuscleIntensitySet()) { 
+      alert('Please enter an exercise name, type, and difficulty and at least one muscle intensity.');
       return;
     }
 
     handleAjax('../php/db.php', 'POST', {
-      query: 'INSERT INTO exercises (name) VALUES (?)',
-      params: [exerciseName]
+      query: 'INSERT INTO exercises (name, type, difficulty) VALUES (?, ?, ?)',
+      params: [exerciseName, exerciseType, exerciseDifficulty],
     }, function(response) {
-      updateExerciseMuscles(exerciseName, false, function(response, updates) {
-        var newRow = '<tr><td>' + exerciseName + '</td><td>Custom</td>';
-        updates.forEach(update => {
-          newRow += '<td>' + update.muscle + '</td><td>' + update.intensity + '</td>';
-        });
-        newRow += '</tr>';
-        $('#exercise-table tbody').append(newRow);
+      updateExerciseMuscles(exerciseName, false, function(err, updates) {
+        if (!err) {
+          var newExerciseData = '';
+          for (var i = 0; i < updates.length; i++) {
+            var update = updates[i];
+            newExerciseData += '<span>' + update.muscle + '</span> (' + update.intensity + ')<br>';
+          }
+
+          exerciseTable.row.add([
+            exerciseName,
+            exerciseType,
+            exerciseDifficulty,
+            newExerciseData
+          ]).draw(false);
+        }
       });
     }, function(error) {
       console.error(error);
-      alert('An error occurred while adding the exercise.');
+      alert('An error occurred while adding a new exercise.');
     });
   });
+
 });
 
 </script>
