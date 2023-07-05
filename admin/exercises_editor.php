@@ -126,89 +126,71 @@
 <script src="../js/nav.js"></script>
 <script>
 $(document).ready(function() {
+  // Initialize table and filters
   var exerciseTable = $('#exercise-table').DataTable({
     paging: false,
     searching: true,
-    columnDefs: [
-      { orderable: false, targets: [1] }
-    ]
+    columnDefs: [{ orderable: false, targets: [1] }]
   });
-  
+
   exerciseTable.column(1).every(function() {
     var column = this;
-    var typeFilter = $(this.header()).find('select');
-    typeFilter.on('change', function() {
+    $(this.header()).find('select').on('change', function() {
       column.search($(this).val()).draw();
-    });
-    column.data().unique().sort().each(function(d) {
-      typeFilter.append('<option value="' + d + '">' + d + '</option>');
-    });
+    }).append(column.data().unique().sort().toArray().map(d => '<option value="' + d + '">' + d + '</option>'));
   });
 
   $('.dataTables_filter').hide();
   var exerciseData = <?php echo json_encode($exercises); ?>;
-  
-  // Set initial slider values
-  $('.slider-container input[type="range"]').each(function() {
-    var muscleName = $(this).attr('name');
-    var intensity = $(this).val();
-    $('#slider-value-' + muscleName).text(intensity); // Set initial value for the intensity span
-    $(this).prev('.muscle-label').toggleClass('dot', intensity > 0);
-  });
+
+  // Handle slider and label updates
+  const handleSliderLabelUpdates = () => {
+    $('.slider-container input[type="range"]').each(function() {
+      var muscleName = $(this).attr('name');
+      var intensity = $(this).val();
+      $('#slider-value-' + muscleName).text(intensity);
+      $(this).prev('.muscle-label').toggleClass('dot', intensity > 0);
+    });
+  };
+
+  handleSliderLabelUpdates();
 
   // Update muscle sliders when exercise is clicked
   $('#exercise-table tbody').on('click', 'tr', function() {
     var $this = $(this);
     $this.siblings().removeClass('selected');
     $this.toggleClass('selected', !$this.hasClass('selected'));
-    // if a row is selected, hide the top-form div. Otherwise, show it.
-    $('#top-form').toggle(!$this.hasClass('selected'));
-    // if a row is selected, selected show the update-button and hide the add-button. Otherwise, show the add-button and hide the update-button.
-    $('#update-button').toggle($this.hasClass('selected'));
-    $('#add-button').toggle(!$this.hasClass('selected'));
-    $('#delete-button').toggle($this.hasClass('selected'));
-    // if no row is selected, reset all sliders and labels to zero
-    if (!$this.hasClass('selected')) {
-      $('.slider-container input[type="range"]').val(0).prev('.muscle-label').removeClass('dot').find('span').text(0);
-      return;
-    }
-    var exerciseName = $this.find('td:first-child').text();
-    var muscles = exerciseData[exerciseName].muscles;
+    var showForm = !$this.hasClass('selected');
+    $('#top-form, #add-button').toggle(showForm);
+    $('#update-button, #delete-button').toggle(!showForm);
+
     // Reset all sliders and labels to zero
     $('.slider-container input[type="range"]').val(0).prev('.muscle-label').removeClass('dot').find('span').text(0);
-    for (var muscleName in muscles) {
-      if (muscles.hasOwnProperty(muscleName)) {
-        var intensity = muscles[muscleName];
-        $('#slider-' + muscleName).val(intensity);
-        $('#slider-value-' + muscleName).text(intensity); // Set new value for the intensity span
-        $('#slider-' + muscleName).prev('.muscle-label').toggleClass('dot', intensity > 0);
+
+    if (!showForm) {
+      var exerciseName = $this.find('td:first-child').text();
+      var muscles = exerciseData[exerciseName].muscles;
+      for (var muscleName in muscles) {
+        if (muscles.hasOwnProperty(muscleName)) {
+          var intensity = muscles[muscleName];
+          $('#slider-' + muscleName).val(intensity);
+          $('#slider-value-' + muscleName).text(intensity);
+          $('#slider-' + muscleName).prev('.muscle-label').toggleClass('dot', intensity > 0);
+        }
       }
     }
   });
 
-  // Helper function to generate the CASE statements for the SQL query
-  function generateCaseStatements(updates) {
-    return updates.map(function(update) {
-      return ' WHEN (SELECT id FROM muscles WHERE name = ?) THEN ' + update.intensity;
-    }).join('');
-  }
-
-  // Helper function to generate the parameter array for the SQL query
-    function generateParams(exerciseName, updates, isUpdate) {
-    if (isUpdate) {
-      var params = updates.map(function(update) {
-        return update.muscle;
-      });
-      params.push(exerciseName);
-      return params;
-    } else {
-      var params = [];
-      updates.forEach(function(update) {
-        params.push(exerciseName, update.muscle, update.intensity);
-      });
-      return params;
-    }
-  }
+  // Handle AJAX requests
+  const handleAjax = (url, type, data, successCallback, errorCallback) => {
+    $.ajax({
+      url: url,
+      type: type,
+      data: data,
+      success: successCallback,
+      error: errorCallback
+    });
+  };
 
   // Helper function to check if at least one muscle intensity is set
   function isMuscleIntensitySet() {
@@ -247,22 +229,11 @@ $(document).ready(function() {
           ? 'UPDATE exercise_muscles em INNER JOIN muscles m ON em.muscle_id = m.id INNER JOIN exercises e ON em.exercise_id = e.id SET em.intensity = ? WHERE m.name = ? AND e.name = ?'
           : 'INSERT INTO exercise_muscles (exercise_id, muscle_id, intensity) SELECT (SELECT id FROM exercises WHERE name = ?), (SELECT id FROM muscles WHERE name = ?), ? FROM dual';
         var params = isUpdate ? [update.intensity, update.muscle, exerciseName] : [exerciseName, update.muscle, update.intensity];
-        $.ajax({
-          url: '../php/db.php',
-          type: 'POST',
-          data: {
-            query: query,
-            params: params
-          },
-          success: function(response) {
-            resolve();
-          },
-          error: function(xhr, status, error) {
-            console.error(error);
-            alert('An error occurred while updating exercise muscles.');
-            reject();
-          }
-        });
+
+        handleAjax('../php/db.php', 'POST', {
+          query: query,
+          params: params
+        }, resolve, reject);
       });
     });
 
@@ -293,32 +264,7 @@ $(document).ready(function() {
         newExerciseData += '<span>' + update.muscle + '</span> (' + update.intensity + ')<br>';
       }
       exerciseRow.find('td:last-child').html(newExerciseData);
-    });
-  });
 
-  $('#add-button').click(function() {
-    var exerciseName = $('#new-exercise-name').val();
-    var exerciseType = $('#new-exercise-type').val();
-    var exerciseDifficulty = $('#new-exercise-difficulty').val();
-    if (!exerciseName || !exerciseType || !exerciseDifficulty  || !isMuscleIntensitySet()) { 
-      alert('Please enter an exercise name, type and difficulty and at least one muscle intensity.');
-      return;
-    }
-
-    $.ajax({
-      url: '../php/db.php',
-      type: 'POST',
-      data: {
-        query: 'INSERT INTO exercises (name, type, difficulty) VALUES (?, ?, ?)',
-        params: [exerciseName, exerciseType, exerciseDifficulty],
-      },
-      success: function(response) {
-        updateExerciseMuscles(exerciseName, false);
-      },
-      error: function(xhr, status, error) {
-        console.error(error);
-        alert('An error occurred while adding a new exercise.');
-      }
     });
   });
 
@@ -328,48 +274,56 @@ $(document).ready(function() {
       alert('Please select an exercise.');
       return;
     }
-    // Create the AJAX request
-    $.ajax({
-      url: '../php/db.php',
-      type: 'POST',
-      data: {
-        query: 'DELETE FROM exercise_muscles WHERE exercise_id = (SELECT id FROM exercises WHERE name = ?)',
-        params: [exerciseName],
-      },
-      success: function(response) {
-        // After the records are deleted, we delete the exercise record
-        $.ajax({
-          url: '../php/db.php',
-          type: 'POST',
-          data: {
-            query: 'DELETE FROM exercises WHERE name = ?',
-            params: [exerciseName],
-          },
-          success: function(response) {
-            // After the exercise record is deleted, we remove the exercise from the table
-            $('#exercise-table tbody tr.selected').remove();
-          },
-          error: function(xhr, status, error) {
-            console.error(error);
-            alert('An error occurred while deleting the exercise.');
-          }
+
+    if (confirm('Are you sure you want to delete this exercise?')) {
+      handleAjax('../php/db.php', 'POST', {
+        query: 'DELETE em FROM exercise_muscles em INNER JOIN exercises e ON e.id = em.exercise_id WHERE e.name = ?',
+        params: [exerciseName]
+      }, function(response) {
+        handleAjax('../php/db.php', 'POST', {
+          query: 'DELETE FROM exercises WHERE name = ?',
+          params: [exerciseName]
+        }, function(response) {
+          $('#exercise-table tbody tr.selected').remove();
+          $('.slider-container input[type="range"]').val(0).prev('.muscle-label').removeClass('dot').find('span').text(0);
+          $('#top-form, #add-button').show();
+        }, function(error) {
+          console.error(error);
+          alert('An error occurred while deleting the exercise.');
         });
-      },
-      error: function(xhr, status, error) {
+      }, function(error) {
         console.error(error);
         alert('An error occurred while deleting the exercise muscles.');
-      }
-    });
+      });
+    }
   });
 
-  // Update muscle name labels with slider values
-  $('.slider-container input[type="range"]').on('input', function() {
-    var muscleName = $(this).attr('name');
-    var intensity = $(this).val();
-    $('#slider-value-' + muscleName).text(intensity); // Update value for the intensity span
-    $(this).prev('.muscle-label').toggleClass('dot', intensity > 0);
+  $('#add-button').click(function() {
+    var exerciseName = $('#new-exercise-name').val();
+    if (!exerciseName || !isMuscleIntensitySet()) {
+      alert('Please enter an exercise name and set at least one muscle intensity.');
+      return;
+    }
+
+    handleAjax('../php/db.php', 'POST', {
+      query: 'INSERT INTO exercises (name) VALUES (?)',
+      params: [exerciseName]
+    }, function(response) {
+      updateExerciseMuscles(exerciseName, false, function(response, updates) {
+        var newRow = '<tr><td>' + exerciseName + '</td><td>Custom</td>';
+        updates.forEach(update => {
+          newRow += '<td>' + update.muscle + '</td><td>' + update.intensity + '</td>';
+        });
+        newRow += '</tr>';
+        $('#exercise-table tbody').append(newRow);
+      });
+    }, function(error) {
+      console.error(error);
+      alert('An error occurred while adding the exercise.');
+    });
   });
 });
+
 </script>
 </body>
 </html>
