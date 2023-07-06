@@ -126,18 +126,20 @@
       $('#add-btn').css('display', 'inline-block');
       $('#cancel-btn').css('display', 'inline-block');
       $('#selected-exercise-name').text(exerciseName);
-      let query = "SELECT p.id, e.name FROM progressions p JOIN exercises e ON p.exercise_id = e.id WHERE p.exercise_id = ?";
+      let query = "SELECT e.name FROM progressions p JOIN exercises e ON p.progression_exercise_id = e.id WHERE p.exercise_id = ?";
       let params = [selectedExerciseId];
       $.post('../php/db.php', { query, params }, null, 'json')
         .done((data) => {
           let exerciseItems = "";
-          data.forEach((progression) => { 
-            exerciseItems += "<li class='exercise-item'>" + progression.name + "<button class='copy-del-btn' data-progression-id='" + progression.id + "'>Delete</button></li>";
+          data.forEach((progression_exercise) => { 
+            exerciseItems += "<li class='exercise-item'>" + progression_exercise.name + "<button class='copy-del-btn' data-progression_exercise-id='" + progression_exercise.id + "'>X</button></li>";
           });
           $('#exercise-items').html(exerciseItems);
           if (data.length === 0) {
             $('#no-progressions').css('display', 'block');
-          }
+          } else {
+            $('#no-progressions').css('display', 'none');
+          } 
         })
         .fail((err) => {
           console.log(err);
@@ -217,49 +219,36 @@
     }
   });
 
-  // save button
-  // Get the selectedExerciseId that was set earlier when the user clicked on a row in the exercise table and print it to the console
   $('#save-btn').click(function() {
-    console.log(selectedExerciseId);
-    // Get the exercise items from the list
     let exerciseItems = $('#exercise-items .exercise-item');
-    // Create an array to hold the progression data
     let progressionExercises = [];
-    // Loop through the exercise items
-    for (let i = 0; i < exerciseItems.length; i++) {
-      // Get the exercise name from the exercise item
-      let exerciseName = exerciseItems[i].querySelector('#exercise-name').innerText;
-      // Get the reps threshold from the exercise item
-      let repsThreshold = exerciseItems[i].querySelector('input[type="number"]').value;
-      // Get the exercise id from the exercise item
-      let exerciseId = exerciseItems[i].querySelector('button').dataset.exerciseId;
-      
-      // Define the nextExerciseId variable here
-      let nextExerciseId;
-      
-      // if this is not the last exercise item, get the next exercie id from the next exercise item
-      if (i < exerciseItems.length - 1) {
-        nextExerciseId = exerciseItems[i + 1].querySelector('button').dataset.exerciseId;
-      } else {
-        nextExerciseId = null;
-      }
-
-      // get the list item number for the current exercise item
-      let listItemNumber = i + 1;
-      // Add the progression data to the progressionExercises array
-      progressionExercises.push({
-        exerciseName,
-        exerciseId,
-        repsThreshold,
-        nextExerciseId
-      });
-      console.log("Exercise Name: " + exerciseName);
-      console.log("Reps Threshold: " + repsThreshold);
-      console.log("Exercise ID: " + exerciseId);
-      console.log("NextExerciseId " + nextExerciseId);
-      console.log("SequenceOrder: " + listItemNumber);
+    function saveExercise(i) {
+        if (i >= exerciseItems.length) return;  // exit condition
+        let exerciseName = exerciseItems[i].querySelector('#exercise-name').innerText;
+        let repsThreshold = exerciseItems[i].querySelector('input[type="number"]').value;
+        let exerciseId = exerciseItems[i].querySelector('button').dataset.exerciseId;
+        let nextExerciseId = (i < exerciseItems.length - 1) ? exerciseItems[i + 1].querySelector('button').dataset.exerciseId : 0;
+        let listItemNumber = i + 1;
+        progressionExercises.push({
+            exerciseName,
+            exerciseId,
+            repsThreshold,
+            nextExerciseId
+        });
+        let query = "INSERT INTO progressions (exercise_id, progression_exercise_id, sequence_order, next_exercise_id, threshold) VALUES (?, ?, ?, ?, ?)";
+        let params = [selectedExerciseId, exerciseId, listItemNumber, nextExerciseId, repsThreshold];
+        $.post('../php/db.php', { query, params }, null, 'json')
+            .done((data) => {
+                console.log(data);
+                saveExercise(i+1);  // call the next iteration
+            })
+            .fail((err) => {
+                console.log(err);
+        });
     }
-  });
+    saveExercise(0);  // start the recursive function
+});
+
 
   // cancel button removes the selected exercises from the list, resets the selected exercise name, and hides the cancel button
   $('#cancel-btn').click(function() {
@@ -268,6 +257,7 @@
     $('#cancel-btn').css('display', 'none');
     $('#save-btn').css('display', 'none');
     $('#add-btn').css('display', 'none');
+    
     addingExercise = false;
     // Remove all event bindings
     $('#exercise-table tbody').off('click', 'tr');
