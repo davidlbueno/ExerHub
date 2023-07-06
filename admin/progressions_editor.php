@@ -213,7 +213,7 @@
 
   // remove Progression list item from the list only when its delete button is clicked
   $('#exercise-items').on('click', '#delete-btn', function() {
-    $(this).parent().remove();
+    $(this).parent().parent().parent().remove();
     if ($('#exercise-items').children().length === 0) {
       $('#exercise-items').html("<li>There are no progressions for this exercise.</li>");
     }
