@@ -171,7 +171,7 @@
             }
           }
           if (!exerciseExists) {
-            $('#exercise-items').append("<li class='exercise-item'>" + exerciseName + "<button id='delete-btn' class='copy-del-btn' data-exercise-id='" + exerciseId + "'>Delete</button><input id='threshold' type='number' min='1' max='10' style='width: 40px; height: 22px; float: right; margin-right: 5px;'><label for='threshold' style='float:right; margin: 2px 5px;'>Reps Threshold</label></li>");
+            $('#exercise-items').append("<li class='exercise-item'><span id='exercise-name'>" + exerciseName + "</span><button id='delete-btn' class='copy-del-btn' data-exercise-id='" + exerciseId + "'>Delete</button><input id='threshold' type='number' min='1' max='10' style='width: 40px; height: 22px; float: right; margin-right: 5px;'><label for='threshold' style='float:right; margin: 2px 5px;'>Reps Threshold</label></li>");
             $('#no-progressions').css('display', 'none');
             $('#already-added').css('display', 'none');          
           }
@@ -217,7 +217,7 @@
     // Loop through the exercise items
     for (let i = 0; i < exerciseItems.length; i++) {
       // Get the exercise name from the exercise item
-      let exerciseName = exerciseItems[i].innerText;
+      let exerciseName = exerciseItems[i].querySelector('#exercise-name').innerText;
       // Get the reps threshold from the exercise item
       let repsThreshold = exerciseItems[i].querySelector('input[type="number"]').value;
       // Get the exercise id from the exercise item
@@ -232,6 +232,9 @@
       } else {
         nextExerciseId = null;
       }
+
+      // get the list item number for the current exercise item
+      let listItemNumber = i + 1;
       // Add the progression data to the progressionExercises array
       progressionExercises.push({
         exerciseName,
@@ -239,7 +242,7 @@
         repsThreshold,
         nextExerciseId
       });
-      console.log(exerciseName, repsThreshold, exerciseId, nextExerciseId);
+      console.log(exerciseName, repsThreshold, exerciseId, nextExerciseId, listItemNumber);
     }
   });
 
