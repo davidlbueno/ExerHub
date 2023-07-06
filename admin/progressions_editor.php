@@ -89,7 +89,7 @@
           <span id="already-added" style='color: red; display: none;'>This exercise is already in the list.</span>
           <span id="no-progressions" style='color: red; display: none;'>There are no progressions for this exercise.</span>
           <div style="text-align: center;">
-            <button class="btn" id="add-btn" style="display: none;">Add Exercise</button>
+            <button class="btn" id="add-btn" style="display: none;">Add</button>
             <button class="btn" id="cancel-btn" style="display: none;">Cancel</button>
             <button class="btn" id="done-adding-items" style="display: none;">Done Adding Exercises</button>
             <button class="btn" id="save-btn" style="display: none;">Save</button>
@@ -196,30 +196,24 @@
     $.post('../php/db.php', { query, params }, null, 'json')
       .done((data) => {
         let progressions = data;
-
         function saveExercise(i) {
           if (i >= exerciseItemsList.length) return;
-
           let exerciseItem = $(exerciseItemsList[i]);
           let exerciseName = exerciseItem.find('#exercise-name').text();
           let repsThreshold = exerciseItem.find('input[type="number"]').val();
           let exerciseId = parseInt(exerciseItem.data('progression-exercise-id'));
           let nextExerciseId = (i < exerciseItemsList.length - 1) ? parseInt(exerciseItemsList[i + 1].dataset.progressionExerciseId) : 0;
           let listItemNumber = i + 1;
-
           progressionExercises.push({
             exerciseName,
             exerciseId,
             repsThreshold,
             nextExerciseId
           });
-
           let existingRecord = progressions.find((record) => record.progression_exercise_id === exerciseId);
-
           if (existingRecord) {
             let updateQuery = "UPDATE progressions SET threshold = ?, sequence_order = ?, next_exercise_id = ? WHERE exercise_id = ? AND progression_exercise_id = ?";
             let updateParams = [repsThreshold, listItemNumber, nextExerciseId, selectedExerciseId, exerciseId];
-
             $.post('../php/db.php', { query: updateQuery, params: updateParams }, null, 'json')
               .done((data) => {
                 console.log(data);
@@ -232,7 +226,6 @@
           } else {
             let insertQuery = "INSERT INTO progressions (exercise_id, progression_exercise_id, sequence_order, next_exercise_id, threshold) VALUES (?, ?, ?, ?, ?)";
             let insertParams = [selectedExerciseId, exerciseId, listItemNumber, nextExerciseId, repsThreshold];
-
             $.post('../php/db.php', { query: insertQuery, params: insertParams }, null, 'json')
               .done((data) => {
                 console.log(data);
@@ -244,16 +237,13 @@
               });
           }
         }
-
         let deletedItems = progressions.filter((record) => {
           return !Array.from(exerciseItemsList).some((item) => parseInt(item.dataset.progressionExerciseId) === record.progression_exercise_id);
         });
-
         if (deletedItems.length > 0) {
           let deleteParams = [selectedExerciseId, ...deletedItems.map((item) => item.progression_exercise_id)];
           let placeholders = deletedItems.map(() => "?").join(", ");
           let deleteQuery = `DELETE FROM progressions WHERE exercise_id = ? AND progression_exercise_id IN (${placeholders})`;
-
           $.post('../php/db.php', { query: deleteQuery, params: deleteParams }, null, 'json')
             .done((data) => {
               console.log(data);
@@ -335,11 +325,9 @@
   });
 
   exerciseItems.on('click', '#del-item-btn', removeExerciseItem);
-
   $('#save-btn').click(saveExerciseProgressions);
   $('#delete-btn').click(deleteExerciseProgressions);
   $('#cancel-btn').click(cancelAddingExercise);
-
   initializeSorting();
 });
 </script>
