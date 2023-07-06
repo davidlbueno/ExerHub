@@ -102,6 +102,7 @@
   <script>
   $(document).ready(function() {
   let addingExercise = false;
+  let selectedExerciseId = null;
   let exerciseTable = $('#exercise-table').DataTable({
     paging: false,
     searching: true,
@@ -121,12 +122,12 @@
   function handleExerciseTableClick() {
     if (!addingExercise) {
       let exerciseName = exerciseTable.row(this).data()[0];
-      let exerciseId = $(this).find('input[name="exercise_id"]').val();
+      selectedExerciseId = $(this).find('input[name="exercise_id"]').val();
       $('#add-btn').css('display', 'inline-block');
       $('#cancel-btn').css('display', 'inline-block');
       $('#selected-exercise-name').text(exerciseName);
       let query = "SELECT p.id, e.name FROM progressions p JOIN exercises e ON p.exercise_id = e.id WHERE p.exercise_id = ?";
-      let params = [exerciseId];
+      let params = [selectedExerciseId];
       $.post('../php/db.php', { query, params }, null, 'json')
         .done((data) => {
           let exerciseItems = "";
@@ -202,6 +203,43 @@
     $(this).parent().remove();
     if ($('#exercise-items').children().length === 0) {
       $('#exercise-items').html("<li>There are no progressions for this exercise.</li>");
+    }
+  });
+
+  // save button
+  // Get the selectedExerciseId that was set earlier when the user clicked on a row in the exercise table and print it to the console
+  $('#save-btn').click(function() {
+    console.log(selectedExerciseId);
+    // Get the exercise items from the list
+    let exerciseItems = $('#exercise-items .exercise-item');
+    // Create an array to hold the progression data
+    let progressionExercises = [];
+    // Loop through the exercise items
+    for (let i = 0; i < exerciseItems.length; i++) {
+      // Get the exercise name from the exercise item
+      let exerciseName = exerciseItems[i].innerText;
+      // Get the reps threshold from the exercise item
+      let repsThreshold = exerciseItems[i].querySelector('input[type="number"]').value;
+      // Get the exercise id from the exercise item
+      let exerciseId = exerciseItems[i].querySelector('button').dataset.exerciseId;
+      
+      // Define the nextExerciseId variable here
+      let nextExerciseId;
+      
+      // if this is not the last exercise item, get the next exercie id from the next exercise item
+      if (i < exerciseItems.length - 1) {
+        nextExerciseId = exerciseItems[i + 1].querySelector('button').dataset.exerciseId;
+      } else {
+        nextExerciseId = null;
+      }
+      // Add the progression data to the progressionExercises array
+      progressionExercises.push({
+        exerciseName,
+        exerciseId,
+        repsThreshold,
+        nextExerciseId
+      });
+      console.log(exerciseName, repsThreshold, exerciseId, nextExerciseId);
     }
   });
 
