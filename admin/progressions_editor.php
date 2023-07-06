@@ -85,7 +85,7 @@
         <div>
           <h4 id="selected-exercise-name" style="text-align: center; width: 100%; margin: 0;"></h4>
           <hr style="width: 100%; margin: 0;">
-          <ol id="exercise-items"></ol>
+          <ol id="exercise-items" style="padding: 5px 0 5px 0;"></ol>
           <span id="already-added"style='color: red; display: none;'>This exercise is already in the list.</span>
           <span id="no-progressions" style='color: red; display: none;'>There are no progressions for this exercise.</span>
           <div style="text-align: center;">
@@ -171,7 +171,18 @@
             }
           }
           if (!exerciseExists) {
-            $('#exercise-items').append("<li class='exercise-item'><span id='exercise-name'>" + exerciseName + "</span><button id='delete-btn' class='copy-del-btn' data-exercise-id='" + exerciseId + "'>Delete</button><input id='threshold' type='number' min='1' max='10' style='width: 40px; height: 22px; float: right; margin-right: 5px;'><label for='threshold' style='float:right; margin: 2px 5px;'>Reps Threshold</label></li>");
+            $('#exercise-items').append(`
+            <li class='exercise-item'>
+              <div style='display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between;'>
+                <span id='exercise-name' style='display: inline-block; margin-left: 5px;'>${exerciseName}</span>
+                <div style='text-align: right;'>
+                  <label for='threshold' style='margin: 2px 5px;'>Reps Threshold:</label>
+                  <input id='threshold' type='number' min='1' max='10' style='width: 40px; height: 22px; margin-right: 5px;'>
+                  <button id='delete-btn' class='copy-del-btn' data-exercise-id='${exerciseId}'>Delete</button>
+                </div>
+              </div>
+            </li>
+            `);
             $('#no-progressions').css('display', 'none');
             $('#already-added').css('display', 'none');          
           }
