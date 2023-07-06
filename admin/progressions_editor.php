@@ -242,7 +242,11 @@
         repsThreshold,
         nextExerciseId
       });
-      console.log(exerciseName, repsThreshold, exerciseId, nextExerciseId, listItemNumber);
+      console.log("Exercise Name: " + exerciseName);
+      console.log("Reps Threshold: " + repsThreshold);
+      console.log("Exercise ID: " + exerciseId);
+      console.log("NextExerciseId " + nextExerciseId);
+      console.log("SequenceOrder: " + listItemNumber);
     }
   });
 
