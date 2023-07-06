@@ -55,8 +55,7 @@
   <main class="container" style="display: flex; flex-direction: column;">
     <div style="display: flex; width: 100%;">
       <div class="left-column" style="height: 80vh; width: 50%; box-sizing: border-box; overflow-y: auto;">
-      <div id="done-adding-items" style="text-align: center; background-color: #a10000; display: none;">Select Exercises to add to progression<button>Done</button></div>
-        <table id="exercise-table">
+      <table id="exercise-table">
           <thead>
             <tr>
               <th>Name</th>
@@ -92,6 +91,8 @@
           <div style="text-align: center;">
             <button class="btn" id="add-btn" style="display: none;">Add Exercise</button>
             <button class="btn" id="cancel-btn" style="display: none;">Cancel</button>
+            <button class="btn" id="done-adding-items" style="display: none;">Done Adding Exercises</button>
+            <button class="btn" id="save-btn" style="display: none;">Save Progression</button>
           </div>
         </div>
       </div>
@@ -130,7 +131,7 @@
         .done((data) => {
           let exerciseItems = "";
           data.forEach((progression) => { 
-            exerciseItems += "<li class='exercise-item'>" + progression.name + "<button class='delete-btn' data-progression-id='" + progression.id + "'>Delete</button></li>";
+            exerciseItems += "<li class='exercise-item'>" + progression.name + "<button class='copy-del-btn' data-progression-id='" + progression.id + "'>Delete</button></li>";
           });
           $('#exercise-items').html(exerciseItems);
           if (data.length === 0) {
@@ -145,11 +146,10 @@
 
   // Bind the click event for 'tr'
   $('#exercise-table tbody').on('click', 'tr', handleExerciseTableClick);
-
   $('#add-btn').click(function() {
     $('#exercise-table').css('border', '2px solid red');
     addingExercise = true;
-    $('#done-adding-items').css('display', 'block');
+    $('#done-adding-items').css('display', 'inline-block');
     $('#cancel-btn').css('display', 'none');
     $('#add-btn').css('display', 'none');
     // Remove previous event bindings
@@ -159,39 +159,46 @@
         let exerciseName = exerciseTable.row(this).data()[0];
         let exerciseId = $(this).find('input[name="exercise_id"]').val();
         let exerciseItems = $('#exercise-items .exercise-item');
+        let selectedExerciseName = $('#selected-exercise-name').text();
         let exerciseExists = false;
-        // check if exercise is already in the list
-        for (let i = 0; i < exerciseItems.length; i++) {
-          if (exerciseItems[i].innerText.includes(exerciseName)) {
-          exerciseExists = true;
-          $('#already-added').css('display', 'block');
-          break;
+        if (selectedExerciseName !== "" && selectedExerciseName !== exerciseName) {
+          for (let i = 0; i < exerciseItems.length; i++) {
+            if (exerciseItems[i].innerText.includes(exerciseName)) {
+            exerciseExists = true;
+            $('#already-added').css('display', 'block');
+            break;
+            }
           }
-        }
-        // if the exercise is not already in the list, add it
-        if (!exerciseExists) {
-          $('#exercise-items').append("<li class='exercise-item'>" + exerciseName + "<button class='delete-btn' data-exercise-id='" + exerciseId + "'>Delete</button></li>");
+          if (!exerciseExists) {
+            $('#exercise-items').append("<li class='exercise-item'>" + exerciseName + "<button id='delete-btn' class='copy-del-btn' data-exercise-id='" + exerciseId + "'>Delete</button><input id='threshold' type='number' min='1' max='10' style='width: 40px; height: 22px; float: right; margin-right: 5px;'><label for='threshold' style='float:right; margin: 2px 5px;'>Reps Threshold</label></li>");
+            $('#no-progressions').css('display', 'none');
+            $('#already-added').css('display', 'none');          
+          }
+        } else {
+          $('#already-added').css('display', 'block');
           $('#no-progressions').css('display', 'none');
-          $('#already-added').css('display', 'none');          
         }
       }
     });
   });
 
-  $('#done-adding-items button').click(function() {
+  $('#done-adding-items').click(function() {
     $('#exercise-table').css('border', 'none');
     addingExercise = false;
     $('#done-adding-items').css('display', 'none');
     $('#cancel-btn').css('display', 'inline-block');
+    $('#save-btn').css('display', 'inline-block');
     // Remove the newly added event bindings
     $('#exercise-table tbody').off('click', 'tr');
     // Rebind the click event for 'tr'
     $('#exercise-table tbody').on('click', 'tr', handleExerciseTableClick);
     $('#add-btn').css('display', 'inline-block');
+    $('#no-progressions').css('display', 'none');
+    $('#already-added').css('display', 'none');  
   });
 
   // remove Progression list item from the list only when its delete button is clicked
-  $('#exercise-items').on('click', '.delete-btn', function() {
+  $('#exercise-items').on('click', '#delete-btn', function() {
     $(this).parent().remove();
     if ($('#exercise-items').children().length === 0) {
       $('#exercise-items').html("<li>There are no progressions for this exercise.</li>");
@@ -203,12 +210,11 @@
     $('#exercise-items').html("");
     $('#selected-exercise-name').text("");
     $('#cancel-btn').css('display', 'none');
+    $('#save-btn').css('display', 'none');
     $('#add-btn').css('display', 'none');
     addingExercise = false;
-
     // Remove all event bindings
     $('#exercise-table tbody').off('click', 'tr');
-
     // Rebind the click event for 'tr'
     $('#exercise-table tbody').on('click', 'tr', handleExerciseTableClick);
   });
