@@ -247,8 +247,7 @@
         });
     }
     saveExercise(0);  // start the recursive function
-});
-
+  });
 
   // cancel button removes the selected exercises from the list, resets the selected exercise name, and hides the cancel button
   $('#cancel-btn').click(function() {
@@ -257,14 +256,12 @@
     $('#cancel-btn').css('display', 'none');
     $('#save-btn').css('display', 'none');
     $('#add-btn').css('display', 'none');
-    
     addingExercise = false;
     // Remove all event bindings
     $('#exercise-table tbody').off('click', 'tr');
     // Rebind the click event for 'tr'
     $('#exercise-table tbody').on('click', 'tr', handleExerciseTableClick);
   });
-
   $('#exercise-items').sortable({
     axis: 'y',
     containment: 'parent'
