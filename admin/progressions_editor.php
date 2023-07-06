@@ -127,10 +127,11 @@
       selectedExerciseId = $(this).find('input[name="exercise_id"]').val();
       $('#add-btn, #cancel-btn, #save-btn').css('display', 'inline-block');
       $('#selected-exercise-name').text(exerciseName);
-      let query = "SELECT e.name, p.progression_exercise_id, p.threshold FROM progressions p JOIN exercises e ON p.progression_exercise_id = e.id WHERE p.exercise_id = ?";
+      let query = "SELECT e.name, p.progression_exercise_id, p.threshold, p.sequence_order FROM progressions p JOIN exercises e ON p.progression_exercise_id = e.id WHERE p.exercise_id = ?";
       let params = [selectedExerciseId];
       $.post('../php/db.php', { query, params }, null, 'json')
         .done((data) => {
+          data.sort((a, b) => a.sequence_order - b.sequence_order); // Sort by sequence_order
           let exerciseItemsHtml = data.map((progressionExercise) => {
             return `
             <li class='exercise-item' data-progression-exercise-id='${progressionExercise.progression_exercise_id}'>
