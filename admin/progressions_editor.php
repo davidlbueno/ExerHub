@@ -86,13 +86,14 @@
           <h4 id="selected-exercise-name" style="text-align: center; width: 100%; margin: 0;"></h4>
           <hr style="width: 100%; margin: 0;">
           <ol id="exercise-items" style="padding: 5px 0 5px 0;"></ol>
-          <span id="already-added"style='color: red; display: none;'>This exercise is already in the list.</span>
+          <span id="already-added" style='color: red; display: none;'>This exercise is already in the list.</span>
           <span id="no-progressions" style='color: red; display: none;'>There are no progressions for this exercise.</span>
           <div style="text-align: center;">
             <button class="btn" id="add-btn" style="display: none;">Add Exercise</button>
             <button class="btn" id="cancel-btn" style="display: none;">Cancel</button>
             <button class="btn" id="done-adding-items" style="display: none;">Done Adding Exercises</button>
-            <button class="btn" id="save-btn" style="display: none;">Save Progression</button>
+            <button class="btn" id="save-btn" style="display: none;">Save</button>
+            <button class="btn" id="delete-btn" style="display: none;">Delete</button>
           </div>
         </div>
       </div>
@@ -125,18 +126,31 @@
       selectedExerciseId = $(this).find('input[name="exercise_id"]').val();
       $('#add-btn').css('display', 'inline-block');
       $('#cancel-btn').css('display', 'inline-block');
+      $('#save-btn').css('display', 'inline-block');
       $('#selected-exercise-name').text(exerciseName);
-      let query = "SELECT e.name FROM progressions p JOIN exercises e ON p.progression_exercise_id = e.id WHERE p.exercise_id = ?";
+      let query = "SELECT e.name, p.progression_exercise_id, p.threshold FROM progressions p JOIN exercises e ON p.progression_exercise_id = e.id WHERE p.exercise_id = ?";
       let params = [selectedExerciseId];
       $.post('../php/db.php', { query, params }, null, 'json')
         .done((data) => {
           let exerciseItems = "";
           data.forEach((progression_exercise) => { 
-            exerciseItems += "<li class='exercise-item'>" + progression_exercise.name + "<button class='copy-del-btn' data-progression_exercise-id='" + progression_exercise.id + "'>X</button></li>";
+            console.log("Progression Exercise ID: " + progression_exercise.progression_exercise_id);
+            exerciseItems += `
+            <li class='exercise-item' data-progression-exercise-id='${progression_exercise.progression_exercise_id}'>
+              <div style='display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between;'>
+                <span id='exercise-name' style='display: inline-block; margin-left: 5px;'>${progression_exercise.name}</span>
+                <div style='text-align: right;'>
+                  <label for='threshold' style='margin: 2px 5px;'>Reps Threshold:</label>
+                  <input id='threshold' type='number' min='1' max='10' value='${progression_exercise.threshold}' style='width: 40px; height: 22px; margin-right: 5px;'>
+                  <button id='del-item-btn' class='copy-del-btn'>Delete</button>
+                </div>
+              </div>
+            </li>`;
           });
           $('#exercise-items').html(exerciseItems);
           if (data.length === 0) {
             $('#no-progressions').css('display', 'block');
+            $('#delete-btn').css('display', 'none');
           } else {
             $('#no-progressions').css('display', 'none');
           } 
@@ -155,38 +169,40 @@
     $('#done-adding-items').css('display', 'inline-block');
     $('#cancel-btn').css('display', 'none');
     $('#add-btn').css('display', 'none');
+    $('#delete-btn').css('display', 'none');
     // Remove previous event bindings
     $('#exercise-table tbody').off('click', 'tr', handleExerciseTableClick);
-    $('#exercise-table tbody').on('click', 'tr', function() {
+    $('#exercise-table tbody').on('click', 'tr td', function() {
       if (addingExercise) {
-        let exerciseName = exerciseTable.row(this).data()[0];
-        let exerciseId = $(this).find('input[name="exercise_id"]').val();
+        let exerciseName = $(this).closest('tr').find('td:first-child').text();
+        let exerciseId = $(this).closest('tr').find('input[name="exercise_id"]').val();
+        console.log("Exercise ID: " + exerciseId);
         let exerciseItems = $('#exercise-items .exercise-item');
         let selectedExerciseName = $('#selected-exercise-name').text();
         let exerciseExists = false;
         if (selectedExerciseName !== "" && selectedExerciseName !== exerciseName) {
           for (let i = 0; i < exerciseItems.length; i++) {
             if (exerciseItems[i].innerText.includes(exerciseName)) {
-            exerciseExists = true;
-            $('#already-added').css('display', 'block');
-            break;
+              exerciseExists = true;
+              $('#already-added').css('display', 'block');
+              break;
             }
           }
           if (!exerciseExists) {
             $('#exercise-items').append(`
-            <li class='exercise-item'>
+            <li class='exercise-item' data-progression-exercise-id='${exerciseId}'>
               <div style='display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between;'>
                 <span id='exercise-name' style='display: inline-block; margin-left: 5px;'>${exerciseName}</span>
                 <div style='text-align: right;'>
                   <label for='threshold' style='margin: 2px 5px;'>Reps Threshold:</label>
-                  <input id='threshold' type='number' min='1' max='10' style='width: 40px; height: 22px; margin-right: 5px;'>
-                  <button id='delete-btn' class='copy-del-btn' data-exercise-id='${exerciseId}'>Delete</button>
+                  <input id='threshold' type='number' min='1' max='10' value='1' style='width: 40px; height: 22px; margin-right: 5px;'>
+                  <button id='del-item-btn' class='copy-del-btn'>Delete</button>
                 </div>
               </div>
             </li>
             `);
             $('#no-progressions').css('display', 'none');
-            $('#already-added').css('display', 'none');          
+            $('#already-added').css('display', 'none');
           }
         } else {
           $('#already-added').css('display', 'block');
@@ -203,17 +219,19 @@
     $('#cancel-btn').css('display', 'inline-block');
     $('#save-btn').css('display', 'inline-block');
     // Remove the newly added event bindings
-    $('#exercise-table tbody').off('click', 'tr');
+    $('#exercise-table tbody').off('click', 'tr td');
     // Rebind the click event for 'tr'
     $('#exercise-table tbody').on('click', 'tr', handleExerciseTableClick);
     $('#add-btn').css('display', 'inline-block');
+    $('#save-btn').css('display', 'inline-block');
+    $('#delete-btn').css('display', 'inline-block');
     $('#no-progressions').css('display', 'none');
-    $('#already-added').css('display', 'none');  
+    $('#already-added').css('display', 'none');
   });
 
   // remove Progression list item from the list only when its delete button is clicked
-  $('#exercise-items').on('click', '#delete-btn', function() {
-    $(this).parent().parent().parent().remove();
+  $('#exercise-items').on('click', '#del-item-btn', function() {
+    $(this).closest('li').remove();
     if ($('#exercise-items').children().length === 0) {
       $('#exercise-items').html("<li>There are no progressions for this exercise.</li>");
     }
@@ -222,31 +240,114 @@
   $('#save-btn').click(function() {
     let exerciseItems = $('#exercise-items .exercise-item');
     let progressionExercises = [];
-    function saveExercise(i) {
-        if (i >= exerciseItems.length) return;  // exit condition
-        let exerciseName = exerciseItems[i].querySelector('#exercise-name').innerText;
-        let repsThreshold = exerciseItems[i].querySelector('input[type="number"]').value;
-        let exerciseId = exerciseItems[i].querySelector('button').dataset.exerciseId;
-        let nextExerciseId = (i < exerciseItems.length - 1) ? exerciseItems[i + 1].querySelector('button').dataset.exerciseId : 0;
-        let listItemNumber = i + 1;
-        progressionExercises.push({
+
+    // Retrieve existing progressions from the progressions table for the selected exercise
+    let query = "SELECT * FROM progressions WHERE exercise_id = ?";
+    let params = [selectedExerciseId];
+    $.post('../php/db.php', { query, params }, null, 'json')
+      .done((data) => {
+        let progressions = data;
+
+        function saveExercise(i) {
+          if (i >= exerciseItems.length) return; // exit condition
+
+          let exerciseName = exerciseItems[i].querySelector('#exercise-name').innerText;
+          let repsThreshold = exerciseItems[i].querySelector('input[type="number"]').value;
+          let exerciseId = parseInt(exerciseItems[i].dataset.progressionExerciseId);
+          let nextExerciseId = (i < exerciseItems.length - 1) ? parseInt(exerciseItems[i + 1].dataset.progressionExerciseId) : 0;
+          let listItemNumber = i + 1;
+
+          progressionExercises.push({
             exerciseName,
             exerciseId,
             repsThreshold,
             nextExerciseId
-        });
-        let query = "INSERT INTO progressions (exercise_id, progression_exercise_id, sequence_order, next_exercise_id, threshold) VALUES (?, ?, ?, ?, ?)";
-        let params = [selectedExerciseId, exerciseId, listItemNumber, nextExerciseId, repsThreshold];
-        $.post('../php/db.php', { query, params }, null, 'json')
-            .done((data) => {
+          });
+
+          // Check if a record already exists in the progressions table for the current exerciseId
+          let existingRecord = progressions.find(record => record.progression_exercise_id === exerciseId);
+
+          if (existingRecord) {
+            // Update the existing record
+            let updateQuery = "UPDATE progressions SET threshold = ?, sequence_order = ?, next_exercise_id = ? WHERE exercise_id = ? AND progression_exercise_id = ?";
+            let updateParams = [repsThreshold, listItemNumber, nextExerciseId, selectedExerciseId, exerciseId];
+
+            $.post('../php/db.php', { query: updateQuery, params: updateParams }, null, 'json')
+              .done((data) => {
                 console.log(data);
-                saveExercise(i+1);  // call the next iteration
+                saveExercise(i + 1); // call the next iteration
+              })
+              .fail((err) => {
+                console.log(err);
+                saveExercise(i + 1); // call the next iteration even if there is an error
+              });
+          } else {
+            // Insert a new record
+            let insertQuery = "INSERT INTO progressions (exercise_id, progression_exercise_id, sequence_order, next_exercise_id, threshold) VALUES (?, ?, ?, ?, ?)";
+            let insertParams = [selectedExerciseId, exerciseId, listItemNumber, nextExerciseId, repsThreshold];
+
+            $.post('../php/db.php', { query: insertQuery, params: insertParams }, null, 'json')
+              .done((data) => {
+                console.log(data);
+                saveExercise(i + 1); // call the next iteration
+              })
+              .fail((err) => {
+                console.log(err);
+                saveExercise(i + 1); // call the next iteration even if there is an error
+              });
+          }
+        }
+
+        // Find the progression exercise IDs of the deleted items
+        let deletedItems = progressions.filter(record => !Array.from(exerciseItems).some(item => parseInt(item.dataset.progressionExerciseId) === record.progression_exercise_id));
+        console.log(deletedItems);let deleteParams = [selectedExerciseId, deletedItems.map(item => item.progression_exercise_id).join(",")];
+
+        if (deletedItems.length > 0) {
+          let placeholders = deletedItems.map(() => "?").join(", ");
+          let deleteParams = [selectedExerciseId, ...deletedItems.map(item => item.progression_exercise_id)];
+          let deleteQuery = `DELETE FROM progressions WHERE exercise_id = ? AND progression_exercise_id IN (${placeholders})`;
+          console.log("params: " + deleteParams);
+          console.log("query: " + deleteQuery);
+
+          $.post('../php/db.php', { query: deleteQuery, params: deleteParams }, null, 'json')
+            .done((data) => {
+              console.log(data);
+              saveExercise(0); // start the recursive function
             })
             .fail((err) => {
-                console.log(err);
-        });
-    }
-    saveExercise(0);  // start the recursive function
+              console.log(err);
+              saveExercise(0); // start the recursive function even if there is an error
+            });
+        } else {
+          saveExercise(0); // start the recursive function
+        }
+      })
+      .fail((err) => {
+        console.log(err);
+      });
+  });
+
+// delete all records in the progressions table for the selectedExercise and reset the list;
+  $('#delete-btn').click(function() {
+    let query = "DELETE FROM progressions WHERE exercise_id = ?";
+    let params = [selectedExerciseId];
+    $.post('../php/db.php', { query, params }, null, 'json')
+      .done((data) => {
+        console.log(data);
+        $('#exercise-items').html("");
+        $('#selected-exercise-name').text("");
+        $('#cancel-btn').css('display', 'none');
+        $('#save-btn').css('display', 'none');
+        $('#add-btn').css('display', 'none');
+        addingExercise = false;
+        // Remove all event bindings
+        $('#exercise-table tbody').off('click', 'tr');
+        // Rebind the click event for 'tr'
+        $('#exercise-table tbody').on('click', 'tr', handleExerciseTableClick);
+      })
+      .fail((err) => {
+        console.log(err);
+      });
   });
 
   // cancel button removes the selected exercises from the list, resets the selected exercise name, and hides the cancel button
@@ -256,6 +357,7 @@
     $('#cancel-btn').css('display', 'none');
     $('#save-btn').css('display', 'none');
     $('#add-btn').css('display', 'none');
+    $('#delete-btn').css('display', 'none');
     addingExercise = false;
     // Remove all event bindings
     $('#exercise-table tbody').off('click', 'tr');
