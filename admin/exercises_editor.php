@@ -52,7 +52,8 @@
   </nav>
 <ul class="sidenav" id="side-nav"></ul>
 <main class="container" style="display: flex; flex-direction: column;">
-  <div id="top-form" style="display: flex; align-items: center;">
+<div id="top-form" style="display: flex; flex-direction: column;">
+  <div style="display: flex; align-items: center; margin-bottom: 10px;">
     <label for="name" id="new-exercise-label" style="margin-right: 10px;">New Exercise: </label>
     <input type="text" id="new-exercise-name" name="new-exercise-name" placeholder="New Exercise Name" style="flex: 1; margin-right: 10px; height: 40px;">
     <select id="new-exercise-type" name="type" style="flex: 0 0 15%; margin-right: 10px; height: 40px;">
@@ -64,15 +65,20 @@
     </select>
     <input type="number" id="new-exercise-difficulty" name="difficulty" placeholder="Difficulty" style="flex: 0 0 10%; margin-right: 10px; height: 40px;">
   </div>
+</div>
+<div id='selected-exercise' style="display: none; margin: 2px 0 0 2px; padding: 2px; background-color: #525252;"></div>
+<div style="margin: 5px 0 5px 5px;">
+  <textarea id="long-text" name="longText" rows="4" cols="50">Exercise description...</textarea>
+</div>
   <div style="display: flex; width: 100%;">
     <div class="left-column" style="height: 80vh; width: 50%; box-sizing: border-box; overflow-y: auto;">
       <table id="exercise-table">
         <thead>
           <tr>
             <th>Name</th>
-            <th>Type:&nbsp;<select title="Filter by Type"><option value="">All Types</option></select></th>
+            <th><select title="Filter by Type"><option value="">All Types</option></select></th>
             <th>Difficulty</th>
-            <th>Muscles (Intensity)</th>
+            <th>Muscles</th>
           </tr>
         </thead>
         <tbody>
@@ -144,13 +150,14 @@ $(document).ready(function() {
     $this.toggleClass('selected', !$this.hasClass('selected'));
     var showForm = !$this.hasClass('selected');
     $('#top-form, #add-button').toggle(showForm);
-    $('#update-button, #delete-button').toggle(!showForm);
+    $('#update-button, #delete-button, #selected-exercise').toggle(!showForm);
 
     // Reset all sliders and labels to zero
     $('.slider-container input[type="range"]').val(0).prev('.muscle-label').removeClass('dot').find('span').text(0);
 
     if (!showForm) {
       var exerciseName = $this.find('td:first-child').text();
+      $('#selected-exercise').text(exerciseName);
       var muscles = exerciseData[exerciseName].muscles;
       for (var muscleName in muscles) {
         if (muscles.hasOwnProperty(muscleName)) {
