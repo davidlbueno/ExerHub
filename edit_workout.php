@@ -24,6 +24,11 @@
         <div class="input-field col s12">
           <input type="text" name="workout-name" id="workout-name" placeholder="Workout Name" style="width:100%;">
         </div>
+        <div class="row">
+          <div class="col s12">
+            <label for="workout-length" style="display: inline-block;">Workout Length</label>
+          <div id="workout-length" style="display: inline-block;">0:00</div>
+        </div>
       </div>
       <div class="col s12">
         <ol id="workout-list" class="sortable">

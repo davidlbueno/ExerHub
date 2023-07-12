@@ -42,7 +42,7 @@ addItemBtn.addEventListener("click", () => {
   const $addItemBtn = $('#add-type-btn');
   const selectedListItem = $(".selected");
 
-  if (typeSelect.value === 'Rest' || (typeSelect.value && exerciseSelect.value && secondsInput.value)) {
+  if (typeSelect.value === 'Rest' || (typeSelect.value && exerciseSelect.value && secondsInput.value && setsInput.value)) {
     if (typeSelect.value === 'Rest') {
       if (selectedListItem.length > 0) {
         // Update existing list item
@@ -81,6 +81,7 @@ addItemBtn.addEventListener("click", () => {
     }
   } else {
     alert("Please enter all required information.");
+    return;
   }
 
   $addItemBtn.text('Add Item');
@@ -163,8 +164,27 @@ $(document).on('click', "#workout-list li", function(event) {
   }
 });
 
+// Function to calculate total workout time and display it in the workout-length div
+function calculateWorkoutLength() {
+  const workoutLength = document.getElementById("workout-length");
+  let totalSeconds = 0;
+  for (let i = 0; i < typesList.children.length; i++) {
+    const type = typesList.children[i].innerText;
+    const seconds = parseInt(type.match(/\((\d+)s\)/)[1]);
+    totalSeconds += seconds;
+  }
+  workoutLength.innerText = totalSeconds;
+  if (totalSeconds > 0) {
+    // Format the number of seconds in totalSeconds to MM:SS
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    workoutLength.innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+  }
+}
+
 // Function to clear input fields
 function clearFields() {
+  calculateWorkoutLength();
   typeSelect.value = "";
   exerciseSelect.value = "";
   secondsInput.value = "";
@@ -186,6 +206,7 @@ cancelWorkoutBtn.addEventListener("click", () => {
 function clearList() {
   typesList.innerHTML = "";
   saveWorkoutBtn.disabled = true;
+  clearFields();
 }
 
 // Set focus on workout name input

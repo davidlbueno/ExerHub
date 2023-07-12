@@ -99,7 +99,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }, 1000);
     });
-}
+  }
 
   playPauseBtn.addEventListener('click', function () {
     const activeItem = document.querySelector('.workout-list li.active');
@@ -362,6 +362,24 @@ document.addEventListener('DOMContentLoaded', function () {
     requestId = requestAnimationFrame(updateCountdown);
   }
 
+  function calculateWorkoutLength() {
+    const workoutLength = document.getElementById("workout-length");
+    let totalSeconds = 0;
+    const listItems = document.querySelectorAll("li");
+    for (let i = 0; i < listItems.length; i++) {
+      const seconds = listItems[i].dataset.seconds;
+      if (seconds) {
+        totalSeconds += parseInt(seconds);
+      }
+    }
+    workoutLength.innerText = totalSeconds;
+    if (totalSeconds > 0) {
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = totalSeconds % 60;
+      workoutLength.innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+    }
+  };
+
   function pauseCountdown() {
     cancelAnimationFrame(requestId);
     isTimerRunning = false;
@@ -387,4 +405,5 @@ document.addEventListener('DOMContentLoaded', function () {
     nextBtn.disabled = disabled;
     resetBtn.disabled = disabled;
   }
+  calculateWorkoutLength();
 });

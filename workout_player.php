@@ -37,6 +37,10 @@
                 <button id="prevBtn" class="btn"><i class="material-icons">skip_previous</i></button>
                 <button id="nextBtn" class="btn"><i class="material-icons">skip_next</i></button>
                 <button id="resetBtn" class="btn"><i class="material-icons">replay</i></button>
+                <div class="col s12">
+                  <label for="workout-length" style="display: inline-block;">Workout Length</label>
+                  <div id="workout-length" style="display: inline-block;">0:00</div>
+                </div>
               </div>
             </div>
             <div class="upper-right-column" style="flex: 1;">
@@ -55,7 +59,7 @@
               $warmup = $row['warmup'];
               if ($exerciseType === 'Rest') {
                 ?>
-                <li class="rest">
+                <li class="rest" data-seconds="<?= $seconds ?>">
                     <strong>Rest</strong> - (<?= $seconds ?> seconds)
                     <div class="exercise-details">
                       Actual Seconds: <span class="actualSeconds">0</span>
@@ -65,7 +69,7 @@
               } else {
                 if ($warmup === '1') {
                   ?>
-                  <li class="exercise-list-item warmup" data-exercise-id="<?= $exerciseId ?>">
+                  <li class="exercise-list-item warmup" data-seconds="<?= $seconds ?>" data-exercise-id="<?= $exerciseId ?>">
                     <strong><?= $exerciseType ?></strong> - <?= $exerciseName ?> (<?= $seconds ?> seconds) - Warmup
                     <div class="exercise-details">
                       Actual Reps: <input type="number" class="repsInput" max="999" placeholder="Reps" style="width: 70px; height: 30px">
@@ -75,7 +79,7 @@
                   <?php
                 } else {
                   ?>
-                  <li class="exercise-list-item" data-exercise-id="<?= $exerciseId ?>">
+                  <li class="exercise-list-item" data-seconds="<?= $seconds ?>" data-exercise-id="<?= $exerciseId ?>">
                     <strong><?= $exerciseType ?></strong> - <?= $exerciseName ?> (<?= $seconds ?> seconds)
                     <div class="exercise-details">
                       Actual Reps: <input type="number" class="repsInput" max="999" placeholder="Reps" style="width: 70px; height: 30px">
