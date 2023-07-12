@@ -16,47 +16,53 @@ $requestData = json_decode($requestBody, true);
 $workoutName = $requestData['workoutName'];
 $workoutData = $requestData['workoutData'];
 $userId = $_SESSION['user_id'];
+
 // Create the workout record in the 'workouts' table
-$query = "INSERT INTO workouts (name, user_id, is_public) VALUES ('$workoutName', $userId, '0')";
-$result = query($query);
+$query = "INSERT INTO workouts (name, user_id, is_public) VALUES (?, ?, '0')";
+
+$params = array($workoutName, $userId);
+$result = query($query, $params);
+
 // Check if the query was successful
-if ($result) {
+if ($result['success']) {
   //Workout record created successfully
-  $workoutId = mysqli_insert_id($conn); // Get the auto-generated workout ID
+  $workoutId = $result['insert_id']; // Get the auto-generated workout ID
   // Process the workout data
-foreach ($workoutData as $type) {
-  $typeValue = $type['type'];
-  $exerciseValue = $type['exercise'];
-  $secondsValue = $type['seconds'];
-  $warmupValue = $type['warmup'];
-  // Get the exercise ID based on the exercise name
-  $exerciseQuery = "SELECT id FROM exercises WHERE name = '$exerciseValue'";
-  $exerciseResult = query($exerciseQuery);
-  if ($typeValue != 'Rest') {
-    if ($exerciseResult && mysqli_num_rows($exerciseResult) > 0) {
-      $exerciseRow = mysqli_fetch_assoc($exerciseResult);
-      $exerciseId = $exerciseRow['id'];
-      // Insert the workout type into the database table
-      $query = "INSERT INTO workout_sequences(workout_id, type, exercise_id, seconds, warmup)
-                VALUES ($workoutId, '$typeValue', $exerciseId, $secondsValue, $warmupValue)";
+  foreach ($workoutData as $type) {
+    $typeValue = $type['type'];
+    $exerciseValue = $type['exercise'];
+    $secondsValue = $type['seconds'];
+    $warmupValue = $type['warmup'];
+    // Get the exercise ID based on the exercise name
+    $exerciseQuery = "SELECT id FROM exercises WHERE name = ?";
+    $exerciseResult = query($exerciseQuery, array($exerciseValue));
+    if ($typeValue != 'Rest') {
+      if (!empty($exerciseResult)) {
+        $exerciseId = $exerciseResult[0]['id'];
+        // Insert the workout type into the database table
+        $query = "INSERT INTO workout_sequences(workout_id, type, exercise_id, seconds, warmup)
+                  VALUES (?, ?, ?, ?, ?)";
+        $params = array($workoutId, $typeValue, $exerciseId, $secondsValue, $warmupValue);
+      } else {
+        // Exercise not found, handle the error accordingly
+        die("Error: Exercise not found for name '$exerciseValue'");
+      }
     } else {
-      // Exercise not found, handle the error accordingly
-      die("Error: Exercise not found for name '$exerciseValue'");
+      // Insert the workout type into the database table without exercise_id
+      $query = "INSERT INTO workout_sequences(workout_id, type, seconds)
+                VALUES (?, ?, ?)";
+      $params = array($workoutId, $typeValue, $secondsValue);
+    }    
+    $result = query($query, $params);
+    if (!$result['success']) {
+      // Handle the error (e.g., display an error message, rollback changes, etc.)
+      die("Error creating workout type: " . $result['error']);
     }
-  } else {
-    // Insert the workout type into the database table without exercise_id
-    $query = "INSERT INTO workout_sequences(workout_id, type, seconds)
-              VALUES ($workoutId, '$typeValue', $secondsValue)";
-  }    
-  $result = query($query);
-  if (!$result) {
-    // Handle the error (e.g., display an error message, rollback changes, etc.)
-    die("Error creating workout type: " . mysqli_error($conn));
   }
-}
-  echo 'success';
+  echo json_encode(['success' => true]);
   exit();
 } else {
   // Handle the error (e.g., display an error message, rollback changes, etc.)
-  die("Error creating workout: " . mysqli_error($conn));
+  die("Error creating workout: " . $result['error']);
 }
+?>
