@@ -351,3 +351,7 @@ li.selected {
 tr td {
   color: #bebdbd !important;
 }
+
+textarea {
+  color: #bebdbd !important;
+}
