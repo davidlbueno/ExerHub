@@ -126,42 +126,49 @@ $(document).ready(function() {
   var exerciseData = <?php echo json_encode($exercises); ?>;
 
   // Handle slider and label updates
-  const handleSliderLabelUpdates = () => {
-    $('.slider-container input[type="range"]').each(function() {
-      var muscleName = $(this).attr('name');
-      var intensity = $(this).val();
-      $('#slider-value-' + muscleName).text(intensity);
-      $(this).prev('.muscle-label').toggleClass('dot', intensity > 0);
-    });
-  };
+const handleSliderLabelUpdates = () => {
+  $('.slider-container input[type="range"]').each(function () {
+    var muscleName = $(this).attr('name');
+    var intensity = $(this).val();
+    $('#slider-value-' + muscleName).text(intensity);
+    $(this).prev('.muscle-label').toggleClass('dot', intensity > 0);
+  });
+};
 
-  handleSliderLabelUpdates();
+// Update muscle sliders when exercise is clicked
+$('#exercise-table tbody').on('click', 'tr', function () {
+  var $this = $(this);
+  $this.siblings().removeClass('selected');
+  $this.toggleClass('selected', !$this.hasClass('selected'));
+  var showForm = !$this.hasClass('selected');
+  $('#top-form, #add-button').toggle(showForm);
+  $('#update-button, #delete-button').toggle(!showForm);
 
-  // Update muscle sliders when exercise is clicked
-  $('#exercise-table tbody').on('click', 'tr', function() {
-    var $this = $(this);
-    $this.siblings().removeClass('selected');
-    $this.toggleClass('selected', !$this.hasClass('selected'));
-    var showForm = !$this.hasClass('selected');
-    $('#top-form, #add-button').toggle(showForm);
-    $('#update-button, #delete-button').toggle(!showForm);
+  // Reset all sliders and labels to zero
+  $('.slider-container input[type="range"]').val(0).prev('.muscle-label').removeClass('dot').find('span').text(0);
 
-    // Reset all sliders and labels to zero
-    $('.slider-container input[type="range"]').val(0).prev('.muscle-label').removeClass('dot').find('span').text(0);
-
-    if (!showForm) {
-      var exerciseName = $this.find('td:first-child').text();
-      var muscles = exerciseData[exerciseName].muscles;
-      for (var muscleName in muscles) {
-        if (muscles.hasOwnProperty(muscleName)) {
-          var intensity = muscles[muscleName];
-          $('#slider-' + muscleName).val(intensity);
-          $('#slider-value-' + muscleName).text(intensity);
-          $('#slider-' + muscleName).prev('.muscle-label').toggleClass('dot', intensity > 0);
-        }
+  if (!showForm) {
+    var exerciseName = $this.find('td:first-child').text();
+    var muscles = exerciseData[exerciseName].muscles;
+    for (var muscleName in muscles) {
+      if (muscles.hasOwnProperty(muscleName)) {
+        var intensity = muscles[muscleName];
+        $('#slider-' + muscleName).val(intensity);
+        $('#slider-value-' + muscleName).text(intensity);
+        $('#slider-' + muscleName).prev('.muscle-label').toggleClass('dot', intensity > 0);
       }
     }
+  }
+
+  // Update sliders and labels
+  handleSliderLabelUpdates();
   });
+
+  // Add event listener for slider changes
+  $('.slider-container input[type="range"]').on('input', function () {
+    handleSliderLabelUpdates();
+  });
+
 
   // Handle AJAX requests
   const handleAjax = (url, type, data, successCallback, errorCallback) => {
@@ -194,6 +201,7 @@ $(document).ready(function() {
       var muscleName = $(this).attr('name');
       var intensity = $(this).val();
       var existingIntensity = exerciseData[exerciseName].muscles[muscleName] || 0;
+      console.log(muscleName, intensity, existingIntensity);
 
       if (intensity > 0 && existingIntensity > 0) {
         if (intensity !== existingIntensity) {
@@ -209,7 +217,7 @@ $(document).ready(function() {
           muscle: muscleName,
           intensity: intensity
         });
-      } else if (intensity === 0 && existingIntensity > 0) {
+      } else if (intensity < 1 && existingIntensity > 0) {
         deletions.push({
           exercise: exerciseName,
           muscle: muscleName
@@ -245,7 +253,6 @@ $(document).ready(function() {
       return new Promise((resolve, reject) => {
         var query = 'DELETE em FROM exercise_muscles em INNER JOIN exercises e ON e.id = em.exercise_id INNER JOIN muscles m ON m.id = em.muscle_id WHERE e.name = ? AND m.name = ?';
         var params = [deletion.exercise, deletion.muscle];
-
         handleAjax('../php/db.php', 'POST', {
           query: query,
           params: params
