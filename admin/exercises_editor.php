@@ -45,15 +45,14 @@
 <body class="dark">
   <nav>
     <div class="nav-wrapper">
-      <span class="brand-logo" style="margin-left: 60px"><a href="../index.html"><i class="material-icons">home</i></a><a href="/admin/index.html">/Admin/</a><span class="sub-page-name">Exercises Editor</span></span>
+      <span class="brand-logo" style="margin-left: 60px"><a href="index.html"><i class="material-icons">home</i></a><a href="/admin/index.html">/Admin/</a><span class="sub-page-name">Exercises Editor</span></span>
       <a href="index.html" data-target="side-nav" class="show-on-large sidenav-trigger"><i class="material-icons">menu</i></a>
       <ul class="right" id="top-nav"></ul>
     </div>
   </nav>
 <ul class="sidenav" id="side-nav"></ul>
 <main class="container" style="display: flex; flex-direction: column;">
-<div id="top-form" style="display: flex; flex-direction: column;">
-  <div style="display: flex; align-items: center; margin-bottom: 10px;">
+  <div id="top-form" style="display: flex; align-items: center;">
     <label for="name" id="new-exercise-label" style="margin-right: 10px;">New Exercise: </label>
     <input type="text" id="new-exercise-name" name="new-exercise-name" placeholder="New Exercise Name" style="flex: 1; margin-right: 10px; height: 40px;">
     <select id="new-exercise-type" name="type" style="flex: 0 0 15%; margin-right: 10px; height: 40px;">
@@ -65,20 +64,15 @@
     </select>
     <input type="number" id="new-exercise-difficulty" name="difficulty" placeholder="Difficulty" style="flex: 0 0 10%; margin-right: 10px; height: 40px;">
   </div>
-</div>
-<div id='selected-exercise' style="display: none; margin: 2px 0 0 2px; padding: 2px; background-color: #525252;"></div>
-<div style="margin: 5px 0 5px 5px;">
-  <textarea id="long-text" name="longText" rows="4" cols="50">Exercise description...</textarea>
-</div>
   <div style="display: flex; width: 100%;">
     <div class="left-column" style="height: 80vh; width: 50%; box-sizing: border-box; overflow-y: auto;">
       <table id="exercise-table">
         <thead>
           <tr>
             <th>Name</th>
-            <th><select title="Filter by Type"><option value="">All Types</option></select></th>
+            <th>Type:&nbsp;<select title="Filter by Type"><option value="">All Types</option></select></th>
             <th>Difficulty</th>
-            <th>Muscles</th>
+            <th>Muscles (Intensity)</th>
           </tr>
         </thead>
         <tbody>
@@ -150,14 +144,13 @@ $(document).ready(function() {
     $this.toggleClass('selected', !$this.hasClass('selected'));
     var showForm = !$this.hasClass('selected');
     $('#top-form, #add-button').toggle(showForm);
-    $('#update-button, #delete-button, #selected-exercise').toggle(!showForm);
+    $('#update-button, #delete-button').toggle(!showForm);
 
     // Reset all sliders and labels to zero
     $('.slider-container input[type="range"]').val(0).prev('.muscle-label').removeClass('dot').find('span').text(0);
 
     if (!showForm) {
       var exerciseName = $this.find('td:first-child').text();
-      $('#selected-exercise').text(exerciseName);
       var muscles = exerciseData[exerciseName].muscles;
       for (var muscleName in muscles) {
         if (muscles.hasOwnProperty(muscleName)) {
@@ -195,29 +188,39 @@ $(document).ready(function() {
 
   function updateExerciseMuscles(exerciseName, isUpdate, successCallback) {
     var updates = [];
+    var deletions = [];
+    var insertions = [];
     $('.slider-container input[type="range"]').each(function() {
       var muscleName = $(this).attr('name');
       var intensity = $(this).val();
-      if (intensity > 0) {
-        updates.push({
+      var existingIntensity = exerciseData[exerciseName].muscles[muscleName] || 0;
+
+      if (intensity > 0 && existingIntensity > 0) {
+        if (intensity !== existingIntensity) {
+          updates.push({
+            exercise: exerciseName,
+            muscle: muscleName,
+            intensity: intensity
+          });
+        }
+      } else if (intensity > 0 && existingIntensity === 0) {
+        insertions.push({
           exercise: exerciseName,
           muscle: muscleName,
           intensity: intensity
         });
+      } else if (intensity === 0 && existingIntensity > 0) {
+        deletions.push({
+          exercise: exerciseName,
+          muscle: muscleName
+        });
       }
     });
 
-    if (!updates.length) {
-      alert('Please set at least one muscle intensity.');
-      return;
-    }
-
     var updatePromises = updates.map(update => {
       return new Promise((resolve, reject) => {
-        var query = isUpdate
-          ? 'UPDATE exercise_muscles em INNER JOIN muscles m ON em.muscle_id = m.id INNER JOIN exercises e ON em.exercise_id = e.id SET em.intensity = ? WHERE m.name = ? AND e.name = ?'
-          : 'INSERT INTO exercise_muscles (exercise_id, muscle_id, intensity) SELECT (SELECT id FROM exercises WHERE name = ?), (SELECT id FROM muscles WHERE name = ?), ? FROM dual';
-        var params = isUpdate ? [update.intensity, update.muscle, exerciseName] : [exerciseName, update.muscle, update.intensity];
+        var query = 'UPDATE exercise_muscles em INNER JOIN muscles m ON em.muscle_id = m.id INNER JOIN exercises e ON em.exercise_id = e.id SET em.intensity = ? WHERE m.name = ? AND e.name = ?';
+        var params = [update.intensity, update.muscle, exerciseName];
 
         handleAjax('../php/db.php', 'POST', {
           query: query,
@@ -226,7 +229,33 @@ $(document).ready(function() {
       });
     });
 
-    Promise.all(updatePromises)
+    var insertionPromises = insertions.map(insertion => {
+      return new Promise((resolve, reject) => {
+        var query = 'INSERT INTO exercise_muscles (exercise_id, muscle_id, intensity) SELECT (SELECT id FROM exercises WHERE name = ?), (SELECT id FROM muscles WHERE name = ?), ? FROM dual';
+        var params = [insertion.exercise, insertion.muscle, insertion.intensity];
+
+        handleAjax('../php/db.php', 'POST', {
+          query: query,
+          params: params
+        }, resolve, reject);
+      });
+    });
+
+    var deletionPromises = deletions.map(deletion => {
+      return new Promise((resolve, reject) => {
+        var query = 'DELETE em FROM exercise_muscles em INNER JOIN exercises e ON e.id = em.exercise_id INNER JOIN muscles m ON m.id = em.muscle_id WHERE e.name = ? AND m.name = ?';
+        var params = [deletion.exercise, deletion.muscle];
+
+        handleAjax('../php/db.php', 'POST', {
+          query: query,
+          params: params
+        }, resolve, reject);
+      });
+    });
+
+    var allPromises = updatePromises.concat(insertionPromises, deletionPromises);
+
+    Promise.all(allPromises)
       .then(() => {
         if (typeof successCallback === 'function') {
           successCallback(null, updates);
