@@ -185,17 +185,22 @@ $(document).ready(function() {
         params: params
       }, function(response) {
         response = JSON.parse(response);
-        $('#description').val(response[0]['description']);
+        if (response.length > 0) {  // Only update the description if we have data returned
+          $('#description').val(response[0]['description']);
+        } else {  // If no data is returned, set the description to be empty
+          $('#description').val('');
+        }
       }, function(error) {
         console.error(error);
-        alert('An error occurred while fetching the exercise description.');
+        // If an error occurs, set the description to be empty instead of alerting the error
+        $('#description').val('');
       });
-      
-    } else {
-      $('#exercise-name').val('');
-      $('#exercise-type').val('');
-      $('#exercise-difficulty').val('');
-    }
+
+      } else {
+        $('#exercise-name').val('');
+        $('#exercise-type').val('');
+        $('#exercise-difficulty').val('');
+      }
 
     handleSliderLabelUpdates();
   });
@@ -328,14 +333,48 @@ $(document).ready(function() {
       });
   }
 
+  // function to update the exercise name, type and difficulty if they have been changed in the form
+  function updateExercise(exerciseId, exerciseName, exerciseType, exerciseDifficulty, description, successCallback) {
+    var query = 'UPDATE exercises SET name = ?, type = ?, difficulty = ? WHERE id = ?';
+    var params = [exerciseName, exerciseType, exerciseDifficulty, exerciseId];
+    handleAjax('../php/db.php', 'POST', {
+      query: query,
+      params: params
+    }, function(response) {
+      // Perform an UPSERT on the exercise_descriptions table
+      console.log('exerciseId: ' + exerciseId + ', description: ' + description);
+      var query = 'INSERT INTO exercise_descriptions (exercise_id, description) VALUES (?, ?) ON DUPLICATE KEY UPDATE description = ?';
+      var params = [exerciseId, description, description];
+      handleAjax('../php/db.php', 'POST', {
+        query: query,
+        params: params
+      }, function(response) {
+        if (typeof successCallback === 'function') {
+          successCallback(null, response);
+        }
+      }, function(error) {
+        console.error(error);
+        alert('An error occurred while updating the exercise description.');
+      });
+    }, function(error) {
+      console.error(error);
+      alert('An error occurred while updating the exercise.');
+    });
+  }
+
   $('#update-button').click(function() {
-    var exerciseName = $('#exercise-table tbody tr.selected td:first-child').text();
+    var exerciseId = $('#exercise-table tbody tr.selected').data('exercise-id');
+    var exerciseName = $('#exercise-name').val();
+    var exerciseType = $('#exercise-type').val();
+    var exerciseDifficulty = $('#exercise-difficulty').val();
+    var description = $('#description').val();
     if (!exerciseName || !isMuscleIntensitySet()) {
       alert('Please select an exercise.');
       return;
     }
-    updateExerciseMuscles(exerciseName, true, function(response, updates) {
-      // Do something with the updates if needed
+    updateExerciseMuscles(exerciseName, true, function(response, response) {
+    });
+    updateExercise(exerciseId, exerciseName, exerciseType, exerciseDifficulty, description, function(response, response) {
     });
   });
 
