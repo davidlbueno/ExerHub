@@ -99,7 +99,6 @@
         <div class="slider-container" style="line-height: 1">
           <label for="slider-<?= $muscle['name'] ?>" class="muscle-label"><?= $muscle['name'] ?>: <span id="slider-value-<?= $muscle['name'] ?>"></span></label>
           <input type="range" style="margin: 0 0 0 0" id="slider-<?= $muscle['name'] ?>" name="<?= $muscle['name'] ?>" min="0" max="10" value="<?= isset($muscle['intensity']) ? $muscle['intensity'] : '0' ?>">
-
         </div>
       <?php endforeach; ?><br>
       <button class="btn waves-effect waves-light" style="height: 40px !important; display: none;" id="update-button">Update Exercise</button>
@@ -164,6 +163,7 @@ $(document).ready(function() {
     $('.slider-container input[type="range"]').val(0).prev('.muscle-label').removeClass('dot').find('span').text(0);
 
     if (!newExercise) {
+      var exerciseId = $this.data('exercise-id');
       var exerciseName = $this.find('td:first-child').text();
       var muscles = exerciseData[exerciseName].muscles;
       $('#exercise-name').val(exerciseName);
@@ -177,6 +177,20 @@ $(document).ready(function() {
           $('#slider-' + muscleName).prev('.muscle-label').toggleClass('dot', intensity > 0);
         }
       }
+      // get exercise description from database
+      var query = 'SELECT description FROM exercise_descriptions WHERE exercise_id = ?';
+      var params = [exerciseId];
+      handleAjax('../php/db.php', 'POST', {
+        query: query,
+        params: params
+      }, function(response) {
+        response = JSON.parse(response);
+        $('#description').val(response[0]['description']);
+      }, function(error) {
+        console.error(error);
+        alert('An error occurred while fetching the exercise description.');
+      });
+      
     } else {
       $('#exercise-name').val('');
       $('#exercise-type').val('');
