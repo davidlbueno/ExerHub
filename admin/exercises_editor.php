@@ -62,6 +62,9 @@
     </select>
     <input type="number" id="exercise-difficulty" name="difficulty" placeholder="Difficulty" style="flex: 0 0 10%; margin-right: 10px; height: 40px;">
   </div>
+  <div style="margin: 2px 0 5px 5px;">
+    <textarea id="description" name="description" placeholder="Exercise Description..." rows="4" cols="50"></textarea>
+  </div>
   <div style="display: flex; width: 100%;">
     <div class="left-column" style="height: 80vh; width: 50%; box-sizing: border-box; overflow-y: auto;">
       <table id="exercise-table">
