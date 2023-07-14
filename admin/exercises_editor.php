@@ -19,7 +19,6 @@
             FROM exercises e
             JOIN exercise_muscles em ON e.id = em.exercise_id
             JOIN muscles m ON m.id = em.muscle_id');
-      
         $exercises = array();
         while ($row = mysqli_fetch_assoc($result)) {
             $exerciseName = $row['exercise_name'];
@@ -36,8 +35,7 @@
                 );
             }
             $exercises[$exerciseName]['muscles'][$muscleName] = $intensity;
-        }
-        
+        }  
         return $exercises;
     }
   ?>
@@ -70,9 +68,9 @@
         <thead>
           <tr>
             <th>Name</th>
-            <th>Type:&nbsp;<select title="Filter by Type"><option value="">All Types</option></select></th>
+            <th><select title="Filter by Type"><option value="">All Types</option></select></th>
             <th>Difficulty</th>
-            <th>Muscles (Intensity)</th>
+            <th>Muscles</th>
           </tr>
         </thead>
         <tbody>
