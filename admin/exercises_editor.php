@@ -152,6 +152,7 @@ $(document).ready(function() {
     $this.toggleClass('selected', !$this.hasClass('selected'));
     var newExercise = !$this.hasClass('selected');
     $('#add-button').toggle(newExercise);
+    $('#exercise-label').toggle(newExercise);
     $('#update-button, #delete-button').toggle(!newExercise);
 
     // Reset all sliders and labels to zero
@@ -171,6 +172,10 @@ $(document).ready(function() {
           $('#slider-' + muscleName).prev('.muscle-label').toggleClass('dot', intensity > 0);
         }
       }
+    } else {
+      $('#exercise-name').val('');
+      $('#exercise-type').val('');
+      $('#exercise-difficulty').val('');
     }
 
     handleSliderLabelUpdates();
