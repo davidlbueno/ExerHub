@@ -86,10 +86,8 @@
           const seconds = listItems[i].dataset.seconds;
           if (seconds) {
             totalSeconds += parseInt(seconds);
-            console.log(totalSeconds);
           }
         }
-        console.log(totalSeconds);
         workoutLength.innerText = totalSeconds;
         if (totalSeconds > 0) {
           // Format the number of seconds in totalSeconds to MM:SS

@@ -101,6 +101,14 @@ select:disabled {
   line-height: 36px !important;
 }
 
+table.dataTable tbody tr {
+  background-color: #1e1e1e;
+ }
+
+table.dataTable tbody tr:hover {
+  background-color: #616161;
+}
+
 #save-workout-btn.btn[disabled] {
   background-color: #2f2f2f !important;
   color: #525252 !important;
