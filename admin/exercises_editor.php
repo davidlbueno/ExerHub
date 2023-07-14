@@ -51,16 +51,16 @@
 <ul class="sidenav" id="side-nav"></ul>
 <main class="container" style="display: flex; flex-direction: column;">
   <div id="top-form" style="display: flex; align-items: center;">
-    <label for="name" id="new-exercise-label" style="margin-right: 10px;">New Exercise: </label>
-    <input type="text" id="new-exercise-name" name="new-exercise-name" placeholder="New Exercise Name" style="flex: 1; margin-right: 10px; height: 40px;">
-    <select id="new-exercise-type" name="type" style="flex: 0 0 15%; margin-right: 10px; height: 40px;">
+    <label for="name" id="exercise-label" style="margin-right: 10px;">New Exercise: </label>
+    <input type="text" id="exercise-name" name="exercise-name" placeholder="New Exercise Name" style="flex: 1; margin-right: 10px; height: 40px;">
+    <select id="exercise-type" name="type" style="flex: 0 0 15%; margin-right: 10px; height: 40px;">
         <option value="" disabled selected>Type</option>
         <option value="Push">Push</option>
         <option value="Pull">Pull</option>
         <option value="Legs">Legs</option>
         <option value="Core">Core</option>
     </select>
-    <input type="number" id="new-exercise-difficulty" name="difficulty" placeholder="Difficulty" style="flex: 0 0 10%; margin-right: 10px; height: 40px;">
+    <input type="number" id="exercise-difficulty" name="difficulty" placeholder="Difficulty" style="flex: 0 0 10%; margin-right: 10px; height: 40px;">
   </div>
   <div style="display: flex; width: 100%;">
     <div class="left-column" style="height: 80vh; width: 50%; box-sizing: border-box; overflow-y: auto;">
@@ -150,16 +150,19 @@ $(document).ready(function() {
     var $this = $(this);
     $this.siblings().removeClass('selected');
     $this.toggleClass('selected', !$this.hasClass('selected'));
-    var showForm = !$this.hasClass('selected');
-    $('#top-form, #add-button').toggle(showForm);
-    $('#update-button, #delete-button').toggle(!showForm);
+    var newExercise = !$this.hasClass('selected');
+    $('#add-button').toggle(newExercise);
+    $('#update-button, #delete-button').toggle(!newExercise);
 
     // Reset all sliders and labels to zero
     $('.slider-container input[type="range"]').val(0).prev('.muscle-label').removeClass('dot').find('span').text(0);
 
-    if (!showForm) {
+    if (!newExercise) {
       var exerciseName = $this.find('td:first-child').text();
       var muscles = exerciseData[exerciseName].muscles;
+      $('#exercise-name').val(exerciseName);
+      $('#exercise-type').val(exerciseData[exerciseName].type);
+      $('#exercise-difficulty').val(exerciseData[exerciseName].difficulty);
       for (var muscleName in muscles) {
         if (muscles.hasOwnProperty(muscleName)) {
           var intensity = muscles[muscleName];
@@ -341,9 +344,9 @@ $(document).ready(function() {
   });
 
   $('#add-button').click(function() {
-    var exerciseName = $('#new-exercise-name').val();
-    var exerciseType = $('#new-exercise-type').val();
-    var exerciseDifficulty = $('#new-exercise-difficulty').val();
+    var exerciseName = $('#exercise-name').val();
+    var exerciseType = $('#exercise-type').val();
+    var exerciseDifficulty = $('#exercise-difficulty').val();
 
     if (!exerciseName || !exerciseType || !exerciseDifficulty || !isMuscleIntensitySet()) {
       alert('Please enter an exercise name, type, difficulty, and at least one muscle intensity.');
