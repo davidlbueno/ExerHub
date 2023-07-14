@@ -119,7 +119,7 @@ function isMuscleIntensitySet() {
 $(document).ready(function() {
   var exerciseTable = $('#exercise-table').DataTable({
     paging: false,
-    searching: false,
+    searching: true,
     columnDefs: [{ orderable: false, targets: [1] }]
   });
 
