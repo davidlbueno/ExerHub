@@ -67,14 +67,36 @@ function beep(duration, frequency, volume, type, callback) {
   oscillator.stop(context.currentTime + ((duration || 1) / 1000));
 }
 
-function speak(text) {
-  const voices = window.speechSynthesis.getVoices();
-  const femaleVoice = voices.filter(voice => voice.gender === 'female')[0];
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.voice = femaleVoice;
+async function speak(text) {
+  // Set the AWS credentials and region
+  AWS.config.update({
+    accessKeyId: 'AKIA2RIOW26SNVQG3BGM',
+    secretAccessKey: '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',
+    region: 'us-east-1'
+  });
+
+  // Create an Amazon Polly client
+  const polly = new AWS.Polly();
+
+  // Set the parameters for the SynthesizeSpeech operation
+  const params = {
+    OutputFormat: 'mp3',
+    Text: text,
+    VoiceId: 'Kendra'
+  };
+
+  // Call the SynthesizeSpeech operation
+  const data = await polly.synthesizeSpeech(params).promise();
+
+  // Create an AudioContext and play the audio data
+  const audioContext = new AudioContext();
+  const source = audioContext.createBufferSource();
+  source.buffer = await audioContext.decodeAudioData(data.AudioStream.buffer);
+  source.connect(audioContext.destination);
+
   return new Promise((resolve) => {
-      utterance.onend = resolve;
-      window.speechSynthesis.speak(utterance);
+      source.onended = resolve;
+      source.start(0);
   });
 }
 
