@@ -61,7 +61,7 @@
       <label for="confirm-new-password">Confirm New Password:</label>
       <input type="password" id="confirm-new-password" name="confirm-new-password" required>
       <span id="password-error" style="color: red;"></span>
-      <span id="password-match" style="color: green;"></span>
+      <span id="password-match" style="color: green;"></span><br>
       <button id="update-password-btn" class="btn" disabled="true">Update Password</button>
       <button id="cancel-password-btn" class="btn">Cancel</button>
     </div>
@@ -124,31 +124,27 @@
     }
   });
 
-// create event listener for name change button
-document.getElementById("name-change-btn").addEventListener("click", function() {
-  var name = document.getElementById("name").value;
-  var userId = "<?php echo $userId ?>";
-  var params = [name, userId];
-  var query = "UPDATE users SET name = ? WHERE id = ?";
-  var postData = {
-    query: query,
-    params: params
-  };
-
-  // Use jQuery's $.post method to send the AJAX request
-  $.post("php/db.php", postData, function(data) {
-    // Parse the JSON response
-    var response = JSON.parse(data);
-
-    if (response.success) {
-      alert("Name successfully updated");
-      window.location.reload();
-    } else {
-      alert("Name update failed");
-    }
+  // create event listener for name change button
+  document.getElementById("name-change-btn").addEventListener("click", function() {
+    var name = document.getElementById("name").value;
+    var userId = "<?php echo $userId ?>";
+    var params = [name, userId];
+    var query = "UPDATE users SET name = ? WHERE id = ?";
+    var postData = {
+      query: query,
+      params: params
+    };
+    $.post("php/db.php", postData, function(data) {
+      // Parse the JSON response
+      var response = JSON.parse(data);
+      if (response.success) {
+        alert("Name successfully updated");
+        window.location.reload();
+      } else {
+        alert("Name update failed");
+      }
+    });
   });
-});
-
 
   // create event listener for password change button
   document.getElementById("update-password-btn").addEventListener("click", function() {
@@ -173,7 +169,6 @@ document.getElementById("name-change-btn").addEventListener("click", function() 
       }
     });
   });
-
 </script>
 <script>document.getElementById("email").focus();</script>
 </body>
