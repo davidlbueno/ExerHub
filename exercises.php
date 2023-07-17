@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
-  <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <?php include 'php/header.php'; ?>
   <title>ExerHub - Exercises</title>
   <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
   <script type="text/javascript" src="//code.jquery.com/jquery-3.6.0.min.js"></script>

@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', function () {
   let startTime;
   let elapsedTime;
   let internalCall = false;
+  let wakeLock = null;
 
   const firstItem = document.querySelector('.workout-list li:first-child');
   const firstSeconds = parseInt(firstItem.textContent.match(/\d+/));
@@ -111,6 +112,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (isTimerRunning) {
       pauseCountdown();
       isTimerRunning = false;
+      releaseWakeLock();
       playPauseBtn.innerHTML = '<i class="material-icons">play_arrow</i>';
     } else {
       if (activeItem === firstItem && progressPercentage === 0) {
@@ -119,6 +121,7 @@ document.addEventListener('DOMContentLoaded', function () {
           const remainingTime = initialDuration - elapsedTime;
           startCountdown(remainingTime, progressPercentage);
           isTimerRunning = true;
+          requestWakeLock();
         });
       } else {
         if (progressPercentage === 0) {
@@ -127,11 +130,13 @@ document.addEventListener('DOMContentLoaded', function () {
           activeItem.dataset.itemStopTime = '';
           startCountdown(remainingTime, progressPercentage);
           isTimerRunning = true;
+          requestWakeLock();
           playPauseBtn.innerHTML = '<i class="material-icons">pause</i>';
         } else {
           const remainingTime = initialDuration - elapsedTime;
           startCountdown(remainingTime, progressPercentage);
           isTimerRunning = true;
+          requestWakeLock();
           playPauseBtn.innerHTML = '<i class="material-icons">pause</i>';
         }
       }
@@ -173,6 +178,7 @@ document.addEventListener('DOMContentLoaded', function () {
         internalCall = false;
         startCountdown(nextSeconds, 0);
         isTimerRunning = true;
+        requestWakeLock();
         playPauseBtn.innerHTML = '<i class="material-icons">pause</i>';
       }
     } else {
@@ -189,6 +195,7 @@ document.addEventListener('DOMContentLoaded', function () {
       });
       pauseCountdown();
       isTimerRunning = false;
+      releaseWakeLock();
       updatePlayPauseButton();
     }
   });
@@ -385,6 +392,7 @@ document.addEventListener('DOMContentLoaded', function () {
   function pauseCountdown() {
     cancelAnimationFrame(requestId);
     isTimerRunning = false;
+    releaseWakeLock();
     updatePlayPauseButton();
   }
 
@@ -407,5 +415,27 @@ document.addEventListener('DOMContentLoaded', function () {
     nextBtn.disabled = disabled;
     resetBtn.disabled = disabled;
   }
+
+  // Function to request a screen wake lock
+  async function requestWakeLock() {
+    try {
+      wakeLock = await navigator.wakeLock.request('screen');
+      wakeLock.addEventListener('release', () => {
+        console.log('Wake Lock was released');
+      });
+      console.log('Wake Lock is active');
+    } catch (err) {
+      console.error(`${err.name}, ${err.message}`);
+    }
+  }
+
+  // Function to release a screen wake lock
+  function releaseWakeLock() {
+    if (wakeLock !== null && wakeLock.released === false) {
+      wakeLock.release();
+      wakeLock = null;
+    }
+  }
+
   calculateWorkoutLength();
 });
