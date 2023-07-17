@@ -1,9 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <?php require_once 'php/header.php'; ?>
   <link rel="stylesheet" href="style.css">
   <title>ExerHub - Login</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
@@ -12,11 +10,14 @@
   <?php
   session_start();
   $userId = $_SESSION['user_id'];
-  $name = $_SESSION['user_name'];
-  $query = "SELECT email FROM users WHERE id = $userId";
+  $query = "SELECT name, email FROM users WHERE id = $userId";
   $result = query($query);
   $row = mysqli_fetch_assoc($result);
+  $name = $row['name'];
   $email = $row['email'];
+  $_SESSION['user_name'] = $name;
+  $_SESSION['user_email'] = $email;
+  
   ?>
 </head>
 <body class="dark">
@@ -123,21 +124,31 @@
     }
   });
 
-  // create event listener for name change button
-  document.getElementById("name-change-btn").addEventListener("click", function() {
-    var name = document.getElementById("name").value;
-    var userId = "<?php echo $userId ?>";
-    var params = [name, userId];
-    var query = "UPDATE users SET name = ? WHERE id = ?";
-    $.post("php/db.php", {query: query, params: params, update_session: true}, function(data) {
-      if (data === "success") {
-        alert("Name successfully updated");
-        window.location.reload();
-      } else {
-        alert("Name update failed");
-      }
-    });
+// create event listener for name change button
+document.getElementById("name-change-btn").addEventListener("click", function() {
+  var name = document.getElementById("name").value;
+  var userId = "<?php echo $userId ?>";
+  var params = [name, userId];
+  var query = "UPDATE users SET name = ? WHERE id = ?";
+  var postData = {
+    query: query,
+    params: params
+  };
+
+  // Use jQuery's $.post method to send the AJAX request
+  $.post("php/db.php", postData, function(data) {
+    // Parse the JSON response
+    var response = JSON.parse(data);
+
+    if (response.success) {
+      alert("Name successfully updated");
+      window.location.reload();
+    } else {
+      alert("Name update failed");
+    }
   });
+});
+
 
   // create event listener for password change button
   document.getElementById("update-password-btn").addEventListener("click", function() {
@@ -155,7 +166,6 @@
         document.getElementById("current-password").value = "";
         document.getElementById("new-password").value = "";
         document.getElementById("confirm-new-password").value = "";
-        
         // Display error message
         document.getElementById("incorrect-password").innerHTML = "Incorrect password";
       } else {
