@@ -48,9 +48,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <?php include 'php/header.php'; ?>
   <link rel="stylesheet" href="style.css">
   <title>BWE - Login</title>
   <!-- Import Material UI scripts -->
