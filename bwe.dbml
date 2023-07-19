@@ -32,6 +32,7 @@ id int [pk, increment]
 name varchar(255)
 email varchar(255) [unique]
 password varchar(255)
+is_admin tinyint
 }
 
 Table workouts {

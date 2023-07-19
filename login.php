@@ -31,6 +31,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       // Authentication successful, set session variables
       $_SESSION['user_id'] = $user['id'];
       $_SESSION['user_name'] = $user['name'];
+      $_SESSION['is_admin'] = $user['is_admin'];
 
       // Set a session variable for user login status
       $_SESSION['logged_in'] = true;
@@ -56,8 +57,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
   <script>
     var sessionVars = {
-      logged_in: <?php echo isset($_SESSION['logged_in']) && $_SESSION['logged_in'] ? 'true' : 'false'; ?>,
-      username: "<?php echo isset($_SESSION['user_name']) ? $_SESSION['user_name'] : ''; ?>"
+      username: <?php echo isset($_SESSION['user_name']) ? $_SESSION['user_name'] : ''; ?>,
+      isAdmin: <?php echo isset($_SESSION['is_admin']) && $_SESSION['is_admin'] ? 'true' : 'false'; ?>
     };
   </script>
 </head>
