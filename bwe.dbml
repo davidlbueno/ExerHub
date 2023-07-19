@@ -73,3 +73,10 @@ exercise_time int
 reps int
 warmup tinyint [default: 0]
 }
+
+Table achievements {
+  id int [pk, increment] 
+  name varchar(45) 
+  type varchar(45) 
+  level int
+}
