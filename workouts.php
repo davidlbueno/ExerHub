@@ -18,38 +18,32 @@
   <ul class="sidenav" id="side-nav"></ul>
   <main class="container">
   <div class="row">
-    <div class="col s8">
-    </div>
-    <div class="col s2" style="width: 174px; align-items: center; margin-top: 10px;">
-      <a href="create_workout.php" class="btn btn-floating waves-effect waves-light"><i class="material-icons">add</i></a><span style="margin-left: 5px;">Create Workout</span>
-    </div>
+  <div class="col s12" style="text-align: center; margin: 5px; display: flex; justify-content: center; flex-wrap: wrap;">
+    <a href="create_workout.php"><button class="btn" id="selectWorkoutBtn" style="margin: 5px; line-height: 1;">Select Workout</button></a>
+    <a href="create_workout.php"><button class="btn" id="createWorkoutBtn" style="margin: 5px; line-height: 1;">Create Workout</button></a>
+    <a href="create_workout.php"><button class="btn" id="workoutHistoryBtn" style="margin: 5px; line-height: 1;">Workout History</button></a>
   </div>
   <div class="row">
     <div class="col s12">
-    <div class="col s8">
+      <h6>My Workouts:</h6>
+    <div class="col s12">
     <?php
         // Fetch and display the workouts for the current user
         session_start();
         $userId = $_SESSION['user_id'];
-        
         $workouts = fetchWorkouts($userId);
         displayWorkouts($workouts);
-        
         // Function to fetch workouts for the current user from the database
         function fetchWorkouts($userId) {
           global $conn;
-          
           $query = "SELECT * FROM workouts WHERE user_id = $userId";
           $result = query($query);
-          
           $workouts = array();
           while ($row = mysqli_fetch_assoc($result)) {
             $workouts[] = $row;
-          }
-          
+          } 
           return $workouts;
         }
-        
         // Function to display the fetched workouts
         function displayWorkouts($workouts) {
           if (empty($workouts)) {
@@ -58,7 +52,6 @@
             echo "<ul>";
             foreach ($workouts as $workout) {
               echo "<li><a href='workout.php?workout_id=" . $workout['id'] . "&workout_name=" . urlencode($workout['name']) . "'>" . $workout['name'] . "</a></li>";
-
 
             }
             echo "</ul>";
