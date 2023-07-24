@@ -21,12 +21,15 @@
     <?php
     $workoutId = $_GET['workout_id'] ?? null;
     if ($workoutId) {
-      $query = "SELECT name FROM workouts WHERE id = $workoutId";
+      $query = "SELECT name, is_public FROM workouts WHERE id = $workoutId";
       $result = query($query);
       $row = mysqli_fetch_assoc($result);
       $workoutName = $row['name'];
-      echo "<h1>$workoutName</h1>";
-
+      $isPublic = $row['is_public'];
+      echo "<h1 style='display: inline-block;'>$workoutName</h1>";
+      if ($isPublic) {
+        echo "<span style='display: inline-block; background-color: #9fa517; color: #3b4302; font-weight: bold; padding: 0 4px 0 3px; margin: 5px; border-radius: 5px;'>Public</span>";
+      }
       $query = "SELECT ws.type, e.id AS exercise_id, e.name AS exercise_name, ws.seconds, ws.warmup
                 FROM workout_sequences ws
                 LEFT JOIN exercises e ON e.id = ws.exercise_id
