@@ -41,6 +41,16 @@
           // Get the workout ID from the URL parameter
           $workoutId = $_GET['workout_id'];
 
+           // Fetch the workout data from the database
+          $query = "SELECT * FROM workouts WHERE id = $workoutId";
+          $queryResult = query($query);
+          if (!$queryResult) {
+            throw new Exception("Failed to fetch workout data: " . mysqli_error($conn));
+          }
+          $workout = mysqli_fetch_assoc($queryResult);
+          // Get the is_public value for the workout
+          $isPublic = $workout['is_public'];
+
           // Retrieve the workout sequence items from the database
           $query = "SELECT ws.type, e.name AS exercise_name, ws.seconds, ws.warmup 
                     FROM workout_sequences ws
@@ -109,7 +119,7 @@
       <button id="cancel-workout-btn" class="btn">Cancel</button>
       <?php if ($is_admin == 1): ?>
             <label>
-              <input type="checkbox" id="public" name="public" style="width: 100%;">
+            <input type="checkbox" id="public" name="public" <?php echo $isPublic == 1 ? 'checked' : ''; ?>>
               <span style="margin-left: 10px;">Public</span>
             </label>
           <?php endif; ?>
