@@ -2,6 +2,11 @@
 <html lang="en" data-theme="dark">
 <head>
   <?php include 'php/header.php'; ?>
+  <?php
+    session_start();
+    $userId = $_SESSION['user_id'];
+    $is_admin = $_SESSION['is_admin'];
+  ?>
   <title>ExerHub - Edit Workout</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
@@ -102,6 +107,12 @@
       <button id="save-workout-btn" class="btn">Update Workout</button>
       <button id="delete-workout-btn" class="btn">Delete Workout</button>
       <button id="cancel-workout-btn" class="btn">Cancel</button>
+      <?php if ($is_admin == 1): ?>
+            <label>
+              <input type="checkbox" id="public" name="public" style="width: 100%;">
+              <span style="margin-left: 10px;">Public</span>
+            </label>
+          <?php endif; ?>
     </div>
   </div>
 </main>
