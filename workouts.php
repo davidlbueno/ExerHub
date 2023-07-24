@@ -5,11 +5,6 @@
   <title>ExerHub - Workouts</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <link rel="stylesheet" href="style.css">
-  <style>
-    [type="checkbox"]+span:not(.lever):before, [type="checkbox"]:not(.filled-in)+span:not(.lever):after {
-      border: 1px solid #808080;
-    }
-    </style>
   <?php require_once 'php/db.php'; ?>
 </head>
 <body class="dark">
@@ -37,8 +32,7 @@
         session_start();
         $userId = $_SESSION['user_id'];
         $workouts = fetchWorkouts($userId);
-        $isAdmin = $_SESSION['is_admin'];
-        displayWorkouts($workouts, $isAdmin);
+        displayWorkouts($workouts);
         // Function to fetch workouts for the current user from the database
         function fetchWorkouts($userId) {
           global $conn;
@@ -51,34 +45,17 @@
           return $workouts;
         }
         // Function to display the fetched workouts
-        function displayWorkouts($workouts, $isAdmin) {
+        function displayWorkouts($workouts) {
           if (empty($workouts)) {
             echo "<p>No workouts found.</p>";
           } else {
             echo "<ul>";
             foreach ($workouts as $workout) {
-              echo "<li>";
-              echo "<a href='workout.php?workout_id=" . $workout['id'] . "&workout_name=" . urlencode($workout['name']) . "' style='display: block; line-height: 1;'>";
-              echo "<div style='display: flex; justify-content: space-between; align-items: center;'>";
-              // Align workout name to the left
-              echo "<div style='flex: 1;'>" . $workout['name'] . "</div>";
-              // Align checkbox to the left
-              if ($isAdmin) {
-                echo "<div>";
-                echo "<label style='display: flex; align-items: center;'>"; // Align the label and checkbox contents vertically
-                echo "<span style='margin-right: 5px;'>Public: </span>"; // Add some space between the label text and the checkbox
-                echo "<input type='checkbox' name='Public' id='isPublic'/>";
-                echo "<span ></span>"; // Empty span for checkbox styling (optional)
-                echo "</label>";
-                echo "</div>";
-              }
-              echo "</div>";
-              echo "</a>";
-              echo "</li>";
+              echo "<li><a href='workout.php?workout_id=" . $workout['id'] . "&workout_name=" . urlencode($workout['name']) . "'>" . $workout['name'] . "</a></li>";
             }
             echo "</ul>";
           }
-        }        
+        }
       ?>
     </div>
   </main>
