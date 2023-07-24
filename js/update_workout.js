@@ -8,6 +8,7 @@ saveWorkoutBtn = document.getElementById("save-workout-btn");
 saveWorkoutBtn.addEventListener("click", () => {
   const workoutName = document.getElementById("workout-name").value;
   const workoutList = document.getElementById("workout-list");
+  const isPublic = document.getElementById("public").checked ? 1 : 0;
   const types = workoutList.children;
 
   // Create an array to store the exercise data
@@ -35,7 +36,7 @@ saveWorkoutBtn.addEventListener("click", () => {
   xhr.setRequestHeader("Content-Type", "application/json");
   xhr.onload = () => {
     if (xhr.status === 200) {
-      window.location.href = '../workouts.php';
+      window.location.href = '../workout.php?workout_id=' + workoutId + '&workout_name=' + workoutName;
       console.log(xhr.responseText);
     } else {
       console.error(xhr.responseText);
@@ -46,6 +47,7 @@ saveWorkoutBtn.addEventListener("click", () => {
     workoutId: workoutId,
     workoutName: workoutName,
     workoutData: workoutData,
+    isPublic: isPublic,
   };
 
   xhr.send(JSON.stringify(payload));

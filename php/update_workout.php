@@ -5,12 +5,13 @@ $data = json_decode(file_get_contents("php://input"), true);
 $workoutId = $data['workoutId'];
 $workoutName = $data['workoutName'];
 $workoutData = $data['workoutData'];
+$isPublic = $data['isPublic'];
 
 $response = array();
 
 try {
-  // Update workout name
-  $query = "UPDATE workouts SET name = '$workoutName' WHERE id = $workoutId"; // Use workoutId in the query
+  // Update workout name and public status
+  $query = "UPDATE workouts SET name = '$workoutName', is_public = $isPublic WHERE id = $workoutId"; // Use workoutId in the query
   $queryResult = query($query);
   if (!$queryResult) {
     throw new Exception("Failed to update workout name: " . mysqli_error($conn));
