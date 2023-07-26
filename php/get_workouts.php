@@ -11,24 +11,20 @@
 
   function fetchWorkouts($userId, $workoutId = null) {
     global $conn;
-    if ($workoutId) {
-        $query = "SELECT * FROM workout_sequences WHERE workout_id = $workoutId";
+    if ($userId) {
+      $query = "SELECT workouts.*, ROUND(AVG(exercises.difficulty)) as avg_difficulty 
+                FROM workouts 
+                LEFT JOIN workout_sequences ON workouts.id = workout_sequences.workout_id 
+                LEFT JOIN exercises ON workout_sequences.exercise_id = exercises.id 
+                WHERE workouts.user_id = $userId 
+                GROUP BY workouts.id";
     } else {
-        if ($userId) {
-            $query = "SELECT workouts.*, ROUND(AVG(exercises.difficulty)) as avg_difficulty 
-                      FROM workouts 
-                      LEFT JOIN workout_sequences ON workouts.id = workout_sequences.workout_id 
-                      LEFT JOIN exercises ON workout_sequences.exercise_id = exercises.id 
-                      WHERE workouts.user_id = $userId 
-                      GROUP BY workouts.id";
-        } else { // Not sure this is necessary. We may want to use it to get a single workout, but IDK. 
-            $query = "SELECT workouts.*, ROUND(AVG(exercises.difficulty)) as avg_difficulty 
-                      FROM workouts 
-                      LEFT JOIN workout_sequences ON workouts.id = workout_sequences.workout_id 
-                      LEFT JOIN exercises ON workout_sequences.exercise_id = exercises.id 
-                      WHERE workouts.is_public = 1 
-                      GROUP BY workouts.id";
-        }
+      $query = "SELECT workouts.*, ROUND(AVG(exercises.difficulty)) as avg_difficulty 
+                FROM workouts 
+                LEFT JOIN workout_sequences ON workouts.id = workout_sequences.workout_id 
+                LEFT JOIN exercises ON workout_sequences.exercise_id = exercises.id 
+                WHERE workouts.is_public = 1 
+                GROUP BY workouts.id";
     }
     $result = query($query);
     $workouts = array();
@@ -50,5 +46,3 @@ function displayWorkout($workout) {
   echo '</ul>';
 }
 ?>
-
-
