@@ -35,6 +35,7 @@ function display_workouts($workouts, $selected_workouts) {
   }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
@@ -55,11 +56,19 @@ function display_workouts($workouts, $selected_workouts) {
   <main class="container">
     <h5>Select Workouts</h5>
     <h6>Public Workouts</h6>
-    <ul>
+    <label>
+        <input type="checkbox" class="filled-in select-all" data-target="public-workouts" />
+        <span>Select All</span>
+    </label>
+    <ul class="public-workouts">
         <?php display_workouts($public_workouts, $selected_workouts); ?>
     </ul>
-    <h6>Your Workouts</h>
-    <ul>
+    <h6>Your Workouts</h6>
+    <label>
+        <input type="checkbox" class="filled-in select-all" data-target="user-workouts" />
+        <span>Select All</span>
+    </label>
+    <ul class="user-workouts">
         <?php display_workouts($user_workouts, $selected_workouts); ?>
     </ul>
   </main>
@@ -71,6 +80,12 @@ function display_workouts($workouts, $selected_workouts) {
           var workout_id = $(this).data('workout-id');
           var selected = $(this).is(':checked');
           $.post('php/workout_selection.php', { workout_id: workout_id, selected: selected });
+      });
+      
+      $('.select-all').change(function() {
+          var selected = $(this).is(':checked');
+          var target = $(this).data('target');
+          $('.' + target).find('.workout-checkbox').prop('checked', selected).change();
       });
   });
   </script>
