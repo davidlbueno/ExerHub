@@ -67,13 +67,26 @@ function beep(duration, frequency, volume, type, callback) {
   oscillator.stop(context.currentTime + ((duration || 1) / 1000));
 }
 
-async function speak(text) {
-  // Set the AWS credentials and region
-  AWS.config.update({
-    accessKeyId: 'AKIA2RIOW26SNVQG3BGM',
-    secretAccessKey: '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',
-    region: 'us-east-1'
+async function getAwsCredentials() {
+  return new Promise((resolve, reject) => {
+    $.ajax({
+      url: '../php/get_aws_creds.php', // Create a separate PHP file to handle the AWS credentials retrieval
+      type: 'GET',
+      dataType: 'json',
+      success: resolve,
+      error: reject
+    });
   });
+}
+
+async function speak(text) {
+  try {
+    // Fetch the AWS credentials using AJAX
+    const awsCredentials = await getAwsCredentials();
+    console.log(awsCredentials);
+
+    // Set the AWS credentials and region
+    AWS.config.update(awsCredentials);
 
   // Create an Amazon Polly client
   const polly = new AWS.Polly();
@@ -98,6 +111,9 @@ async function speak(text) {
       source.onended = resolve;
       source.start(0);
   });
+  } catch (error) {
+    console.error('Error fetching AWS credentials:', error);
+  }
 }
 
 // Export the helper functions
