@@ -30,27 +30,20 @@
     <?php
         // Fetch and display the workouts for the current user
         session_start();
-        $userId = $_SESSION['user_id'];
-        $workouts = fetchWorkouts($userId);
-        displayWorkouts($workouts);
-        // Function to fetch workouts for the current user from the database
-        function fetchWorkouts($userId) {
-          global $conn;
-          $query = "SELECT * FROM workouts WHERE user_id = $userId";
-          $result = query($query);
-          $workouts = array();
-          while ($row = mysqli_fetch_assoc($result)) {
-            $workouts[] = $row;
-          } 
-          return $workouts;
+        if (isset($_SESSION['user_id'])) {
+            $userId = $_SESSION['user_id'];
+            $workouts = query("SELECT * FROM workouts WHERE id IN (SELECT workout_id FROM user_selected_workouts WHERE user_id = $userId)");
+        } else {
+            $workouts = query("SELECT * FROM workouts WHERE is_public = 1");
         }
+        displayWorkouts($workouts);
         // Function to display the fetched workouts
         function displayWorkouts($workouts) {
-          if (empty($workouts)) {
+          if (mysqli_num_rows($workouts) == 0) {
             echo "<p>No workouts found.</p>";
           } else {
             echo "<ul>";
-            foreach ($workouts as $workout) {
+            while ($workout = mysqli_fetch_assoc($workouts)) {
               echo "<li><a href='workout.php?workout_id=" . $workout['id'] . "&workout_name=" . urlencode($workout['name']) . "'>" . $workout['name'] . "</a></li>";
             }
             echo "</ul>";
