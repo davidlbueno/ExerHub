@@ -2,7 +2,7 @@ Table exercises {
 id int [pk, increment]
 name varchar(255)
 type varchar(255)
-difficulty varchar(255)
+difficulty int
 }
 
 Table muscles {
@@ -76,13 +76,13 @@ warmup tinyint [default: 0]
 }
 
 Table achievements {
-  id int [pk, increment] 
-  name varchar(45) 
-  type varchar(45) 
-  level int
+id int [pk, increment] 
+name varchar(45) 
+type varchar(45) 
+level int
 }
 
 Table user_selected_workouts {
-  user_id int [pk] 
-  workout_id int [pk]
+user_id int [pk] 
+workout_id int [pk]
 }
