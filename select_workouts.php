@@ -29,7 +29,7 @@ function display_workouts($workouts, $selected_workouts) {
       echo "<li>
               <label>
                   <input type='checkbox' class='workout-checkbox filled-in' data-workout-id='{$workout['id']}' $checked />
-                  <span>{$workout['name']}</span>
+                  <span style='color: #fff;'>{$workout['name']}</span>
               </label>
             </li>";
   }
@@ -54,7 +54,6 @@ function display_workouts($workouts, $selected_workouts) {
 </nav>
   <ul class="sidenav" id="side-nav"></ul>
   <main class="container">
-    <h5>Select Workouts</h5>
     <h6>Public Workouts</h6>
     <label>
         <input type="checkbox" class="filled-in select-all" data-target="public-workouts" />
@@ -63,6 +62,7 @@ function display_workouts($workouts, $selected_workouts) {
     <ul class="public-workouts">
         <?php display_workouts($public_workouts, $selected_workouts); ?>
     </ul>
+    <br>
     <h6>Your Workouts</h6>
     <label>
         <input type="checkbox" class="filled-in select-all" data-target="user-workouts" />
