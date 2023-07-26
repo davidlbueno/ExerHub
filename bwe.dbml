@@ -81,3 +81,8 @@ Table achievements {
   type varchar(45) 
   level int
 }
+
+Table user_selected_workouts {
+  user_id int [pk] 
+  workout_id int [pk]
+}
