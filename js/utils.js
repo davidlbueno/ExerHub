@@ -70,7 +70,7 @@ function beep(duration, frequency, volume, type, callback) {
 async function getAwsCredentials() {
   return new Promise((resolve, reject) => {
     $.ajax({
-      url: '../php/get_aws_creds.php', // Create a separate PHP file to handle the AWS credentials retrieval
+      url: '../php/get_aws_creds.php',
       type: 'GET',
       dataType: 'json',
       success: resolve,
@@ -81,36 +81,30 @@ async function getAwsCredentials() {
 
 async function speak(text) {
   try {
-    // Fetch the AWS credentials using AJAX
     const awsCredentials = await getAwsCredentials();
     console.log(awsCredentials);
-
-    // Set the AWS credentials and region
     AWS.config.update(awsCredentials);
+    const polly = new AWS.Polly();
 
-  // Create an Amazon Polly client
-  const polly = new AWS.Polly();
+    // Set the parameters for the SynthesizeSpeech operation
+    const params = {
+      OutputFormat: 'mp3',
+      Text: text,
+      VoiceId: 'Kendra'
+    };
 
-  // Set the parameters for the SynthesizeSpeech operation
-  const params = {
-    OutputFormat: 'mp3',
-    Text: text,
-    VoiceId: 'Kendra'
-  };
+    // Call the SynthesizeSpeech operation
+    const data = await polly.synthesizeSpeech(params).promise();
+    // Create an AudioContext and play the audio data
+    const audioContext = new AudioContext();
+    const source = audioContext.createBufferSource();
+    source.buffer = await audioContext.decodeAudioData(data.AudioStream.buffer);
+    source.connect(audioContext.destination);
 
-  // Call the SynthesizeSpeech operation
-  const data = await polly.synthesizeSpeech(params).promise();
-
-  // Create an AudioContext and play the audio data
-  const audioContext = new AudioContext();
-  const source = audioContext.createBufferSource();
-  source.buffer = await audioContext.decodeAudioData(data.AudioStream.buffer);
-  source.connect(audioContext.destination);
-
-  return new Promise((resolve) => {
-      source.onended = resolve;
-      source.start(0);
-  });
+    return new Promise((resolve) => {
+        source.onended = resolve;
+        source.start(0);
+    });
   } catch (error) {
     console.error('Error fetching AWS credentials:', error);
   }
