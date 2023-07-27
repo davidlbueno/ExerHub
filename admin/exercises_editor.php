@@ -120,6 +120,7 @@ function isMuscleIntensitySet() {
 }
 
 $(document).ready(function() {
+  var newExercise = true;
   var exerciseTable = $('#exercise-table').DataTable({
     paging: false,
     searching: true,
@@ -157,7 +158,7 @@ $(document).ready(function() {
     var $this = $(this);
     $this.siblings().removeClass('selected');
     $this.toggleClass('selected', !$this.hasClass('selected'));
-    var newExercise = $('#exercise-table tbody tr.selected').length === 0;
+    newExercise = $('#exercise-table tbody tr.selected').length === 0;
     $('#add-button').toggle(newExercise);
     $('#exercise-label').toggle(newExercise);
     $('#update-button, #delete-button').toggle(!newExercise);
