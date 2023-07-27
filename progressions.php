@@ -31,22 +31,19 @@
   document.getElementById("pullBtn").addEventListener("click", () => fetchData('Pull'));
   document.getElementById("legsBtn").addEventListener("click", () => fetchData('Legs'));
   function fetchData(type) {
-    const query = "SELECT name, difficulty FROM exercises WHERE type = ? ORDER BY CAST(difficulty AS UNSIGNED) ASC";
-    const params = [type];
-    $.post('php/db.php', { query, params }, null, 'json')
-      .done((data) => {
-        console.log(data);
-        // Display a table for the results
-        let table = "<table><thead><tr><th>Name</th><th>Difficulty</th></tr></thead><tbody>";
-        data.forEach((exercise) => {
-          table += "<tr><td>" + exercise.name + "</td><td>" + exercise.difficulty + "</td></tr>";
-        });
-        table += "</tbody></table>";
-        document.getElementById("main").innerHTML = table;
-      })
-      .fail((err) => {
-        console.log(err);
+  $.get('php/get_exercises.php', { type, includeDifficulty: true }, null, 'json')
+    .done((data) => {
+      // Display a table for the results
+      let table = "<table><thead><tr><th>Name</th><th>Difficulty</th></tr></thead><tbody>";
+      data.forEach((exercise) => {
+        table += "<tr><td>" + exercise.name + "</td><td>" + exercise.difficulty + "</td></tr>";
       });
+      table += "</tbody></table>";
+      document.getElementById("main").innerHTML = table;
+    })
+    .fail((err) => {
+      console.log(err);
+    });
   }
 </script>
 </body>

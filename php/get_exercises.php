@@ -3,8 +3,14 @@ require_once 'db_connect.php';
 require_once 'db_query.php';
 
 $type = $_GET['type'];
+$includeDifficulty = isset($_GET['includeDifficulty']) ? $_GET['includeDifficulty'] : false;
 
-$stmt = $conn->prepare("SELECT name FROM exercises WHERE type=?");
+if ($includeDifficulty) {
+  $stmt = $conn->prepare("SELECT name, difficulty FROM exercises WHERE type=?");
+} else {
+  $stmt = $conn->prepare("SELECT name FROM exercises WHERE type=?");
+}
+
 $stmt->bind_param("s", $type);
 
 $stmt->execute();
@@ -12,9 +18,7 @@ $stmt->execute();
 $result = $stmt->get_result();
 $exercises = [];
 while ($row = $result->fetch_assoc()) {
-  $exercises[] = [
-    'name' => $row['name']
-  ];
+  $exercises[] = $row;
 }
 
 $stmt->close();
