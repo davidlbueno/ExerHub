@@ -22,7 +22,7 @@ $userId = $_SESSION['user_id'];
 $query = "INSERT INTO workouts (name, user_id, is_public) VALUES (?, ?, '0')";
 
 $params = array($workoutName, $userId);
-$result = query($query, $params);
+$result = query($conn, $query, $params);
 
 // Check if the query was successful
 if ($result['success']) {
@@ -36,7 +36,7 @@ if ($result['success']) {
     $warmupValue = $type['warmup'];
     // Get the exercise ID based on the exercise name
     $exerciseQuery = "SELECT id FROM exercises WHERE name = ?";
-    $exerciseResult = query($exerciseQuery, array($exerciseValue));
+    $exerciseResult = query($conn, $exerciseQuery, array($exerciseValue));
     if ($typeValue != 'Rest') {
       if (!empty($exerciseResult)) {
         $exerciseId = $exerciseResult[0]['id'];
@@ -54,7 +54,7 @@ if ($result['success']) {
                 VALUES (?, ?, ?)";
       $params = array($workoutId, $typeValue, $secondsValue);
     }    
-    $result = query($query, $params);
+    $result = query($conn, $query, $params);
     if (!$result['success']) {
       // Handle the error (e.g., display an error message, rollback changes, etc.)
       die("Error creating workout type: " . $result['error']);
