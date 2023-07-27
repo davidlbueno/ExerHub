@@ -74,47 +74,49 @@
   </main>
   <script src="js/nav.js"></script>
   <script>
-    window.onload = function() {
-      const workoutId = <?php echo json_encode($workoutId); ?>;
-      const workoutName = <?php echo json_encode($workoutName); ?>;
-      const userId = sessionVars.userId;
+    document.addEventListener('DOMContentLoaded', function () {
+      fetchSessionVars().then(sessionVars => {
+        const workoutId = <?php echo json_encode($workoutId); ?>;
+        const workoutName = <?php echo json_encode($workoutName); ?>;
+        const userId = sessionVars.userId;
 
-      // Function to calculate total workout time and display it in the workout-length div
-      function calculateWorkoutLength() {
-        const workoutLength = document.getElementById("workout-length");
-        let totalSeconds = 0;
-        // get the seconds value from the dataset for each list item that has a seconds value
-        const listItems = document.querySelectorAll("li");
-        for (let i = 0; i < listItems.length; i++) {
-          const seconds = listItems[i].dataset.seconds;
-          if (seconds) {
-            totalSeconds += parseInt(seconds);
+        // Function to calculate total workout time and display it in the workout-length div
+        function calculateWorkoutLength() {
+          const workoutLength = document.getElementById("workout-length");
+          let totalSeconds = 0;
+          // get the seconds value from the dataset for each list item that has a seconds value
+          const listItems = document.querySelectorAll("li");
+          for (let i = 0; i < listItems.length; i++) {
+            const seconds = listItems[i].dataset.seconds;
+            if (seconds) {
+              totalSeconds += parseInt(seconds);
+            }
           }
-        }
-        workoutLength.innerText = totalSeconds;
-        if (totalSeconds > 0) {
-          // Format the number of seconds in totalSeconds to MM:SS
-          const minutes = Math.floor(totalSeconds / 60);
-          const seconds = totalSeconds % 60;
-          workoutLength.innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-        }
-      };
+          workoutLength.innerText = totalSeconds;
+          if (totalSeconds > 0) {
+            // Format the number of seconds in totalSeconds to MM:SS
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            workoutLength.innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+          }
+        };
 
-      startWorkoutBtn.addEventListener('click', function () {
-        const workoutPlayerUrl = `workout_player.php?user_id=${userId}&workout_id=${workoutId}`;
-        window.location.href = workoutPlayerUrl;
-      });
+        startWorkoutBtn.addEventListener('click', function () {
+          const workoutPlayerUrl = `workout_player.php?user_id=${userId}&workout_id=${workoutId}`;
+          window.location.href = workoutPlayerUrl;
+        });
 
-      editBtn.addEventListener('click', function () {
-        const editUrl = `edit_workout.php?workout_id=${workoutId}&workout_name=${encodeURIComponent(workoutName)}`;
-        window.location.href = editUrl;
-      });
+        editBtn.addEventListener('click', function () {
+          const editUrl = `edit_workout.php?workout_id=${workoutId}&workout_name=${encodeURIComponent(workoutName)}`;
+          window.location.href = editUrl;
+        });
 
-      viewLogBtn.addEventListener('click', function () {
-        window.location.href = 'workout_logs.php?workout_id=' + workoutId + '&user_id=' + userId;
+        viewLogBtn.addEventListener('click', function () {
+          window.location.href = 'workout_logs.php?workout_id=' + workoutId + '&user_id=' + userId;
+        });
+        calculateWorkoutLength();
       });
-    calculateWorkoutLength();
-    };
+    });
   </script>
 </body>
 </html>
