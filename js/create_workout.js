@@ -42,7 +42,7 @@ addItemBtn.addEventListener("click", () => {
   const $addItemBtn = $('#add-type-btn');
   const selectedListItem = $(".selected");
 
-  if (typeSelect.value === 'Rest' || (typeSelect.value && exerciseSelect.value && secondsInput.value && (!setsInput.disabled || setsInput.value))) {
+  if (typeSelect.value === 'Rest' || (typeSelect.value && exerciseSelect.value && secondsInput.value && (!setsInput.disabled || setsInput.value != null))) {
     if (typeSelect.value === 'Rest') {
       if (selectedListItem.length > 0) {
         // Update existing list item
