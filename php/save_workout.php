@@ -40,7 +40,7 @@ if ($result['success']) {
     if ($typeValue != 'Rest') {
       if (!empty($exerciseResult)) {
         $exerciseId = $exerciseResult[0]['id'];
-        // Insert the workout type into the database table
+        // Insert the exercise into the workout sequence for the workout in the database
         $query = "INSERT INTO workout_sequences(workout_id, type, exercise_id, seconds, warmup)
                   VALUES (?, ?, ?, ?, ?)";
         $params = array($workoutId, $typeValue, $exerciseId, $secondsValue, $warmupValue);
