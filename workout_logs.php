@@ -8,7 +8,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <link rel="stylesheet" href="style.css">
-  <?php require_once 'php/db_connect.php';
+  <?php include 'php/header.php';
+        require_once 'php/db_connect.php';
         require_once 'php/db_query.php';
   ?>
 </head>

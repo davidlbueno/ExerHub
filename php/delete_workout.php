@@ -7,8 +7,13 @@ $requestPayload = file_get_contents('php://input');
 $data = json_decode($requestPayload, true);
 $workoutId = $data['workoutId'];
 
+// Delete user selected workouts associated with the workout ID
+$deleteUserSelectedWorkoutsQuery = "DELETE FROM user_selected_workouts WHERE workout_id = $workoutId";
+$queryResult = query($conn, $deleteUserSelectedWorkoutsQuery);
+
 // Delete workout log items associated with the workout ID
 $deleteLogItemsQuery = "DELETE FROM workout_log_items WHERE workout_log_id IN (SELECT id FROM workout_logs WHERE workout_id = $workoutId)";
+$queryResult = query($conn, $deleteLogItemsQuery);
 
 // Delete workout sequences associated with the workout ID
 $deleteSequencesQuery = "DELETE FROM workout_sequences WHERE workout_id = $workoutId";
