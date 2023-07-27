@@ -157,7 +157,7 @@ $(document).ready(function() {
   $('#exercise-table tbody').on('click', 'tr', function() {
     var $this = $(this);
     $this.siblings().removeClass('selected');
-    $this.toggleClass('selected', !$this.hasClass('selected'));
+    $this.toggleClass('selected', $this.hasClass('selected'));
     newExercise = $('#exercise-table tbody tr.selected').length === 0;
     $('#add-button').toggle(newExercise);
     $('#exercise-label').toggle(newExercise);
