@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="../style.css">
   <link rel="stylesheet" href="admin.css">
   <?php 
+    include '../php/header.php';
     require_once '../php/db_connect.php';
     require_once '../php/db_query.php';
 
@@ -375,7 +376,7 @@ $(document).ready(function() {
     return;
   }
 
-  $.post('php/update_exercise.php', {
+  $.post('/admin/php/update_exercise.php', {
     id: exerciseId,
     name: exerciseName,
     type: exerciseType,
@@ -398,7 +399,7 @@ $('#delete-button').click(function() {
     return;
   }
 
-  $.post('../../php/delete_exercise.php', {
+  $.post('/admin/php/delete_exercise.php', {
     id: exerciseId
   }, function(response) {
     if (response.error) {
@@ -420,7 +421,7 @@ $('#delete-button').click(function() {
     return;
   }
 
-  $.post('php/add_exercise.php', {
+  $.post('/admin/php/add_exercise.php', {
     name: exerciseName,
     type: exerciseType,
     difficulty: exerciseDifficulty
