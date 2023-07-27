@@ -4,26 +4,22 @@ require_once '../../php/db_query.php';
 
 $conn = db_connect();
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $id = $_POST['id'];
-    $name = $_POST['name'];
-    $type = $_POST['type'];
-    $difficulty = $_POST['difficulty'];
-
-    // Input validation
-    if (empty($id) || empty($name) || empty($type) || empty($difficulty)) {
-        echo json_encode(['error' => 'Missing required fields']);
-        exit();
-    }
-
-    $query = 'UPDATE exercises SET name = ?, type = ?, difficulty = ? WHERE id = ?';
-    $params = [$name, $type, $difficulty, $id];
-
-    $result = db_query($conn, $query, $params);
-
-    if ($result === false) {
-        echo json_encode(['error' => 'Database query failed']);
-    } else {
-        echo json_encode(['success' => 'Exercise updated successfully']);
-    }
+if (!isset($_POST['exercise_id'], $_POST['exercise_name'], $_POST['description'], $_POST['difficulty'], $_POST['muscles'])) {
+    echo "Error: Not all form data was sent.";
+    exit;
 }
+
+$exercise_id = $_POST['exercise_id'];
+$exercise_name = $_POST['exercise_name'];
+$description = $_POST['description'];
+$difficulty = $_POST['difficulty'];
+$muscles = $_POST['muscles'];
+
+$sql = "UPDATE exercises SET exercise_name='$exercise_name', description='$description', difficulty='$difficulty', muscles='$muscles' WHERE exercise_id='$exercise_id'";
+
+if ($conn->query($sql) === TRUE) {
+    echo "Record updated successfully";
+} else {
+    echo "Error updating record: " . $conn->error;
+}
+
