@@ -1,5 +1,8 @@
 <?php
-require_once 'db.php';
+require_once 'php/db_connect.php';
+require_once 'php/db_query.php';
+require_once 'php/db_post.php';
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   if (isset($_POST['currentPassword']) && isset($_POST['newPassword']) && isset($_POST['userId'])) {
     $currentPassword = $_POST['currentPassword'];
