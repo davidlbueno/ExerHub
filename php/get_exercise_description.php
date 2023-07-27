@@ -8,7 +8,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $query = 'SELECT description FROM exercise_descriptions WHERE exercise_id = ?';
         $params = [$exerciseId];
         $result = query($conn, $query, $params);
-        echo json_encode($result);
+
+        // Fetch the result as an associative array
+        $data = [];
+        while ($row = mysqli_fetch_assoc($result)) {
+            $data[] = $row;
+        }
+
+        echo json_encode($data);
     } else {
         http_response_code(400);
         echo json_encode(['error' => 'Missing exercise_id parameter']);

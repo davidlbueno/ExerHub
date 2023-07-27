@@ -157,7 +157,7 @@ $(document).ready(function() {
     var $this = $(this);
     $this.siblings().removeClass('selected');
     $this.toggleClass('selected', !$this.hasClass('selected'));
-    var newExercise = !$this.hasClass('selected');
+    var newExercise = $('#exercise-table tbody tr.selected').length === 0;
     $('#add-button').toggle(newExercise);
     $('#exercise-label').toggle(newExercise);
     $('#update-button, #delete-button').toggle(!newExercise);
@@ -184,6 +184,7 @@ $(document).ready(function() {
       var params = { exercise_id: exerciseId };
       handleAjax('../php/get_exercise_description.php', 'POST', params, function(response) {
           response = JSON.parse(response);
+          var data = response.data;
           console.log(response);
           if (response.length > 0) {  // Only update the description if we have data returned
               $('#description').val(response[0]['description']);
@@ -255,7 +256,7 @@ $(document).ready(function() {
         var query = 'UPDATE exercise_muscles em INNER JOIN muscles m ON em.muscle_id = m.id INNER JOIN exercises e ON em.exercise_id = e.id SET em.intensity = ? WHERE m.name = ? AND e.name = ?';
         var params = [update.intensity, update.muscle, exerciseName];
 
-        handleAjax('../php/db.php', 'POST', {
+        handleAjax('../php/db_post.php', 'POST', {
           query: query,
           params: params
         }, resolve, reject);
@@ -267,7 +268,7 @@ $(document).ready(function() {
         var query = 'INSERT INTO exercise_muscles (exercise_id, muscle_id, intensity) SELECT (SELECT id FROM exercises WHERE name = ?), (SELECT id FROM muscles WHERE name = ?), ? FROM dual';
         var params = [insertion.exercise, insertion.muscle, insertion.intensity];
 
-        handleAjax('../php/db.php', 'POST', {
+        handleAjax('../php/db_post.php', 'POST', {
           query: query,
           params: params
         }, resolve, reject);
@@ -278,7 +279,7 @@ $(document).ready(function() {
       return new Promise(function(resolve, reject) {
         var query = 'DELETE em FROM exercise_muscles em INNER JOIN exercises e ON e.id = em.exercise_id INNER JOIN muscles m ON m.id = em.muscle_id WHERE e.name = ? AND m.name = ?';
         var params = [deletion.exercise, deletion.muscle];
-        handleAjax('../php/db.php', 'POST', {
+        handleAjax('../php/db_post.php', 'POST', {
           query: query,
           params: params
         }, resolve, reject);
@@ -294,11 +295,12 @@ $(document).ready(function() {
           'JOIN muscles m ON m.id = em.muscle_id ' +
           'WHERE e.name = ?';
         var params = [exerciseName];
-        handleAjax('../php/db.php', 'POST', {
+        handleAjax('../php/db_post.php', 'POST', {
           query: query,
           params: params
         }, function(response) {
           response = JSON.parse(response);
+          var data = response.data;
 
           var updatedMuscles = {};
           response.forEach(function(row) {
@@ -337,7 +339,7 @@ $(document).ready(function() {
   function updateExercise(exerciseId, exerciseName, exerciseType, exerciseDifficulty, description, successCallback) {
     var query = 'UPDATE exercises SET name = ?, type = ?, difficulty = ? WHERE id = ?';
     var params = [exerciseName, exerciseType, exerciseDifficulty, exerciseId];
-    handleAjax('../php/db.php', 'POST', {
+    handleAjax('../php/db_post.php', 'POST', {
       query: query,
       params: params
     }, function(response) {
@@ -345,7 +347,7 @@ $(document).ready(function() {
       console.log('exerciseId: ' + exerciseId + ', description: ' + description);
       var query = 'INSERT INTO exercise_descriptions (exercise_id, description) VALUES (?, ?) ON DUPLICATE KEY UPDATE description = ?';
       var params = [exerciseId, description, description];
-      handleAjax('../php/db.php', 'POST', {
+      handleAjax('../php/db_post.php', 'POST', {
         query: query,
         params: params
       }, function(response) {
@@ -386,11 +388,11 @@ $(document).ready(function() {
     }
 
     if (confirm('Are you sure you want to delete this exercise?')) {
-      handleAjax('../php/db.php', 'POST', {
+      handleAjax('../php/db_post.php', 'POST', {
         query: 'DELETE em FROM exercise_muscles em INNER JOIN exercises e ON e.id = em.exercise_id WHERE e.name = ?',
         params: [exerciseName]
       }, function(response) {
-        handleAjax('../php/db.php', 'POST', {
+        handleAjax('../php/db_post.php', 'POST', {
           query: 'DELETE FROM exercises WHERE name = ?',
           params: [exerciseName]
         }, function(response) {
@@ -416,7 +418,7 @@ $(document).ready(function() {
       return;
     }
 
-    handleAjax('../php/db.php', 'POST', {
+    handleAjax('../php/db_post.php', 'POST', {
       query: 'INSERT INTO exercises (name, type, difficulty) VALUES (?, ?, ?)',
       params: [exerciseName, exerciseType, exerciseDifficulty],
     }, function(response) {
