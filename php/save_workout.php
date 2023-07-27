@@ -20,7 +20,6 @@ $userId = $_SESSION['user_id'];
 
 // Create the workout record in the 'workouts' table
 $query = "INSERT INTO workouts (name, user_id, is_public) VALUES (?, ?, '0')";
-
 $params = array($workoutName, $userId);
 $result = query($conn, $query, $params);
 
@@ -38,8 +37,9 @@ if ($result['success']) {
     $exerciseQuery = "SELECT id FROM exercises WHERE name = ?";
     $exerciseResult = query($conn, $exerciseQuery, array($exerciseValue));
     if ($typeValue != 'Rest') {
-      if (!empty($exerciseResult)) {
-        $exerciseId = $exerciseResult[0]['id'];
+      $exerciseRow = mysqli_fetch_assoc($exerciseResult);
+      if ($exerciseRow) {
+        $exerciseId = $exerciseRow['id'];
         // Insert the exercise into the workout sequence for the workout in the database
         $query = "INSERT INTO workout_sequences(workout_id, type, exercise_id, seconds, warmup)
                   VALUES (?, ?, ?, ?, ?)";
