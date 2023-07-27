@@ -1,5 +1,5 @@
 <?php
-require_once 'db_connect.php'; // Assuming you have a separate file for the database connection
+require_once 'db_connect.php';
 require_once 'db_query.php';
 
 // Get the workout ID from the request payload
@@ -12,15 +12,15 @@ $deleteLogItemsQuery = "DELETE FROM workout_log_items WHERE workout_log_id IN (S
 
 // Delete workout sequences associated with the workout ID
 $deleteSequencesQuery = "DELETE FROM workout_sequences WHERE workout_id = $workoutId";
-$queryResult = query($deleteSequencesQuery);
+$queryResult = query($conn, $deleteSequencesQuery);
 
 // Delete workout logs associated with the workout ID
 $deleteLogsQuery = "DELETE FROM workout_logs WHERE workout_id = $workoutId";
-$queryResult = query($deleteLogsQuery);
+$queryResult = query($conn, $deleteLogsQuery);
 
 // Delete the workout
 $deleteWorkoutQuery = "DELETE FROM workouts WHERE id = $workoutId";
-$queryResult = query($deleteWorkoutQuery);
+$queryResult = query($conn, $deleteWorkoutQuery);
 
 if ($queryResult) {
   // Return a success message or any other response

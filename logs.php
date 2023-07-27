@@ -6,7 +6,9 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <link rel="stylesheet" href="style.css">
-  <?php require_once 'php/db.php'; ?>
+  <?php require_once 'php/db_connect.php';
+        require_once 'php/db_query.php';
+  ?>
 </head>
 <body class="dark">
   <nav>
@@ -26,7 +28,7 @@
 
     // Retrieve the workout logs from the database for the user along with the workout name, sort newest to oldest
     $logsQuery = "SELECT workout_logs.id, workout_logs.start_time, workout_logs.end_time, workouts.name FROM workout_logs INNER JOIN workouts ON workout_logs.workout_id = workouts.id WHERE workout_logs.user_id = $userId ORDER BY workout_logs.start_time DESC";
-    $logsResult = query($logsQuery);
+    $logsResult = query($conn, $logsQuery);
 
     // Display the table of workout logs
     echo "<table>";

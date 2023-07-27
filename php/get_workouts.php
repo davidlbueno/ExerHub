@@ -1,7 +1,6 @@
 <?php
   require_once 'php/db_connect.php';
-require_once 'php/db_query.php';
-  require_once 'php/get_workouts.php';
+  require_once 'php/db_query.php';
   session_start();
   if (isset($_SESSION['user_id'])) {
       $userId = $_SESSION['user_id'];
@@ -13,13 +12,16 @@ require_once 'php/db_query.php';
   function fetchWorkouts($userId, $workoutId = null) {
     global $conn;
     if ($userId) {
+      // Fetch the selected workouts for the logged-in user
       $query = "SELECT workouts.*, ROUND(AVG(exercises.difficulty)) as avg_difficulty 
                 FROM workouts 
+                INNER JOIN user_selected_workouts ON workouts.id = user_selected_workouts.workout_id
                 LEFT JOIN workout_sequences ON workouts.id = workout_sequences.workout_id 
                 LEFT JOIN exercises ON workout_sequences.exercise_id = exercises.id 
-                WHERE workouts.user_id = $userId 
+                WHERE user_selected_workouts.user_id = $userId 
                 GROUP BY workouts.id";
     } else {
+      // Fetch the public workouts for the non-logged-in user
       $query = "SELECT workouts.*, ROUND(AVG(exercises.difficulty)) as avg_difficulty 
                 FROM workouts 
                 LEFT JOIN workout_sequences ON workouts.id = workout_sequences.workout_id 
@@ -33,7 +35,7 @@ require_once 'php/db_query.php';
         $workouts[] = $row;
     }
     return $workouts;
-  }  
+  }   
 
 function displayWorkout($workout) {
   echo '<ul>';

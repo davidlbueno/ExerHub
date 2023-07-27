@@ -14,7 +14,9 @@ if (!isset($_SESSION['user_id'])) {
   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
-  <?php require_once 'php/db.php'; ?>
+  <?php require_once 'php/db_connect.php';
+        require_once 'php/db_query.php';
+  ?>
 </head>
 <body class="dark">
   <nav>
@@ -90,6 +92,5 @@ if (!isset($_SESSION['user_id'])) {
     });
   </script>
   <script src="js/save_workout.js"></script>
-  <?php require_once 'php/db.php'; ?>
 </body>
 </html>

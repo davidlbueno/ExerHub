@@ -1,5 +1,5 @@
 <?php
-require 'db_connect.php';
+require_once 'db_connect.php';
 require_once 'db_query.php';
 
 session_start();
@@ -14,7 +14,7 @@ $workout_id = $_POST['workout_id'];
 $selected = $_POST['selected'];
 
 if ($selected == "true") {
-    query("INSERT INTO user_selected_workouts (user_id, workout_id) VALUES ($user_id, $workout_id)");
+    query($conn, "INSERT INTO user_selected_workouts (user_id, workout_id) VALUES ($user_id, $workout_id)");
 } else {
-    query("DELETE FROM user_selected_workouts WHERE user_id = $user_id AND workout_id = $workout_id");
+    query($conn, "DELETE FROM user_selected_workouts WHERE user_id = $user_id AND workout_id = $workout_id");
 }

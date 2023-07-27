@@ -1,5 +1,6 @@
 <?php
-require 'php/db.php';
+require_once 'php/db_connect.php';
+require_once 'php/db_query.php';
 
 session_start();
 
@@ -11,20 +12,20 @@ if (!isset($_SESSION['user_id'])) {
 $user_id = $_SESSION['user_id'];
 
 // Fetch all public workouts
-$public_workouts = query("SELECT * FROM workouts WHERE is_public = 1");
+$public_workouts = query($conn, "SELECT * FROM workouts WHERE is_public = 1");
 
 // Fetch all workouts created by the current user
-$user_workouts = query("SELECT * FROM workouts WHERE user_id = $user_id");
+$user_workouts = query($conn, "SELECT * FROM workouts WHERE user_id = $user_id");
 
 // Fetch all selected workouts for the current user
-$selected_workouts_result = query("SELECT workout_id FROM user_selected_workouts WHERE user_id = $user_id");
+$selected_workouts_result = query($conn, "SELECT workout_id FROM user_selected_workouts WHERE user_id = $user_id");
 $selected_workouts = array();
-while ($row = $selected_workouts_result->fetch_assoc()) {
+while ($row = mysqli_fetch_assoc($selected_workouts_result)) {
     $selected_workouts[] = $row['workout_id'];
 }
 
 function display_workouts($workouts, $selected_workouts) {
-  while ($workout = $workouts->fetch_assoc()) {
+  while ($workout = mysqli_fetch_assoc($workouts)) {
       $checked = in_array($workout['id'], $selected_workouts) ? 'checked' : '';
       echo "<li>
               <label>

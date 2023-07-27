@@ -6,12 +6,13 @@
   <title>ExerHub - Login</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-  <?php require_once 'php/db.php'; ?>
+  <?php require_once 'php/db_connect.php'; ?>
+  <?php require_once 'php/db_query.php'; ?>
   <?php
   session_start();
   $userId = $_SESSION['user_id'];
   $query = "SELECT name, email FROM users WHERE id = $userId";
-  $result = query($query);
+  $result = query($conn, $query);
   $row = mysqli_fetch_assoc($result);
   $name = $row['name'];
   $email = $row['email'];
@@ -127,21 +128,15 @@
   // create event listener for name change button
   document.getElementById("name-change-btn").addEventListener("click", function() {
     var name = document.getElementById("name").value;
-    var userId = "<?php echo $userId ?>";
-    var params = [name, userId];
-    var query = "UPDATE users SET name = ? WHERE id = ?";
     var postData = {
-      query: query,
-      params: params
+      name: name
     };
-    $.post("php/db.php", postData, function(data) {
-      // Parse the JSON response
-      var response = JSON.parse(data);
-      if (response.success) {
-        alert("Name successfully updated");
-        window.location.reload();
+    $.post("php/update_name.php", postData, function(data) {
+      if (data.trim() === 'success') {
+          alert("Name successfully updated");
+          window.location.reload();
       } else {
-        alert("Name update failed");
+          alert("Name update failed");
       }
     });
   });

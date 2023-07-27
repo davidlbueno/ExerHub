@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
-  <?php include 'php/header.php'; ?>
-  <?php
+  <?php include 'php/header.php';
+    require_once 'php/db_connect.php';
+    require_once 'php/db_query.php';
+
     session_start();
     $userId = $_SESSION['user_id'];
     $is_admin = $_SESSION['is_admin'];
@@ -36,9 +38,7 @@
       </div>
       <div class="col s12">
         <ol id="workout-list" class="sortable">
-          <?php require_once 'php/db_connect.php';
-                require_once 'php/db_query.php';
-
+          <?php 
           // Get the workout ID from the URL parameter
           $workoutId = $_GET['workout_id'];
 

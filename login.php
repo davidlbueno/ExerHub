@@ -1,6 +1,6 @@
 <?php
-// Include the db.php file
-require_once 'php/db.php';
+require_once 'php/db_connect.php';
+require_once 'php/db_query.php';
 
 // Start the session
 session_start();
@@ -23,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
   $query = "SELECT * FROM users WHERE email = '$email'";
 
   // Execute the query and check if the user exists
-  $result = query($query);
+  $result = query($conn, $query);
   if ($result && mysqli_num_rows($result) > 0) {
     $user = mysqli_fetch_assoc($result);
     // Verify the password

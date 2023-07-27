@@ -8,9 +8,11 @@
   <script type="text/javascript" src="//cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <link rel="stylesheet" href="style.css">
-  <?php require_once 'php/db.php'; ?>
+  <?php require_once 'php/db_connect.php';
+        require_once 'php/db_query.php';
+  ?>
   <?php
-    $result = query('SELECT e.name AS exercise_name, e.type AS exercise_type, e.difficulty, m.name AS muscle_name, em.intensity
+    $result = query($conn, 'SELECT e.name AS exercise_name, e.type AS exercise_type, e.difficulty, m.name AS muscle_name, em.intensity
     FROM exercises e
     JOIN exercise_muscles em ON e.id = em.exercise_id
     JOIN muscles m ON m.id = em.muscle_id');
