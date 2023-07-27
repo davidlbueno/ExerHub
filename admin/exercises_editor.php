@@ -409,32 +409,42 @@ $(document).ready(function() {
   });
 
   $('#add-button').click(function() {
-    var exerciseName = $('#exercise-name').val();
-    var exerciseType = $('#exercise-type').val();
-    var exerciseDifficulty = $('#exercise-difficulty').val();
-    console.log(exerciseName);
-    console.log(exerciseType);
-    console.log(exerciseDifficulty);
+  var exerciseName = $('#exercise-name').val();
+  var exerciseType = $('#exercise-type').val();
+  var exerciseDifficulty = $('#exercise-difficulty').val();
 
-    if (!exerciseName || !exerciseType || !exerciseDifficulty || !isMuscleIntensitySet()) {
-      alert('Please enter an exercise name, type, difficulty, and at least one muscle intensity.');
-      return;
-    }
+  if (!exerciseName || !exerciseType || !exerciseDifficulty || !isMuscleIntensitySet()) {
+    alert('Please enter an exercise name, type, difficulty, and at least one muscle intensity.');
+    return;
+  }
 
-    handleAjax('../php/db_post.php', 'POST', {
-      query: 'INSERT INTO exercises (name, type, difficulty) VALUES (?, ?, ?)',
-      params: [exerciseName, exerciseType, exerciseDifficulty],
-    }, function(response) {
-      updateExerciseMuscles(exerciseName, false, function(err, updates) {
-        if (!err) {
-          window.location.reload();
-        }
-      });
-    }, function(error) {
-      console.error(error);
-      alert('An error occurred while adding a new exercise.');
+  handleAjax('../php/db_post.php', 'POST', {
+    query: 'INSERT INTO exercises (name, type, difficulty) VALUES (?, ?, ?)',
+    params: [exerciseName, exerciseType, exerciseDifficulty],
+  }, function(response) {
+    // Parse the response to get the new exercise ID
+    var exerciseId = JSON.parse(response).insert_id;
+
+    // Add the new exercise to exerciseData
+    exerciseData[exerciseName] = {
+      exercise_id: exerciseId,
+      muscles: {},
+      type: exerciseType,
+      difficulty: exerciseDifficulty
+    };
+
+    // Now update the muscles of the new exercise
+    updateExerciseMuscles(exerciseName, false, function(err, updates) {
+      if (!err) {
+        window.location.reload();
+      }
     });
+  }, function(error) {
+    console.error(error);
+    alert('An error occurred while adding a new exercise.');
   });
+});
+
 });
 </script>
 </body>
