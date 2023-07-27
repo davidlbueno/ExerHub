@@ -181,22 +181,19 @@ $(document).ready(function() {
         }
       }
       // get exercise description from database
-      var query = 'SELECT description FROM exercise_descriptions WHERE exercise_id = ?';
-      var params = [exerciseId];
-      handleAjax('../php/db.php', 'POST', {
-        query: query,
-        params: params
-      }, function(response) {
-        response = JSON.parse(response);
-        if (response.length > 0) {  // Only update the description if we have data returned
-          $('#description').val(response[0]['description']);
-        } else {  // If no data is returned, set the description to be empty
-          $('#description').val('');
-        }
+      var params = { exercise_id: exerciseId };
+      handleAjax('../php/get_exercise_description.php', 'POST', params, function(response) {
+          response = JSON.parse(response);
+          console.log(response);
+          if (response.length > 0) {  // Only update the description if we have data returned
+              $('#description').val(response[0]['description']);
+          } else {  // If no data is returned, set the description to be empty
+              $('#description').val('');
+          }
       }, function(error) {
-        console.error(error);
-        // If an error occurs, set the description to be empty instead of alerting the error
-        $('#description').val('');
+          console.error(error);
+          // If an error occurs, set the description to be empty instead of alerting the error
+          $('#description').val('');
       });
 
       } else {
