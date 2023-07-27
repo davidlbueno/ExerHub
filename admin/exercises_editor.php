@@ -120,7 +120,6 @@ function isMuscleIntensitySet() {
 }
 
 $(document).ready(function() {
-  var newExercise = true;
   var exerciseTable = $('#exercise-table').DataTable({
     paging: false,
     searching: true,
@@ -157,8 +156,8 @@ $(document).ready(function() {
   $('#exercise-table tbody').on('click', 'tr', function() {
     var $this = $(this);
     $this.siblings().removeClass('selected');
-    $this.toggleClass('selected', $this.hasClass('selected'));
-    newExercise = $('#exercise-table tbody tr.selected').length === 0;
+    $this.toggleClass('selected', !$this.hasClass('selected'));
+    var newExercise = !$this.hasClass('selected');
     $('#add-button').toggle(newExercise);
     $('#exercise-label').toggle(newExercise);
     $('#update-button, #delete-button').toggle(!newExercise);
@@ -169,7 +168,7 @@ $(document).ready(function() {
     if (!newExercise) {
       var exerciseId = $this.data('exercise-id');
       var exerciseName = $this.find('td:first-child').text();
-      var muscles = exerciseData[exerciseName].muscles; // Moved inside the if block
+      var muscles = exerciseData[exerciseName].muscles;
       $('#exercise-name').val(exerciseName);
       $('#exercise-type').val(exerciseData[exerciseName].type);
       $('#exercise-difficulty').val(exerciseData[exerciseName].difficulty);
@@ -413,6 +412,9 @@ $(document).ready(function() {
     var exerciseName = $('#exercise-name').val();
     var exerciseType = $('#exercise-type').val();
     var exerciseDifficulty = $('#exercise-difficulty').val();
+    console.log(exerciseName);
+    console.log(exerciseType);
+    console.log(exerciseDifficulty);
 
     if (!exerciseName || !exerciseType || !exerciseDifficulty || !isMuscleIntensitySet()) {
       alert('Please enter an exercise name, type, difficulty, and at least one muscle intensity.');
