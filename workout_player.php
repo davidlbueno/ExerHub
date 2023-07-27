@@ -7,7 +7,9 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <script src="https://sdk.amazonaws.com/js/aws-sdk-2.958.0.min.js"></script>
   <link rel="stylesheet" href="style.css">
-  <?php require_once 'php/db.php'; ?>
+  <?php require_once 'php/db_connect.php';
+        require_once 'php/db_query.php';
+  ?>
 </head>
 <body class="dark">
   <main class="container">
@@ -16,7 +18,7 @@
     $workoutId = $_GET['workout_id'] ?? null;
     if ($workoutId) {
       $query = "SELECT name FROM workouts WHERE id = $workoutId";
-      $result = query($query);
+      $result = query($conn, $query);
       $row = mysqli_fetch_assoc($result);
       $workoutName = $row['name'];
       echo "<h4>$workoutName</h4>";
@@ -24,7 +26,7 @@
                 FROM workout_sequences ws
                 LEFT JOIN exercises e ON e.id = ws.exercise_id
                 WHERE ws.workout_id = $workoutId";
-      $result = query($query);
+      $result = query($conn,$query);
       ?>
       <div class="container">
         <div class="player-content" style="display: flex; flex-direction: column;">

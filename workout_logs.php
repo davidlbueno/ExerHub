@@ -8,7 +8,9 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <link rel="stylesheet" href="style.css">
-  <?php require_once 'php/db.php'; ?>
+  <?php require_once 'php/db_connect.php';
+        require_once 'php/db_query.php';
+  ?>
 </head>
 <body class="dark">
   <main class="container">
@@ -19,7 +21,7 @@
 
     // Retrieve the workout name from the database
     $workoutQuery = "SELECT name FROM workouts WHERE id = $workoutId";
-    $workoutResult = query($workoutQuery);
+    $workoutResult = query($conn, $workoutQuery);
     $workoutRow = mysqli_fetch_assoc($workoutResult);
     $workoutName = $workoutRow['name'];
 
@@ -28,7 +30,7 @@
 
     // Retrieve the workout logs from the database
     $logsQuery = "SELECT id, start_time, end_time FROM workout_logs WHERE workout_id = $workoutId AND user_id = $userId";
-    $logsResult = query($logsQuery);
+    $logsResult = query($conn, $logsQuery);
 
     // Display the table of workout logs
     echo "<table>";

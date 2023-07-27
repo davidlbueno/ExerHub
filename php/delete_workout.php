@@ -1,5 +1,6 @@
 <?php
-require_once 'db.php'; // Assuming you have a separate file for the database connection
+require_once 'db_connect.php'; // Assuming you have a separate file for the database connection
+require_once 'db_query.php';
 
 // Get the workout ID from the request payload
 $requestPayload = file_get_contents('php://input');

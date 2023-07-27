@@ -1,5 +1,6 @@
 <?php
-require_once 'db.php';
+require_once 'db_connect.php';
+require_once 'db_query.php';
 
 $type = $_GET['type'];
 

@@ -36,14 +36,15 @@
       </div>
       <div class="col s12">
         <ol id="workout-list" class="sortable">
-          <?php require_once 'php/db.php';
+          <?php require_once 'php/db_connect.php';
+                require_once 'php/db_query.php';
 
           // Get the workout ID from the URL parameter
           $workoutId = $_GET['workout_id'];
 
            // Fetch the workout data from the database
           $query = "SELECT * FROM workouts WHERE id = $workoutId";
-          $queryResult = query($query);
+          $queryResult = query($conn, $query);
           if (!$queryResult) {
             throw new Exception("Failed to fetch workout data: " . mysqli_error($conn));
           }
@@ -57,7 +58,7 @@
                     LEFT JOIN exercises e ON ws.exercise_id = e.id
                     WHERE ws.workout_id = $workoutId
                     ORDER BY ws.id";
-          $result = query($query);
+          $result = query($conn, $query);
 
           // Create the list items based on the retrieved data
           while ($row = mysqli_fetch_assoc($result)) {

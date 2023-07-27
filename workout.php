@@ -6,7 +6,9 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <link rel="stylesheet" href="style.css">
-  <?php require_once 'php/db.php'; ?>
+  <?php require_once 'php/db_connect.php';
+        require_once 'php/db_query.php';
+  ?>
 </head>
 <body class="dark">
   <nav>
@@ -22,7 +24,7 @@
     $workoutId = $_GET['workout_id'] ?? null;
     if ($workoutId) {
       $query = "SELECT name, is_public FROM workouts WHERE id = $workoutId";
-      $result = query($query);
+      $result = query($conn, $query);
       $row = mysqli_fetch_assoc($result);
       $workoutName = $row['name'];
       $isPublic = $row['is_public'];
@@ -34,7 +36,7 @@
                 FROM workout_sequences ws
                 LEFT JOIN exercises e ON e.id = ws.exercise_id
                 WHERE ws.workout_id = $workoutId";
-      $result = query($query);
+      $result = query($conn, $query);
       echo '<div class="row">
               <div class="col s12">
                 <label for="workout-length" style="display: inline-block;">Workout Length</label>

@@ -1,5 +1,6 @@
 <?php
-  require_once 'db.php';
+  require_once 'php/db_connect.php';
+require_once 'php/db_query.php';
   require_once 'php/get_workouts.php';
   session_start();
   if (isset($_SESSION['user_id'])) {
@@ -26,7 +27,7 @@
                 WHERE workouts.is_public = 1 
                 GROUP BY workouts.id";
     }
-    $result = query($query);
+    $result = query($conn, $query);
     $workouts = array();
     while ($row = mysqli_fetch_assoc($result)) {
         $workouts[] = $row;

@@ -1,5 +1,6 @@
 <?php
-require 'db.php';
+require 'db_connect.php';
+require_once 'db_query.php';
 
 session_start();
 

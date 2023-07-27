@@ -7,7 +7,8 @@ if (!isset($_SESSION['user_id'])) {
   exit();
 }
 // Include the database connection file
-require_once 'db.php';
+require_once 'db_connect.php';
+require_once 'db_query.php';
 // Get the raw request body
 $requestBody = file_get_contents('php://input');
 // Parse the JSON data
