@@ -365,48 +365,50 @@ $(document).ready(function() {
   }
 
   $('#update-button').click(function() {
-    var exerciseId = $('#exercise-table tbody tr.selected').data('exercise-id');
-    var exerciseName = $('#exercise-name').val();
-    var exerciseType = $('#exercise-type').val();
-    var exerciseDifficulty = $('#exercise-difficulty').val();
-    var description = $('#description').val();
-    if (!exerciseName || !isMuscleIntensitySet()) {
-      alert('Please select an exercise.');
-      return;
-    }
-    updateExerciseMuscles(exerciseName, true, function(response, response) {
-    });
-    updateExercise(exerciseId, exerciseName, exerciseType, exerciseDifficulty, description, function(response, response) {
-    });
-  });
+  var exerciseId = $('#exercise-table tbody tr.selected').data('exercise-id');
+  var exerciseName = $('#exercise-name').val();
+  var exerciseType = $('#exercise-type').val();
+  var exerciseDifficulty = $('#exercise-difficulty').val();
 
-  $('#delete-button').click(function() {
-    var exerciseName = $('#exercise-table tbody tr.selected td:first-child').text();
-    if (!exerciseName) {
-      alert('Please select an exercise.');
-      return;
-    }
+  if (!exerciseName || !exerciseType || !exerciseDifficulty || !isMuscleIntensitySet()) {
+    alert('Please enter an exercise name, type, difficulty, and at least one muscle intensity.');
+    return;
+  }
 
-    if (confirm('Are you sure you want to delete this exercise?')) {
-      handleAjax('../php/db_post.php', 'POST', {
-        query: 'DELETE em FROM exercise_muscles em INNER JOIN exercises e ON e.id = em.exercise_id WHERE e.name = ?',
-        params: [exerciseName]
-      }, function(response) {
-        handleAjax('../php/db_post.php', 'POST', {
-          query: 'DELETE FROM exercises WHERE name = ?',
-          params: [exerciseName]
-        }, function(response) {
-          window.location.reload();
-        }, function(error) {
-          console.error(error);
-          alert('An error occurred while deleting the exercise.');
-        });
-      }, function(error) {
-        console.error(error);
-        alert('An error occurred while deleting the exercise muscles.');
-      });
+  $.post('php/update_exercise.php', {
+    id: exerciseId,
+    name: exerciseName,
+    type: exerciseType,
+    difficulty: exerciseDifficulty
+  }, function(response) {
+    if (response.error) {
+      alert('An error occurred: ' + response.error);
+    } else {
+      window.location.reload();
     }
-  });
+  }, 'json');
+});
+
+
+$('#delete-button').click(function() {
+  var exerciseId = $('#exercise-table tbody tr.selected').data('exercise-id');
+
+  if (!exerciseId) {
+    alert('Please select an exercise to delete.');
+    return;
+  }
+
+  $.post('../../php/delete_exercise.php', {
+    id: exerciseId
+  }, function(response) {
+    if (response.error) {
+      alert('An error occurred: ' + response.error);
+    } else {
+      window.location.reload();
+    }
+  }, 'json');
+});
+
 
   $('#add-button').click(function() {
   var exerciseName = $('#exercise-name').val();
@@ -418,31 +420,17 @@ $(document).ready(function() {
     return;
   }
 
-  handleAjax('../php/db_post.php', 'POST', {
-    query: 'INSERT INTO exercises (name, type, difficulty) VALUES (?, ?, ?)',
-    params: [exerciseName, exerciseType, exerciseDifficulty],
+  $.post('php/add_exercise.php', {
+    name: exerciseName,
+    type: exerciseType,
+    difficulty: exerciseDifficulty
   }, function(response) {
-    // Parse the response to get the new exercise ID
-    var exerciseId = JSON.parse(response).insert_id;
-
-    // Add the new exercise to exerciseData
-    exerciseData[exerciseName] = {
-      exercise_id: exerciseId,
-      muscles: {},
-      type: exerciseType,
-      difficulty: exerciseDifficulty
-    };
-
-    // Now update the muscles of the new exercise
-    updateExerciseMuscles(exerciseName, false, function(err, updates) {
-      if (!err) {
-        window.location.reload();
-      }
-    });
-  }, function(error) {
-    console.error(error);
-    alert('An error occurred while adding a new exercise.');
-  });
+    if (response.error) {
+      alert('An error occurred: ' + response.error);
+    } else {
+      window.location.reload();
+    }
+  }, 'json');
 });
 
 });
