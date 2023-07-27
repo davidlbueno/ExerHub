@@ -54,7 +54,7 @@
         if ($type === "Rest") {
           echo "<li data-seconds={$seconds} class='rest'><strong>Rest</strong> - ({$seconds}s)</li>";
         } else {
-          if ($warmup === '1') {
+          if ($warmup === 1) {
             echo "<li data-seconds={$seconds} class='warmup'><strong>Warmup</strong> - $exerciseName ({$seconds}s)</li>";
           } else {
             echo "<li data-seconds={$seconds} ><strong>$type</strong> - $exerciseName ({$seconds}s)</li>";
