@@ -14,9 +14,9 @@
     include '../php/header.php'; 
     require_once '../php/db_connect.php';
     require_once '../php/db_query.php'; 
-    $exercises = queryExercises();
+    $exercises = queryExercises($conn);
     $muscles = query($conn, 'SELECT * FROM muscles');
-    function queryExercises() {
+    function queryExercises($conn) {
         $result = query($conn, 'SELECT e.name AS exercise_name, e.type AS exercise_type, e.difficulty, m.name AS muscle_name, em.intensity
             FROM exercises e
             JOIN exercise_muscles em ON e.id = em.exercise_id
@@ -214,7 +214,7 @@ $(document).ready(function() {
           : 'INSERT INTO exercise_muscles (exercise_id, muscle_id, intensity) SELECT (SELECT id FROM exercises WHERE name = ?), (SELECT id FROM muscles WHERE name = ?), ? FROM dual';
         var params = isUpdate ? [update.intensity, update.muscle, exerciseName] : [exerciseName, update.muscle, update.intensity];
 
-        handleAjax('../php_db_post.php', 'POST', {
+        handleAjax('../php/db_post.php', 'POST', {
           query: query,
           params: params
         }, resolve, reject);
@@ -259,11 +259,11 @@ $(document).ready(function() {
     }
 
     if (confirm('Are you sure you want to delete this exercise?')) {
-      handleAjax('../php_db_post.php', 'POST', {
+      handleAjax('../php/db_post.php', 'POST', {
         query: 'DELETE em FROM exercise_muscles em INNER JOIN exercises e ON e.id = em.exercise_id WHERE e.name = ?',
         params: [exerciseName]
       }, function(response) {
-        handleAjax('../php_db_post.php', 'POST', {
+        handleAjax('../php/db_post.php', 'POST', {
           query: 'DELETE FROM exercises WHERE name = ?',
           params: [exerciseName]
         }, function(response) {
@@ -289,7 +289,7 @@ $(document).ready(function() {
       return;
     }
 
-    handleAjax('../php_db_post.php', 'POST', {
+    handleAjax('../php/db_post.php', 'POST', {
       query: 'INSERT INTO exercises (name, type, difficulty) VALUES (?, ?, ?)',
       params: [exerciseName, exerciseType, exerciseDifficulty],
     }, function(response) {
