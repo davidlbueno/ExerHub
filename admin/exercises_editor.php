@@ -64,7 +64,7 @@
         <option value="Legs">Legs</option>
         <option value="Core">Core</option>
     </select>
-    <input type="number" id="new-exercise-difficulty" name="difficulty" placeholder="Difficulty" style="flex: 0 0 10%; margin-right: 10px; height: 40px;">
+    <input type="number" id="exercise-difficulty" name="difficulty" placeholder="Difficulty" style="flex: 0 0 10%; margin-right: 10px; height: 40px;">
   </div>
   <div style="margin: 2px 0 5px 5px;">
     <textarea id="description" name="description" placeholder="Exercise Description..." rows="4" cols="50"></textarea>
