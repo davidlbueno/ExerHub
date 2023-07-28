@@ -86,3 +86,9 @@ Table user_selected_workouts {
 user_id int [pk] 
 workout_id int [pk]
 }
+
+Table exercise_descriptions {
+id int [pk, increment] 
+exercise_id int 
+description longtext
+}
