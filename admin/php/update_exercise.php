@@ -1,39 +1,28 @@
 <?php
 require_once '../../php/db_connect.php';
-require_once '../../php/db_query.php';
+require_once '../../php/db_post.php';
 
-function update_query($conn, $query, $params) {
-  $stmt = mysqli_prepare($conn, $query);
-  if ($stmt === false) {
-    return ['success' => false, 'error' => mysqli_error($conn)];
-  }
+header('Content-Type: application/json');
 
-  mysqli_stmt_bind_param($stmt, str_repeat('s', count($params)), ...$params);
-  $success = mysqli_stmt_execute($stmt);
+$exerciseId = $_POST['exerciseId'];
+$exerciseName = $_POST['exerciseName'];
+$exerciseDescription = $_POST['exerciseDescription'];
+$muscleIds = $_POST['muscleIds'];
 
-  if ($success === false) {
-    return ['success' => false, 'error' => mysqli_stmt_error($stmt)];
-  }
+// Update the exercise in the exercises table
+$post($conn, 'UPDATE exercises SET name = ? WHERE id = ?', [$exerciseName, $exerciseId]);
 
-  $affected_rows = mysqli_stmt_affected_rows($stmt);
-  return ['success' => true, 'affected_rows' => $affected_rows];
+// Update the exercise description in the exercise_descriptions table
+$post($conn, 'UPDATE exercise_descriptions SET description = ? WHERE exercise_id = ?', [$exerciseDescription, $exerciseId]);
+
+// Update the associated muscles in the exercise_muscles table
+// First, delete all existing associated muscles
+$post($conn, 'DELETE FROM exercise_muscles WHERE exercise_id = ?', [$exerciseId]);
+
+// Then, insert the new associated muscles
+foreach ($muscleIds as $muscleId) {
+    $post($conn, 'INSERT INTO exercise_muscles (exercise_id, muscle_id) VALUES (?, ?)', [$exerciseId, $muscleId]);
 }
 
-$exercise_id = $_POST['exercise_id'];
-$exercise_name = $_POST['exercise_name'];
-$description = $_POST['description'];
-$difficulty = $_POST['difficulty'];
-$muscles = $_POST['muscles'];
-
-$conn = db_connect();
-
-$query = 'UPDATE exercises SET exercise_name = ?, description = ?, difficulty = ?, muscles = ? WHERE exercise_id = ?';
-$params = [$exercise_name, $description, $difficulty, $muscles, $exercise_id];
-$result = update_query($conn, $query, $params);
-
-if ($result['success']) {
-    echo "Record updated successfully";
-} else {
-    echo "Error updating record: " . $result['error'];
-}
+echo json_encode(['status' => 'success']);
 ?>

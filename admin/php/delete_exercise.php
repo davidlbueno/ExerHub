@@ -1,26 +1,19 @@
 <?php
 require_once '../../php/db_connect.php';
-require_once '../../php/db_query.php';
+require_once '../../php/db_delete.php';
 
-$conn = db_connect();
+header('Content-Type: application/json');
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $id = $_POST['id'];
+$exerciseId = $_POST['exerciseId'];
 
-    // Input validation
-    if (empty($id)) {
-        echo json_encode(['error' => 'Missing required fields']);
-        exit();
-    }
+// Delete the exercise from the exercises table
+$delete($conn, 'DELETE FROM exercises WHERE id = ?', [$exerciseId]);
 
-    $query = 'DELETE FROM exercises WHERE id = ?';
-    $params = [$id];
+// Delete the exercise description from the exercise_descriptions table
+$delete($conn, 'DELETE FROM exercise_descriptions WHERE exercise_id = ?', [$exerciseId]);
 
-    $result = db_query($conn, $query, $params);
+// Delete the associated muscles from the exercise_muscles table
+$delete($conn, 'DELETE FROM exercise_muscles WHERE exercise_id = ?', [$exerciseId]);
 
-    if ($result === false) {
-        echo json_encode(['error' => 'Database query failed']);
-    } else {
-        echo json_encode(['success' => 'Exercise deleted successfully']);
-    }
-}
+echo json_encode(['status' => 'success']);
+?>

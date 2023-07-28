@@ -179,13 +179,10 @@ $(document).ready(function() {
           $('#slider-' + muscleName).prev('.muscle-label').toggleClass('dot', intensity > 0);
         }
       }
+
       // get exercise description from database
-      var query = 'SELECT description FROM exercise_descriptions WHERE exercise_id = ?';
-      var params = [exerciseId];
-      console.log('query: ' + query + ', params: ' + params);
-      handleAjax('../php/db_query.php', 'POST', {
-        query: query,
-        params: params
+      handleAjax('php/get_exercises.php', 'POST', {
+        exerciseId: exerciseId
       }, function(response) {
         response = JSON.parse(response);
         if (response.length > 0) {  // Only update the description if we have data returned
@@ -199,11 +196,11 @@ $(document).ready(function() {
         $('#description').val('');
       });
 
-      } else {
-        $('#exercise-name').val('');
-        $('#exercise-type').val('');
-        $('#exercise-difficulty').val('');
-      }
+    } else {
+      $('#exercise-name').val('');
+      $('#exercise-type').val('');
+      $('#exercise-difficulty').val('');
+    }
 
     handleSliderLabelUpdates();
   });
@@ -214,154 +211,10 @@ $(document).ready(function() {
   function handleAjax(url, type, data, successCallback, errorCallback) {
     $.ajax({
       url: url,
-      type: 'POST',
+      type: type,
       data: data,
       success: successCallback,
       error: errorCallback
-    });
-  }
-
-  function updateExerciseMuscles(exerciseName, isUpdate, successCallback) {
-    var updates = [];
-    var deletions = [];
-    var insertions = [];
-
-    $('.slider-container input[type="range"]').each(function() {
-      var muscleName = $(this).attr('name');
-      var intensity = $(this).val();
-      var existingIntensity = exerciseData[exerciseName].muscles[muscleName] || 0;
-
-      if (intensity > 0 && existingIntensity > 0) {
-        if (intensity !== existingIntensity) {
-          updates.push({
-            exercise: exerciseName,
-            muscle: muscleName,
-            intensity: intensity
-          });
-        }
-      } else if (intensity > 0 && existingIntensity === 0) {
-        insertions.push({
-          exercise: exerciseName,
-          muscle: muscleName,
-          intensity: intensity
-        });
-      } else if (intensity < 1 && existingIntensity > 0) {
-        deletions.push({
-          exercise: exerciseName,
-          muscle: muscleName
-        });
-      }
-    });
-
-    var updatePromises = updates.map(function(update) {
-      return new Promise(function(resolve, reject) {
-        var query = 'UPDATE exercise_muscles em INNER JOIN muscles m ON em.muscle_id = m.id INNER JOIN exercises e ON em.exercise_id = e.id SET em.intensity = ? WHERE m.name = ? AND e.name = ?';
-        var params = [update.intensity, update.muscle, exerciseName];
-
-        handleAjax('../php/db.php', 'POST', {
-          query: query,
-          params: params
-        }, resolve, reject);
-      });
-    });
-
-    var insertionPromises = insertions.map(function(insertion) {
-      return new Promise(function(resolve, reject) {
-        var query = 'INSERT INTO exercise_muscles (exercise_id, muscle_id, intensity) SELECT (SELECT id FROM exercises WHERE name = ?), (SELECT id FROM muscles WHERE name = ?), ? FROM dual';
-        var params = [insertion.exercise, insertion.muscle, insertion.intensity];
-
-        handleAjax('../php/db.php', 'POST', {
-          query: query,
-          params: params
-        }, resolve, reject);
-      });
-    });
-
-    var deletionPromises = deletions.map(function(deletion) {
-      return new Promise(function(resolve, reject) {
-        var query = 'DELETE em FROM exercise_muscles em INNER JOIN exercises e ON e.id = em.exercise_id INNER JOIN muscles m ON m.id = em.muscle_id WHERE e.name = ? AND m.name = ?';
-        var params = [deletion.exercise, deletion.muscle];
-        handleAjax('../php/db.php', 'POST', {
-          query: query,
-          params: params
-        }, resolve, reject);
-      });
-    });
-
-    var allPromises = updatePromises.concat(insertionPromises, deletionPromises);
-    Promise.all(allPromises)
-      .then(function() {
-        var query = 'SELECT e.name AS exercise_name, m.name AS muscle_name, em.intensity ' +
-          'FROM exercises e ' +
-          'JOIN exercise_muscles em ON e.id = em.exercise_id ' +
-          'JOIN muscles m ON m.id = em.muscle_id ' +
-          'WHERE e.name = ?';
-        var params = [exerciseName];
-        handleAjax('../php/db.php', 'POST', {
-          query: query,
-          params: params
-        }, function(response) {
-          response = JSON.parse(response);
-
-          var updatedMuscles = {};
-          response.forEach(function(row) {
-            var muscleName = row['muscle_name'];
-            var intensity = row['intensity'];
-            updatedMuscles[muscleName] = intensity;
-          });
-
-          exerciseData[exerciseName].muscles = updatedMuscles;
-
-          var exerciseRow = $('#exercise-table tbody tr.selected');
-          var newExerciseData = '';
-          for (var muscleName in updatedMuscles) {
-            if (updatedMuscles.hasOwnProperty(muscleName)) {
-              var intensity = updatedMuscles[muscleName];
-              newExerciseData += '<span>' + muscleName + '</span> (' + intensity + ')<br>';
-            }
-          }
-          exerciseRow.find('td:last-child').html(newExerciseData);
-
-          if (typeof successCallback === 'function') {
-            successCallback(null, updates);
-          }
-        }, function(error) {
-          console.error(error);
-          alert('An error occurred while fetching the updated muscle data.');
-        });
-      })
-      .catch(function(error) {
-        console.error(error);
-        alert('An error occurred while updating exercise muscles.');
-      });
-  }
-
-  // function to update the exercise name, type and difficulty if they have been changed in the form
-  function updateExercise(exerciseId, exerciseName, exerciseType, exerciseDifficulty, description, successCallback) {
-    var query = 'UPDATE exercises SET name = ?, type = ?, difficulty = ? WHERE id = ?';
-    var params = [exerciseName, exerciseType, exerciseDifficulty, exerciseId];
-    handleAjax('../php/db.php', 'POST', {
-      query: query,
-      params: params
-    }, function(response) {
-      // Perform an UPSERT on the exercise_descriptions table
-      console.log('exerciseId: ' + exerciseId + ', description: ' + description);
-      var query = 'INSERT INTO exercise_descriptions (exercise_id, description) VALUES (?, ?) ON DUPLICATE KEY UPDATE description = ?';
-      var params = [exerciseId, description, description];
-      handleAjax('../php/db.php', 'POST', {
-        query: query,
-        params: params
-      }, function(response) {
-        if (typeof successCallback === 'function') {
-          successCallback(null, response);
-        }
-      }, function(error) {
-        console.error(error);
-        alert('An error occurred while updating the exercise description.');
-      });
-    }, function(error) {
-      console.error(error);
-      alert('An error occurred while updating the exercise.');
     });
   }
 
@@ -375,36 +228,35 @@ $(document).ready(function() {
       alert('Please select an exercise.');
       return;
     }
-    updateExerciseMuscles(exerciseName, true, function(response, response) {
-    });
-    updateExercise(exerciseId, exerciseName, exerciseType, exerciseDifficulty, description, function(response, response) {
+    handleAjax('php/update_exercise.php', 'POST', {
+      exerciseId: exerciseId,
+      exerciseName: exerciseName,
+      exerciseType: exerciseType,
+      exerciseDifficulty: exerciseDifficulty,
+      description: description
+    }, function(response) {
+      window.location.reload();
+    }, function(error) {
+      console.error(error);
+      alert('An error occurred while updating the exercise.');
     });
   });
 
   $('#delete-button').click(function() {
-    var exerciseName = $('#exercise-table tbody tr.selected td:first-child').text();
-    if (!exerciseName) {
+    var exerciseId = $('#exercise-table tbody tr.selected').data('exercise-id');
+    if (!exerciseId) {
       alert('Please select an exercise.');
       return;
     }
 
     if (confirm('Are you sure you want to delete this exercise?')) {
-      handleAjax('../php/db.php', 'POST', {
-        query: 'DELETE em FROM exercise_muscles em INNER JOIN exercises e ON e.id = em.exercise_id WHERE e.name = ?',
-        params: [exerciseName]
+      handleAjax('php/delete_exercise.php', 'POST', {
+        exerciseId: exerciseId
       }, function(response) {
-        handleAjax('../php/db.php', 'POST', {
-          query: 'DELETE FROM exercises WHERE name = ?',
-          params: [exerciseName]
-        }, function(response) {
-          window.location.reload();
-        }, function(error) {
-          console.error(error);
-          alert('An error occurred while deleting the exercise.');
-        });
+        window.location.reload();
       }, function(error) {
         console.error(error);
-        alert('An error occurred while deleting the exercise muscles.');
+        alert('An error occurred while deleting the exercise.');
       });
     }
   });
@@ -413,21 +265,20 @@ $(document).ready(function() {
     var exerciseName = $('#exercise-name').val();
     var exerciseType = $('#exercise-type').val();
     var exerciseDifficulty = $('#exercise-difficulty').val();
+    var description = $('#description').val();
 
     if (!exerciseName || !exerciseType || !exerciseDifficulty || !isMuscleIntensitySet()) {
       alert('Please enter an exercise name, type, difficulty, and at least one muscle intensity.');
       return;
     }
 
-    handleAjax('../php/db.php', 'POST', {
-      query: 'INSERT INTO exercises (name, type, difficulty) VALUES (?, ?, ?)',
-      params: [exerciseName, exerciseType, exerciseDifficulty],
+    handleAjax('php/add_exercise.php', 'POST', {
+      exerciseName: exerciseName,
+      exerciseType: exerciseType,
+      exerciseDifficulty: exerciseDifficulty,
+      description: description
     }, function(response) {
-      updateExerciseMuscles(exerciseName, false, function(err, updates) {
-        if (!err) {
-          window.location.reload();
-        }
-      });
+      window.location.reload();
     }, function(error) {
       console.error(error);
       alert('An error occurred while adding a new exercise.');

@@ -1,29 +1,26 @@
 <?php
 require_once '../../php/db_connect.php';
-require_once '../../php/db_query.php';
+require_once '../../php/db_post.php';
 
-$conn = db_connect();
+header('Content-Type: application/json');
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $id = $_POST['id'];
-    $name = $_POST['name'];
-    $type = $_POST['type'];
-    $difficulty = $_POST['difficulty'];
+$exerciseName = $_POST['exerciseName'];
+$exerciseDescription = $_POST['exerciseDescription'];
+$muscleIds = $_POST['muscleIds'];
 
-    // Input validation
-    if (empty($id) || empty($name) || empty($type) || empty($difficulty)) {
-        echo json_encode(['error' => 'Missing required fields']);
-        exit();
-    }
+// Insert the new exercise into the exercises table
+$post($conn, 'INSERT INTO exercises (name) VALUES (?)', [$exerciseName]);
 
-    $query = 'UPDATE exercises SET name = ?, type = ?, difficulty = ? WHERE id = ?';
-    $params = [$name, $type, $difficulty, $id];
+// Get the ID of the newly inserted exercise
+$exerciseId = mysqli_insert_id($conn);
 
-    $result = db_query($conn, $query, $params);
+// Insert the exercise description into the exercise_descriptions table
+$post($conn, 'INSERT INTO exercise_descriptions (exercise_id, description) VALUES (?, ?)', [$exerciseId, $exerciseDescription]);
 
-    if ($result === false) {
-        echo json_encode(['error' => 'Database query failed']);
-    } else {
-        echo json_encode(['success' => 'Exercise updated successfully']);
-    }
+// Insert the associated muscles into the exercise_muscles table
+foreach ($muscleIds as $muscleId) {
+    $post($conn, 'INSERT INTO exercise_muscles (exercise_id, muscle_id) VALUES (?, ?)', [$exerciseId, $muscleId]);
 }
+
+echo json_encode(['status' => 'success']);
+?>
