@@ -15,11 +15,12 @@ $description = $_POST['description'];
 $difficulty = $_POST['difficulty'];
 $muscles = $_POST['muscles'];
 
-$sql = "UPDATE exercises SET exercise_name='$exercise_name', description='$description', difficulty='$difficulty', muscles='$muscles' WHERE exercise_id='$exercise_id'";
+$query = 'UPDATE exercises SET exercise_name = ?, description = ?, difficulty = ?, muscles = ? WHERE exercise_id = ?';
+$params = [$exercise_name, $description, $difficulty, $muscles, $exercise_id];
+$result = query($conn, $query, $params);
 
-if ($conn->query($sql) === TRUE) {
+if ($result['success']) {
     echo "Record updated successfully";
 } else {
-    echo "Error updating record: " . $conn->error;
+    echo "Error updating record: " . $result['error'];
 }
-
