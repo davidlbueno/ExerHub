@@ -170,7 +170,7 @@ $(document).ready(function() {
       var exerciseId = $this.data('exercise-id');
       var exerciseName = $this.find('td:first-child').text();
       var muscles;
-      if (exerciseData[exerciseName]) {
+      if (exerciseData[exerciseName] && typeof exerciseData[exerciseName] === 'object') {
         muscles = exerciseData[exerciseName].muscles;
       } else {
         muscles = {};
