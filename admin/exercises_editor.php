@@ -366,30 +366,33 @@ $(document).ready(function() {
   }
 
   $('#update-button').click(function() {
-  var exerciseId = $('#exercise-table tbody tr.selected').data('exercise-id');
-  var exerciseName = $('#exercise-name').val();
-  var exerciseType = $('#exercise-type').val();
-  var exerciseDifficulty = $('#exercise-difficulty').val();
+    updateExerciseMuscles();
+    updateExercise();
+    var exerciseId = $('#exercise-id').val();
+    var exerciseName = $('#exercise-name').val();
+    var description = $('#description').val();
+    var difficulty = $('#difficulty').val();
+    var muscles = getMuscleIntensities();
 
-  if (!exerciseName || !exerciseType || !exerciseDifficulty || !isMuscleIntensitySet()) {
+    if (!exerciseName || !exerciseType || !exerciseDifficulty || !isMuscleIntensitySet()) {
     alert('Please enter an exercise name, type, difficulty, and at least one muscle intensity.');
     return;
-  }
+    }
 
-  $.post('/admin/php/update_exercise.php', {
-    id: exerciseId,
-    name: exerciseName,
-    type: exerciseType,
-    difficulty: exerciseDifficulty
-  }, function(response) {
-    if (response.error) {
+    $.post('../php/update_exercise.php', {
+      exercise_id: exerciseId,
+      exercise_name: exerciseName,
+      description: description,
+      difficulty: difficulty,
+      muscles: muscles
+    }, function(response) {
+      if (response.error) {
       alert('An error occurred: ' + response.error);
     } else {
       window.location.reload();
     }
-  }, 'json');
-});
-
+    });
+  });
 
 $('#delete-button').click(function() {
   var exerciseId = $('#exercise-table tbody tr.selected').data('exercise-id');
