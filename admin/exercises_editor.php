@@ -184,7 +184,6 @@ $(document).ready(function() {
       handleAjax('php/get_exercises.php', 'POST', {
         exerciseId: exerciseId
       }, function(response) {
-        response = JSON.parse(response);
         if (response.length > 0) {  // Only update the description if we have data returned
           $('#description').val(response[0]['description']);
         } else {  // If no data is returned, set the description to be empty
