@@ -244,7 +244,7 @@ $(document).ready(function() {
       exerciseDescription: description,
       muscleIds: muscleIds
     }, function(response) {
-      window.location.reload();
+      //window.location.reload();
     }, function(error) {
       console.error(error);
       alert('An error occurred while updating the exercise.');

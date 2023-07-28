@@ -2,16 +2,11 @@
 require_once 'db_connect.php';
 require_once 'db_query.php';
 
-$conn = db_connect();
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  if (isset($_POST['query'])) {
-    $query = $_POST['query'];
-    $params = isset($_POST['params']) ? $_POST['params'] : [];
-
+function post($conn, $query, $params) {
     $stmt = mysqli_prepare($conn, $query);
 
     if ($stmt === false) {
+      http_response_code(500);
       echo json_encode(['error' => 'Failed to prepare statement: ' . mysqli_error($conn)]);
       exit();
     }
@@ -23,6 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $executed = mysqli_stmt_execute($stmt);
 
     if (!$executed) {
+      http_response_code(500);
       echo json_encode(['error' => 'SQL Command Failed: ' . mysqli_stmt_error($stmt)]);
       exit();
     }
@@ -33,18 +29,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       case 'SELECT':
         $result = mysqli_stmt_get_result($stmt);
         $rows = mysqli_fetch_all($result, MYSQLI_ASSOC);
-        echo json_encode($rows);
-        break;
+        return $rows;
       case 'INSERT':
-        echo json_encode(['insert_id' => mysqli_insert_id($conn)]);
-        break;
+        return ['insert_id' => mysqli_insert_id($conn)];
       case 'UPDATE':
       case 'DELETE':
       default:
-        echo json_encode(['success' => true]);
-        break;
+        return ['success' => true];
     }
 
     mysqli_stmt_close($stmt);
-  }
 }
