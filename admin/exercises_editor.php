@@ -315,6 +315,13 @@ $(document).ready(function() {
             updatedMuscles[muscleName] = intensity;
           });
 
+          if (exerciseData[exerciseName] && typeof exerciseData[exerciseName] === 'object') {
+            exerciseData[exerciseName].muscles = updatedMuscles;
+          } else {
+            console.error('Cannot update muscles for exercise: ' + exerciseName);
+          }
+
+
           exerciseData[exerciseName].muscles = updatedMuscles;
 
           var exerciseRow = $('#exercise-table tbody tr.selected');
