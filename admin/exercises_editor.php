@@ -119,10 +119,15 @@ function isMuscleIntensitySet() {
 }
 
 $(document).ready(function() {
+  var muscleIds = {};
   var exerciseTable = $('#exercise-table').DataTable({
     paging: false,
     searching: true,
     columnDefs: [{ orderable: false, targets: [1] }]
+  });
+
+  $.getJSON('php/get_muscle_ids.php', function(data) {
+    muscleIds = data;
   });
 
   exerciseTable.column(1).every(function() {
@@ -215,19 +220,21 @@ $(document).ready(function() {
   }
 
   $('#update-button').click(function() {
-    var exerciseId = $('#exercise-table tbody tr.selected').data('exercise-id');
+    var exerciseId = $('#exercise-id').val();
     var exerciseName = $('#exercise-name').val();
     var exerciseType = $('#exercise-type').val();
     var exerciseDifficulty = $('#exercise-difficulty').val();
     var description = $('#description').val();
-    var muscleIds = []; // TODO: Get the muscle IDs from the sliders
+
+    var muscleIdsArray = [];
 
     // Get the muscle IDs from the sliders
     $('.slider-container input[type="range"]').each(function() {
       var muscleName = $(this).attr('name');
       var intensity = $(this).val();
       if (intensity > 0) {
-        muscleIds.push(muscleName); // Assuming the muscle name is the muscle ID
+        var muscleId = muscleIds[muscleName];
+        muscleIdsArray.push(muscleId);
       }
     });
 
@@ -242,7 +249,7 @@ $(document).ready(function() {
       exerciseType: exerciseType,
       exerciseDifficulty: exerciseDifficulty,
       exerciseDescription: description,
-      muscleIds: muscleIds
+      muscleIds: muscleIdsArray
     }, function(response) {
       //window.location.reload();
     }, function(error) {
