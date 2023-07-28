@@ -182,7 +182,8 @@ $(document).ready(function() {
       // get exercise description from database
       var query = 'SELECT description FROM exercise_descriptions WHERE exercise_id = ?';
       var params = [exerciseId];
-      handleAjax('../php/db.php', 'POST', {
+      console.log('query: ' + query + ', params: ' + params);
+      handleAjax('../php/db_query.php', 'POST', {
         query: query,
         params: params
       }, function(response) {
