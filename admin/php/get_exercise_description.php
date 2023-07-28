@@ -12,7 +12,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Fetch the result as an associative array
         $data = mysqli_fetch_assoc($result);
 
-        echo json_encode($data['description']);
+        if ($data && isset($data['description'])) {
+            echo $data['description'];
+        } else {
+            echo '';
+        }
     } else {
         http_response_code(400);
         echo json_encode(['error' => 'Missing exercise_id parameter']);
