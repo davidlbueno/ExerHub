@@ -120,6 +120,8 @@ function isMuscleIntensitySet() {
 
 $(document).ready(function() {
   var muscleIds = {};
+  var selectedExerciseId; 
+
   var exerciseTable = $('#exercise-table').DataTable({
     paging: false,
     searching: true,
@@ -170,6 +172,7 @@ $(document).ready(function() {
     $('.slider-container input[type="range"]').val(0).prev('.muscle-label').removeClass('dot').find('span').text(0);
 
     if (!newExercise) {
+      selectedExerciseId = exerciseId;
       var exerciseId = $this.data('exercise-id');
       var exerciseName = $this.find('td:first-child').text();
       var muscles = exerciseData[exerciseName].muscles;
@@ -199,6 +202,7 @@ $(document).ready(function() {
       });
 
     } else {
+      selectedExerciseId = null;
       $('#exercise-name').val('');
       $('#exercise-type').val('');
       $('#exercise-difficulty').val('');
@@ -220,7 +224,7 @@ $(document).ready(function() {
   }
 
   $('#update-button').click(function() {
-    var exerciseId = $('#exercise-id').val();
+    var exerciseId = selectedExerciseId;
     var exerciseName = $('#exercise-name').val();
     var exerciseType = $('#exercise-type').val();
     var exerciseDifficulty = $('#exercise-difficulty').val();
@@ -257,6 +261,7 @@ $(document).ready(function() {
       alert('An error occurred while updating the exercise.');
     });
   });
+
 
   $('#delete-button').click(function() {
     var exerciseId = $('#exercise-table tbody tr.selected').data('exercise-id');

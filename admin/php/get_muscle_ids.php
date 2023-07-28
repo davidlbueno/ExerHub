@@ -1,8 +1,6 @@
 <?php
 require_once '../../php/db_connect.php';
 
-$conn = db_connect();
-
 $result = $conn->query('SELECT id, name FROM muscles');
 
 $muscleIds = [];
