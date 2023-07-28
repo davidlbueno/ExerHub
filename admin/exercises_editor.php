@@ -181,7 +181,7 @@ $(document).ready(function() {
       }
 
       // get exercise description from database
-      handleAjax('php/get_exercises.php', 'POST', {
+      handleAjax('php/get_exercise_description.php', 'POST', {
         exerciseId: exerciseId
       }, function(response) {
         if (response.length > 0) {  // Only update the description if we have data returned
