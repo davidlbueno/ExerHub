@@ -180,18 +180,16 @@ $(document).ready(function() {
         }
       }
 
-      // get exercise description from database
       handleAjax('php/get_exercise_description.php', 'POST', {
-        exerciseId: exerciseId
+        exercise_id: exerciseId
       }, function(response) {
-        if (response) {  // Only update the description if we have data returned
+        if (response) {
           $('#description').val(response);
-        } else {  // If no data is returned, set the description to be empty
+        } else {
           $('#description').val('');
         }
       }, function(error) {
         console.error(error);
-        // If an error occurs, set the description to be empty instead of alerting the error
         $('#description').val('');
       });
 
@@ -204,7 +202,6 @@ $(document).ready(function() {
     handleSliderLabelUpdates();
   });
 
-  // Add event listener for slider changes
   $('.slider-container input[type="range"]').on('input', handleSliderLabelUpdates);
 
   function handleAjax(url, type, data, successCallback, errorCallback) {
