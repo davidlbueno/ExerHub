@@ -191,46 +191,42 @@ $(document).ready(function() {
   function updateExerciseMuscles(exerciseName, isUpdate, successCallback) {
     var updates = [];
     $('.slider-container input[type="range"]').each(function() {
-      var muscleName = $(this).attr('name');
-      var intensity = $(this).val();
-      if (intensity > 0) {
-        updates.push({
-          exercise: exerciseName,
-          muscle: muscleName,
-          intensity: intensity
-        });
-      }
+        var muscleName = $(this).attr('name');
+        var intensity = $(this).val();
+        if (intensity > 0) {
+            updates.push({
+                exercise: exerciseName,
+                muscle: muscleName,
+                intensity: intensity
+            });
+        }
     });
 
     if (!updates.length) {
-      alert('Please set at least one muscle intensity.');
-      return;
+        alert('Please set at least one muscle intensity.');
+        return;
     }
 
     var updatePromises = updates.map(update => {
-      return new Promise((resolve, reject) => {
-        var query = isUpdate
-          ? 'UPDATE exercise_muscles em INNER JOIN muscles m ON em.muscle_id = m.id INNER JOIN exercises e ON em.exercise_id = e.id SET em.intensity = ? WHERE m.name = ? AND e.name = ?'
-          : 'INSERT INTO exercise_muscles (exercise_id, muscle_id, intensity) SELECT (SELECT id FROM exercises WHERE name = ?), (SELECT id FROM muscles WHERE name = ?), ? FROM dual';
-        var params = isUpdate ? [update.intensity, update.muscle, exerciseName] : [exerciseName, update.muscle, update.intensity];
-
-        handleAjax('../php/db_post.php', 'POST', {
-          query: query,
-          params: params
-        }, resolve, reject);
-      });
+        return new Promise((resolve, reject) => {
+            handleAjax('php/update_exercise.php', 'POST', {
+                exercise: update.exercise,
+                muscle: update.muscle,
+                intensity: update.intensity
+            }, resolve, reject);
+        });
     });
 
     Promise.all(updatePromises)
-      .then(() => {
-        if (typeof successCallback === 'function') {
-          successCallback(null, updates);
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-        alert('An error occurred while updating exercise muscles.');
-      });
+        .then(() => {
+            if (typeof successCallback === 'function') {
+                successCallback(null, updates);
+            }
+        })
+        .catch((error) => {
+            console.error(error);
+            alert('An error occurred while updating exercise muscles.');
+        });
   }
 
   $('#update-button').click(function() {
