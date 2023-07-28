@@ -169,7 +169,12 @@ $(document).ready(function() {
     if (!newExercise) {
       var exerciseId = $this.data('exercise-id');
       var exerciseName = $this.find('td:first-child').text();
-      var muscles = exerciseData[exerciseName].muscles;
+      var muscles;
+      if (exerciseData[exerciseName]) {
+        muscles = exerciseData[exerciseName].muscles;
+      } else {
+        muscles = {};
+      }
       $('#exercise-name').val(exerciseName);
       $('#exercise-type').val(exerciseData[exerciseName].type);
       $('#exercise-difficulty').val(exerciseData[exerciseName].difficulty);
