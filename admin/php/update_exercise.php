@@ -7,7 +7,7 @@ header('Content-Type: application/json');
 $exerciseId = $_POST['exerciseId'];
 $exerciseName = $_POST['exerciseName'];
 $exerciseDescription = $_POST['exerciseDescription'];
-$muscleIds = $_POST['muscleIds'];
+$muscleIds = isset($_POST['muscleIds']) ? $_POST['muscleIds'] : [];
 
 // Update the exercise in the exercises table
 $post($conn, 'UPDATE exercises SET name = ? WHERE id = ?', [$exerciseName, $exerciseId]);

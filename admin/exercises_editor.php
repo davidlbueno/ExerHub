@@ -220,16 +220,29 @@ $(document).ready(function() {
     var exerciseType = $('#exercise-type').val();
     var exerciseDifficulty = $('#exercise-difficulty').val();
     var description = $('#description').val();
+    var muscleIds = []; // TODO: Get the muscle IDs from the sliders
+
+    // Get the muscle IDs from the sliders
+    $('.slider-container input[type="range"]').each(function() {
+      var muscleName = $(this).attr('name');
+      var intensity = $(this).val();
+      if (intensity > 0) {
+        muscleIds.push(muscleName); // Assuming the muscle name is the muscle ID
+      }
+    });
+
     if (!exerciseName || !isMuscleIntensitySet()) {
       alert('Please select an exercise.');
       return;
     }
+
     handleAjax('php/update_exercise.php', 'POST', {
       exerciseId: exerciseId,
       exerciseName: exerciseName,
       exerciseType: exerciseType,
       exerciseDifficulty: exerciseDifficulty,
-      description: description
+      exerciseDescription: description,
+      muscleIds: muscleIds
     }, function(response) {
       window.location.reload();
     }, function(error) {
