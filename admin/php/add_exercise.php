@@ -1,5 +1,7 @@
 <?php
 require_once '../../php/db_connect.php';
+require_once '../../php/db_post.php';
+
 
 $exerciseName = $_POST['exerciseName'];
 $exerciseType = $_POST['exerciseType'];
