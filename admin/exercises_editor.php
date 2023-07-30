@@ -207,6 +207,7 @@ $(document).ready(function() {
       $('#exercise-name').val('');
       $('#exercise-type').val('');
       $('#exercise-difficulty').val('');
+      $('#description').val('');
     }
 
     handleSliderLabelUpdates();
