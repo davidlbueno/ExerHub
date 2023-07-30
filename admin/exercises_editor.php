@@ -163,7 +163,8 @@ $(document).ready(function() {
     var $this = $(this);
     $this.siblings().removeClass('selected');
     $this.toggleClass('selected', !$this.hasClass('selected'));
-    var newExercise = !$this.hasClass('selected');
+    var newExercise = !$this.hasClass('selected')
+    // Toggle add/update/delete buttons
     $('#add-button').toggle(newExercise);
     $('#exercise-label').toggle(newExercise);
     $('#update-button, #delete-button').toggle(!newExercise);
@@ -172,7 +173,7 @@ $(document).ready(function() {
     $('.slider-container input[type="range"]').val(0).prev('.muscle-label').removeClass('dot').find('span').text(0);
 
     if (!newExercise) {
-      selectedExerciseId = exerciseId;
+      selectedExerciseId = $this.data('exercise-id');
       var exerciseId = $this.data('exercise-id');
       var exerciseName = $this.find('td:first-child').text();
       var muscles = exerciseData[exerciseName].muscles;
@@ -230,15 +231,13 @@ $(document).ready(function() {
     var exerciseDifficulty = $('#exercise-difficulty').val();
     var description = $('#description').val();
 
-    var muscleIdsArray = [];
-
-    // Get the muscle IDs from the sliders
+    var muscles = [];
     $('.slider-container input[type="range"]').each(function() {
       var muscleName = $(this).attr('name');
       var intensity = $(this).val();
       if (intensity > 0) {
         var muscleId = muscleIds[muscleName];
-        muscleIdsArray.push(muscleId);
+        muscles.push({id: muscleId, intensity: intensity});
       }
     });
 
@@ -253,9 +252,9 @@ $(document).ready(function() {
       exerciseType: exerciseType,
       exerciseDifficulty: exerciseDifficulty,
       exerciseDescription: description,
-      muscleIds: muscleIdsArray
+      muscles: muscles
     }, function(response) {
-      //window.location.reload();
+      window.location.reload();
     }, function(error) {
       console.error(error);
       alert('An error occurred while updating the exercise.');
@@ -283,28 +282,45 @@ $(document).ready(function() {
   });
 
   $('#add-button').click(function() {
-    var exerciseName = $('#exercise-name').val();
-    var exerciseType = $('#exercise-type').val();
-    var exerciseDifficulty = $('#exercise-difficulty').val();
-    var description = $('#description').val();
+  var exerciseName = $('#exercise-name').val();
+  var exerciseType = $('#exercise-type').val();
+  var exerciseDifficulty = $('#exercise-difficulty').val();
+  var description = $('#description').val();
 
-    if (!exerciseName || !exerciseType || !exerciseDifficulty || !isMuscleIntensitySet()) {
-      alert('Please enter an exercise name, type, difficulty, and at least one muscle intensity.');
-      return;
+  var muscles = [];
+
+  // Get the muscle IDs and their intensities from the sliders
+  $('.slider-container input[type="range"]').each(function() {
+    var muscleName = $(this).attr('name');
+    var intensity = $(this).val();
+    if (intensity > 0) {
+      var muscleId = muscleIds[muscleName];
+      muscles.push({muscleId: muscleId, intensity: intensity});
     }
-
-    handleAjax('php/add_exercise.php', 'POST', {
-      exerciseName: exerciseName,
-      exerciseType: exerciseType,
-      exerciseDifficulty: exerciseDifficulty,
-      description: description
-    }, function(response) {
-      window.location.reload();
-    }, function(error) {
-      console.error(error);
-      alert('An error occurred while adding a new exercise.');
-    });
   });
+
+  if (!exerciseName || !exerciseType || !exerciseDifficulty || !isMuscleIntensitySet()) {
+    alert('Please enter an exercise name, type, difficulty, and at least one muscle intensity.');
+    return;
+  }
+
+  console.log(exerciseName, exerciseType, exerciseDifficulty, description, muscles);
+
+  handleAjax('php/add_exercise.php', 'POST', {
+    exerciseName: exerciseName,
+    exerciseType: exerciseType,
+    exerciseDifficulty: exerciseDifficulty,
+    description: description,
+    muscles: muscles  // Include the muscle data array in the data sent
+  }, function(response) {
+    //window.location.reload();
+  }, function(error) {
+    console.error(error);
+    alert('An error occurred while adding a new exercise.');
+  });
+});
+
+
 });
 </script>
 </body>
