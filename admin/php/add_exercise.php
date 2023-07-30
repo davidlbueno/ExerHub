@@ -9,7 +9,7 @@ $exerciseDifficulty = $_POST['exerciseDifficulty'];
 $description = $_POST['description'];
 $muscles = $_POST['muscles'];  // Get the muscle data array
 
-$conn = db_connect();
+//$conn = db_connect();
 
 // Insert the new exercise into the exercises table
 post($conn, 'INSERT INTO exercises (name, type, difficulty) VALUES (?, ?, ?)', [$exerciseName, $exerciseType, $exerciseDifficulty]);
