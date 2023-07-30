@@ -2,7 +2,6 @@
 require_once '../../php/db_connect.php';
 require_once '../../php/db_post.php';
 
-
 $exerciseName = $_POST['exerciseName'];
 $exerciseType = $_POST['exerciseType'];
 $exerciseDifficulty = $_POST['exerciseDifficulty'];
@@ -15,15 +14,16 @@ $muscles = $_POST['muscles'];  // Get the muscle data array
 post($conn, 'INSERT INTO exercises (name, type, difficulty) VALUES (?, ?, ?)', [$exerciseName, $exerciseType, $exerciseDifficulty]);
 
 // Get the ID of the newly inserted exercise
-$exerciseId = $conn->lastInsertId();
+$exerciseId = $conn->insert_id;
 
 // Insert the exercise description into the exercise_descriptions table
 post($conn, 'INSERT INTO exercise_descriptions (exercise_id, description) VALUES (?, ?)', [$exerciseId, $description]);
 
 // Insert the muscle data into the exercise_muscles table
 foreach ($muscles as $muscle) {
-  $muscleId = $muscle['muscleId'];
-  $intensity = $muscle['intensity'];
-  post($conn, 'INSERT INTO exercise_muscles (exercise_id, muscle_id, intensity) VALUES (?, ?, ?)', [$exerciseId, $muscleId, $intensity]);
-}
+    $muscleId = $muscle['muscleId'];
+    $intensity = $muscle['intensity'];
+    post($conn, 'INSERT INTO exercise_muscles (exercise_id, muscle_id, intensity) VALUES (?, ?, ?)', [$exerciseId, $muscleId, $intensity]);
+  }
+  
 ?>
