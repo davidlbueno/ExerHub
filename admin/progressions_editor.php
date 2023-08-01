@@ -152,7 +152,7 @@
                 $('#no-progressions').css('display', data.length === 0 ? 'block' : 'none');
             })
             .fail((err) => {
-                console.log(err);
+                console.log("ERROR: " + err);
             });
     }
   }
@@ -223,7 +223,7 @@
               saveExercise(i + 1);
             })
             .fail((err) => {
-              console.log(err);
+              console.log("ERROR: " + err);
               saveExercise(i + 1);
             });
         } else {
@@ -235,7 +235,7 @@
               saveExercise(i + 1);
             })
             .fail((err) => {
-              console.log(err);
+              console.log("ERROR: " + err);console.log(err);
               saveExercise(i + 1);
             });
         }
@@ -253,7 +253,7 @@
             saveExercise(0);
           })
           .fail((err) => {
-            console.log(err);
+            console.log("ERROR: " + err);
             saveExercise(0);
           });
       } else {
@@ -261,7 +261,7 @@
       }
     })
     .fail((err) => {
-      console.log(err);
+      console.log("ERROR: " + err);
     });
   }
 
@@ -279,7 +279,7 @@
       $('#exercise-table tbody').on('click', 'tr', handleExerciseTableClick);
     })
     .fail((err) => {
-      console.log(err);
+      console.log("ERROR: " + err);
     });
   }
 
