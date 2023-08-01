@@ -1,21 +1,21 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
-  <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>ExerHub - Admin: Progressions Editor</title>
-  <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
+  <?php include '../php/header.php';
+    require_once '../php/db_connect.php';
+    require_once '../php/db_query.php';
+
+    session_start();
+    $userId = $_SESSION['user_id'];
+    $is_admin = $_SESSION['is_admin'];
+  ?>
   <script type="text/javascript" src="//code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
-  <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
   <script type="text/javascript" src="//cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <link rel="stylesheet" href="../style.css">
   <link rel="stylesheet" href="css/admin.css">
   <?php 
-        require_once '../php/db_connect.php'; 
-        require_once '../php/db_query.php';
-        require_once '../php/db_post.php'; 
         $exercises = queryExercises($conn);
         $muscles = query($conn, 'SELECT * FROM muscles');
 
@@ -196,7 +196,7 @@
 
   let query = "SELECT * FROM progressions WHERE exercise_id = ?";
   let params = [selectedExerciseId];
-  post('../php/db_post.php', { query, params }, null, 'json')
+  $.post('../php/db_post.php', { query, params }, null, 'json')
     .done((data) => {
       let progressions = data;
       function saveExercise(i) {
@@ -217,7 +217,7 @@
         if (existingRecord) {
           let updateQuery = "UPDATE progressions SET threshold = ?, sequence_order = ?, next_exercise_id = ? WHERE exercise_id = ? AND progression_exercise_id = ?";
           let updateParams = [repsThreshold, listItemNumber, nextExerciseId, selectedExerciseId, exerciseId];
-          post('../php/db_post.php', { query: updateQuery, params: updateParams }, null, 'json')
+          $.post('../php/db_post.php', { query: updateQuery, params: updateParams }, null, 'json')
             .done((data) => {
               console.log(data);
               saveExercise(i + 1);
@@ -229,7 +229,7 @@
         } else {
           let insertQuery = "INSERT INTO progressions (exercise_id, progression_exercise_id, sequence_order, next_exercise_id, threshold) VALUES (?, ?, ?, ?, ?)";
           let insertParams = [selectedExerciseId, exerciseId, listItemNumber, nextExerciseId, repsThreshold];
-          post('../php/db_post.php', { query: insertQuery, params: insertParams }, null, 'json')
+          $.post('../php/db_post.php', { query: insertQuery, params: insertParams }, null, 'json')
             .done((data) => {
               console.log(data);
               saveExercise(i + 1);
@@ -247,7 +247,7 @@
         let deleteParams = [selectedExerciseId, ...deletedItems.map((item) => item.progression_exercise_id)];
         let placeholders = deletedItems.map(() => "?").join(", ");
         let deleteQuery = `DELETE FROM progressions WHERE exercise_id = ? AND progression_exercise_id IN (${placeholders})`;
-        post('../php/db_post.php', { query: deleteQuery, params: deleteParams }, null, 'json')
+        $.post('../php/db_post.php', { query: deleteQuery, params: deleteParams }, null, 'json')
           .done((data) => {
             console.log(data);
             saveExercise(0);
