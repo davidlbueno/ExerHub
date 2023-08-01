@@ -11,37 +11,40 @@
   <script type="text/javascript" src="//cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <link rel="stylesheet" href="../style.css">
-  <link rel="stylesheet" href="admin.css">
+  <link rel="stylesheet" href="css/admin.css">
   <?php 
-    require_once '../php/db.php'; 
-    $exercises = queryExercises();
-    $muscles = query('SELECT * FROM muscles');
-    function queryExercises() {
-        $result = query('SELECT e.id, e.name AS exercise_name, e.type AS exercise_type, e.difficulty, m.name AS muscle_name, em.intensity
-            FROM exercises e
-            JOIN exercise_muscles em ON e.id = em.exercise_id
-            JOIN muscles m ON m.id = em.muscle_id');
-        $exercises = array();
-        while ($row = mysqli_fetch_assoc($result)) {
-            $exerciseId = $row['id'];
-            $exerciseName = $row['exercise_name'];
-            $muscleName = $row['muscle_name'];
-            $intensity = $row['intensity'];
-            $exerciseType = $row['exercise_type'];
-            $exerciseDifficulty = $row['difficulty'];
-            if (!isset($exercises[$exerciseName])) {
-                $exercises[$exerciseName] = array(
-                    'id' => $exerciseId,
-                    'muscles' => array(),
-                    'type' => $exerciseType,
-                    'difficulty' => $exerciseDifficulty
-                );
+        require_once '../php/db_connect.php'; 
+        require_once '../php/db_query.php';
+        require_once '../php/db_post.php'; 
+        $exercises = queryExercises($conn);
+        $muscles = query($conn, 'SELECT * FROM muscles');
+
+        function queryExercises($conn) {
+            $result = query($conn, 'SELECT e.id, e.name AS exercise_name, e.type AS exercise_type, e.difficulty, m.name AS muscle_name, em.intensity
+                FROM exercises e
+                JOIN exercise_muscles em ON e.id = em.exercise_id
+                JOIN muscles m ON m.id = em.muscle_id');
+            $exercises = array();
+            foreach ($result as $row) {
+                $exerciseId = $row['id'];
+                $exerciseName = $row['exercise_name'];
+                $muscleName = $row['muscle_name'];
+                $intensity = $row['intensity'];
+                $exerciseType = $row['exercise_type'];
+                $exerciseDifficulty = $row['difficulty'];
+                if (!isset($exercises[$exerciseName])) {
+                    $exercises[$exerciseName] = array(
+                        'id' => $exerciseId,
+                        'muscles' => array(),
+                        'type' => $exerciseType,
+                        'difficulty' => $exerciseDifficulty
+                    );
+                }
+                $exercises[$exerciseName]['muscles'][$muscleName] = $intensity;
             }
-            $exercises[$exerciseName]['muscles'][$muscleName] = $intensity;
+            return $exercises;
         }
-        return $exercises;
-    }
-  ?>
+    ?>
 </head>
 <body class="dark">
   <nav>
@@ -123,34 +126,34 @@
 
   function handleExerciseTableClick() {
     if (!addingExercise) {
-      let exerciseName = $(this).find('td:first-child').text();
-      selectedExerciseId = $(this).find('input[name="exercise_id"]').val();
-      $('#add-btn, #cancel-btn, #save-btn').css('display', 'inline-block');
-      $('#selected-exercise-name').text(exerciseName);
-      let query = "SELECT e.name, p.progression_exercise_id, p.threshold, p.sequence_order FROM progressions p JOIN exercises e ON p.progression_exercise_id = e.id WHERE p.exercise_id = ?";
-      let params = [selectedExerciseId];
-      $.post('../php/db.php', { query, params }, null, 'json')
-        .done((data) => {
-          data.sort((a, b) => a.sequence_order - b.sequence_order); // Sort by sequence_order
-          let exerciseItemsHtml = data.map((progressionExercise) => {
-            return `
-            <li class='exercise-item' data-progression-exercise-id='${progressionExercise.progression_exercise_id}'>
-              <div style='display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between;'>
-                <span id='exercise-name' style='display: inline-block; margin-left: 5px;'>${progressionExercise.name}</span>
-                <div style='text-align: right;'>
-                  <label for='threshold' style='margin: 2px 5px;'>Reps Threshold:</label>
-                  <input id='threshold' type='number' min='1' max='10' value='${progressionExercise.threshold}' style='width: 40px; height: 22px; margin-right: 5px;'>
-                  <button id='del-item-btn' class='copy-del-btn'>Delete</button>
-                </div>
-              </div>
-            </li>`;
-          }).join('');
-          exerciseItems.html(exerciseItemsHtml);
-          $('#no-progressions').css('display', data.length === 0 ? 'block' : 'none');
-        })
-        .fail((err) => {
-          console.log(err);
-        });
+        let exerciseName = $(this).find('td:first-child').text();
+        selectedExerciseId = $(this).find('input[name="exercise_id"]').val();
+        $('#add-btn, #cancel-btn, #save-btn').css('display', 'inline-block');
+        $('#selected-exercise-name').text(exerciseName);
+        let query = "SELECT e.name, p.progression_exercise_id, p.threshold, p.sequence_order FROM progressions p JOIN exercises e ON p.progression_exercise_id = e.id WHERE p.exercise_id = ?";
+        let params = [selectedExerciseId];
+        $.post('../php/db_query.php', { query, params }, null, 'json')
+            .done((data) => {
+                data.sort((a, b) => a.sequence_order - b.sequence_order); // Sort by sequence_order
+                let exerciseItemsHtml = data.map((progressionExercise) => {
+                    return `
+                    <li class='exercise-item' data-progression-exercise-id='${progressionExercise.progression_exercise_id}'>
+                      <div style='display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between;'>
+                        <span id='exercise-name' style='display: inline-block; margin-left: 5px;'>${progressionExercise.name}</span>
+                        <div style='text-align: right;'>
+                          <label for='threshold' style='margin: 2px 5px;'>Reps Threshold:</label>
+                          <input id='threshold' type='number' min='1' max='10' value='${progressionExercise.threshold}' style='width: 40px; height: 22px; margin-right: 5px;'>
+                          <button id='del-item-btn' class='copy-del-btn'>Delete</button>
+                        </div>
+                      </div>
+                    </li>`;
+                }).join('');
+                exerciseItems.html(exerciseItemsHtml);
+                $('#no-progressions').css('display', data.length === 0 ? 'block' : 'none');
+            })
+            .fail((err) => {
+                console.log(err);
+            });
     }
   }
 
@@ -188,96 +191,96 @@
   }
 
   function saveExerciseProgressions() {
-    let exerciseItemsList = exerciseItems.find('.exercise-item');
-    let progressionExercises = [];
+  let exerciseItemsList = exerciseItems.find('.exercise-item');
+  let progressionExercises = [];
 
-    let query = "SELECT * FROM progressions WHERE exercise_id = ?";
-    let params = [selectedExerciseId];
-    $.post('../php/db.php', { query, params }, null, 'json')
-      .done((data) => {
-        let progressions = data;
-        function saveExercise(i) {
-          if (i >= exerciseItemsList.length) return;
-          let exerciseItem = $(exerciseItemsList[i]);
-          let exerciseName = exerciseItem.find('#exercise-name').text();
-          let repsThreshold = exerciseItem.find('input[type="number"]').val();
-          let exerciseId = parseInt(exerciseItem.data('progression-exercise-id'));
-          let nextExerciseId = (i < exerciseItemsList.length - 1) ? parseInt(exerciseItemsList[i + 1].dataset.progressionExerciseId) : 0;
-          let listItemNumber = i + 1;
-          progressionExercises.push({
-            exerciseName,
-            exerciseId,
-            repsThreshold,
-            nextExerciseId
-          });
-          let existingRecord = progressions.find((record) => record.progression_exercise_id === exerciseId);
-          if (existingRecord) {
-            let updateQuery = "UPDATE progressions SET threshold = ?, sequence_order = ?, next_exercise_id = ? WHERE exercise_id = ? AND progression_exercise_id = ?";
-            let updateParams = [repsThreshold, listItemNumber, nextExerciseId, selectedExerciseId, exerciseId];
-            $.post('../php/db.php', { query: updateQuery, params: updateParams }, null, 'json')
-              .done((data) => {
-                console.log(data);
-                saveExercise(i + 1);
-              })
-              .fail((err) => {
-                console.log(err);
-                saveExercise(i + 1);
-              });
-          } else {
-            let insertQuery = "INSERT INTO progressions (exercise_id, progression_exercise_id, sequence_order, next_exercise_id, threshold) VALUES (?, ?, ?, ?, ?)";
-            let insertParams = [selectedExerciseId, exerciseId, listItemNumber, nextExerciseId, repsThreshold];
-            $.post('../php/db.php', { query: insertQuery, params: insertParams }, null, 'json')
-              .done((data) => {
-                console.log(data);
-                saveExercise(i + 1);
-              })
-              .fail((err) => {
-                console.log(err);
-                saveExercise(i + 1);
-              });
-          }
-        }
-        let deletedItems = progressions.filter((record) => {
-          return !Array.from(exerciseItemsList).some((item) => parseInt(item.dataset.progressionExerciseId) === record.progression_exercise_id);
+  let query = "SELECT * FROM progressions WHERE exercise_id = ?";
+  let params = [selectedExerciseId];
+  post('../php/db_post.php', { query, params }, null, 'json')
+    .done((data) => {
+      let progressions = data;
+      function saveExercise(i) {
+        if (i >= exerciseItemsList.length) return;
+        let exerciseItem = $(exerciseItemsList[i]);
+        let exerciseName = exerciseItem.find('#exercise-name').text();
+        let repsThreshold = exerciseItem.find('input[type="number"]').val();
+        let exerciseId = parseInt(exerciseItem.data('progression-exercise-id'));
+        let nextExerciseId = (i < exerciseItemsList.length - 1) ? parseInt(exerciseItemsList[i + 1].dataset.progressionExerciseId) : 0;
+        let listItemNumber = i + 1;
+        progressionExercises.push({
+          exerciseName,
+          exerciseId,
+          repsThreshold,
+          nextExerciseId
         });
-        if (deletedItems.length > 0) {
-          let deleteParams = [selectedExerciseId, ...deletedItems.map((item) => item.progression_exercise_id)];
-          let placeholders = deletedItems.map(() => "?").join(", ");
-          let deleteQuery = `DELETE FROM progressions WHERE exercise_id = ? AND progression_exercise_id IN (${placeholders})`;
-          $.post('../php/db.php', { query: deleteQuery, params: deleteParams }, null, 'json')
+        let existingRecord = progressions.find((record) => record.progression_exercise_id === exerciseId);
+        if (existingRecord) {
+          let updateQuery = "UPDATE progressions SET threshold = ?, sequence_order = ?, next_exercise_id = ? WHERE exercise_id = ? AND progression_exercise_id = ?";
+          let updateParams = [repsThreshold, listItemNumber, nextExerciseId, selectedExerciseId, exerciseId];
+          post('../php/db_post.php', { query: updateQuery, params: updateParams }, null, 'json')
             .done((data) => {
               console.log(data);
-              saveExercise(0);
+              saveExercise(i + 1);
             })
             .fail((err) => {
               console.log(err);
-              saveExercise(0);
+              saveExercise(i + 1);
             });
         } else {
-          saveExercise(0);
+          let insertQuery = "INSERT INTO progressions (exercise_id, progression_exercise_id, sequence_order, next_exercise_id, threshold) VALUES (?, ?, ?, ?, ?)";
+          let insertParams = [selectedExerciseId, exerciseId, listItemNumber, nextExerciseId, repsThreshold];
+          post('../php/db_post.php', { query: insertQuery, params: insertParams }, null, 'json')
+            .done((data) => {
+              console.log(data);
+              saveExercise(i + 1);
+            })
+            .fail((err) => {
+              console.log(err);
+              saveExercise(i + 1);
+            });
         }
-      })
-      .fail((err) => {
-        console.log(err);
+      }
+      let deletedItems = progressions.filter((record) => {
+        return !Array.from(exerciseItemsList).some((item) => parseInt(item.dataset.progressionExerciseId) === record.progression_exercise_id);
       });
+      if (deletedItems.length > 0) {
+        let deleteParams = [selectedExerciseId, ...deletedItems.map((item) => item.progression_exercise_id)];
+        let placeholders = deletedItems.map(() => "?").join(", ");
+        let deleteQuery = `DELETE FROM progressions WHERE exercise_id = ? AND progression_exercise_id IN (${placeholders})`;
+        post('../php/db_post.php', { query: deleteQuery, params: deleteParams }, null, 'json')
+          .done((data) => {
+            console.log(data);
+            saveExercise(0);
+          })
+          .fail((err) => {
+            console.log(err);
+            saveExercise(0);
+          });
+      } else {
+        saveExercise(0);
+      }
+    })
+    .fail((err) => {
+      console.log(err);
+    });
   }
 
   function deleteExerciseProgressions() {
-    let query = "DELETE FROM progressions WHERE exercise_id = ?";
-    let params = [selectedExerciseId];
-    $.post('../php/db.php', { query, params }, null, 'json')
-      .done((data) => {
-        console.log(data);
-        exerciseItems.html("");
-        $('#selected-exercise-name').text("");
-        $('#cancel-btn, #save-btn, #add-btn').css('display', 'none');
-        addingExercise = false;
-        $('#exercise-table tbody').off('click', 'tr');
-        $('#exercise-table tbody').on('click', 'tr', handleExerciseTableClick);
-      })
-      .fail((err) => {
-        console.log(err);
-      });
+  let query = "DELETE FROM progressions WHERE exercise_id = ?";
+  let params = [selectedExerciseId];
+  $.post('../php/db_post.php', { query, params }, null, 'json')
+    .done((data) => {
+      console.log(data);
+      exerciseItems.html("");
+      $('#selected-exercise-name').text("");
+      $('#cancel-btn, #save-btn, #add-btn').css('display', 'none');
+      addingExercise = false;
+      $('#exercise-table tbody').off('click', 'tr');
+      $('#exercise-table tbody').on('click', 'tr', handleExerciseTableClick);
+    })
+    .fail((err) => {
+      console.log(err);
+    });
   }
 
   function cancelAddingExercise() {
