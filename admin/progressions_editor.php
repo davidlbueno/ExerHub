@@ -126,34 +126,36 @@
 
   function handleExerciseTableClick() {
     if (!addingExercise) {
-        let exerciseName = $(this).find('td:first-child').text();
-        selectedExerciseId = $(this).find('input[name="exercise_id"]').val();
-        $('#add-btn, #cancel-btn, #save-btn').css('display', 'inline-block');
-        $('#selected-exercise-name').text(exerciseName);
-        let query = "SELECT e.name, p.progression_exercise_id, p.threshold, p.sequence_order FROM progressions p JOIN exercises e ON p.progression_exercise_id = e.id WHERE p.exercise_id = ?";
-        let params = [selectedExerciseId];
-        $.post('../php/db_query.php', { query, params }, null, 'json')
-            .done((data) => {
-                data.sort((a, b) => a.sequence_order - b.sequence_order); // Sort by sequence_order
-                let exerciseItemsHtml = data.map((progressionExercise) => {
-                    return `
-                    <li class='exercise-item' data-progression-exercise-id='${progressionExercise.progression_exercise_id}'>
-                      <div style='display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between;'>
-                        <span id='exercise-name' style='display: inline-block; margin-left: 5px;'>${progressionExercise.name}</span>
-                        <div style='text-align: right;'>
-                          <label for='threshold' style='margin: 2px 5px;'>Reps Threshold:</label>
-                          <input id='threshold' type='number' min='1' max='10' value='${progressionExercise.threshold}' style='width: 40px; height: 22px; margin-right: 5px;'>
-                          <button id='del-item-btn' class='copy-del-btn'>Delete</button>
-                        </div>
-                      </div>
-                    </li>`;
-                }).join('');
-                exerciseItems.html(exerciseItemsHtml);
-                $('#no-progressions').css('display', data.length === 0 ? 'block' : 'none');
-            })
-            .fail((err) => {
-                console.log("ERROR: " + err);
-            });
+      let exerciseName = $(this).find('td:first-child').text();
+      // add selected class to row
+      $(this).addClass('selected').siblings().removeClass('selected');
+      selectedExerciseId = $(this).find('input[name="exercise_id"]').val();
+      $('#add-btn, #cancel-btn, #save-btn').css('display', 'inline-block');
+      $('#selected-exercise-name').text(exerciseName);
+      let query = "SELECT e.name, p.progression_exercise_id, p.threshold, p.sequence_order FROM progressions p JOIN exercises e ON p.progression_exercise_id = e.id WHERE p.exercise_id = ?";
+      let params = [selectedExerciseId];
+      $.post('../php/db_query.php', { query, params }, null, 'json')
+        .done((data) => {
+          data.sort((a, b) => a.sequence_order - b.sequence_order); // Sort by sequence_order
+          let exerciseItemsHtml = data.map((progressionExercise) => {
+            return `
+            <li class='exercise-item' data-progression-exercise-id='${progressionExercise.progression_exercise_id}'>
+              <div style='display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between;'>
+                <span id='exercise-name' style='display: inline-block; margin-left: 5px;'>${progressionExercise.name}</span>
+                <div style='text-align: right;'>
+                  <label for='threshold' style='margin: 2px 5px;'>Reps Threshold:</label>
+                  <input id='threshold' type='number' min='1' max='10' value='${progressionExercise.threshold}' style='width: 40px; height: 22px; margin-right: 5px;'>
+                  <button id='del-item-btn' class='copy-del-btn'>Delete</button>
+                </div>
+              </div>
+            </li>`;
+          }).join('');
+          exerciseItems.html(exerciseItemsHtml);
+          $('#no-progressions').css('display', data.length === 0 ? 'block' : 'none');
+        })
+        .fail((err) => {
+            console.log("ERROR: " + err);
+      });
     }
   }
 
@@ -222,8 +224,8 @@
               console.log(data);
               saveExercise(i + 1);
             })
-            .fail((err) => {
-              console.log("ERROR: " + err);
+            .fail((jqXHR, textStatus, errorThrown) => {
+              console.log(`ERROR: ${textStatus}, ${errorThrown}, ${jqXHR.responseText}`);
               saveExercise(i + 1);
             });
         } else {
@@ -234,9 +236,8 @@
               console.log(data);
               saveExercise(i + 1);
             })
-            .fail((err) => {
-              console.log("ERROR: " + err);console.log(err);
-              saveExercise(i + 1);
+            .fail((jqXHR, textStatus, errorThrown) => {
+              console.log(`ERROR: ${textStatus}, ${errorThrown}, ${jqXHR.responseText}`);
             });
         }
       }
@@ -260,8 +261,8 @@
         saveExercise(0);
       }
     })
-    .fail((err) => {
-      console.log("ERROR: " + err);
+    .fail((jqXHR, textStatus, errorThrown) => {
+      console.log(`ERROR: ${textStatus}, ${errorThrown}, ${jqXHR.responseText}`);
     });
   }
 
