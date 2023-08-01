@@ -29,11 +29,14 @@
                 WHERE workouts.is_public = 1 
                 GROUP BY workouts.id";
     }
-    $result = query($conn, $query);
+    $stmt = $conn->prepare($query);
+    $stmt->execute();
+    $result = $stmt->get_result();
     $workouts = array();
-    while ($row = mysqli_fetch_assoc($result)) {
+    while ($row = $result->fetch_assoc()) {
         $workouts[] = $row;
     }
+
     return $workouts;
   }   
 

@@ -44,11 +44,15 @@ try {
       if (!$queryResult) {
         throw new Exception("Failed to retrieve exercise ID: " . mysqli_error($conn));
       }
-      $row = mysqli_fetch_assoc($queryResult);
+      $stmt = $conn->prepare("SELECT id FROM exercises WHERE name = ?");
+      $stmt->bind_param("s", $exercise);
+      $stmt->execute();
+      $result = $stmt->get_result();
+      $row = $result->fetch_assoc();
       $exerciseId = $row['id'];
 
       if (!$exerciseId) {
-        throw new Exception("Exercise '$exercise' not found!");
+          throw new Exception("Exercise '$exercise' not found!");
       }
     }
     

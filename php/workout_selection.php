@@ -1,6 +1,7 @@
 <?php
 require_once 'db_connect.php';
 require_once 'db_query.php';
+require_once 'db_post.php';
 
 session_start();
 

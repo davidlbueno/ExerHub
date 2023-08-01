@@ -37,16 +37,19 @@ if ($result['success']) {
     $exerciseQuery = "SELECT id FROM exercises WHERE name = ?";
     $exerciseResult = query($conn, $exerciseQuery, array($exerciseValue));
     if ($typeValue != 'Rest') {
-      $exerciseRow = mysqli_fetch_assoc($exerciseResult);
+      $stmt = $conn->prepare("SELECT id FROM exercises WHERE name = ?");
+      $stmt->bind_param("s", $exerciseValue);
+      $stmt->execute();
+      $result = $stmt->get_result();
+      $exerciseRow = $result->fetch_assoc();
       if ($exerciseRow) {
-        $exerciseId = $exerciseRow['id'];
-        // Insert the exercise into the workout sequence for the workout in the database
-        $query = "INSERT INTO workout_sequences(workout_id, type, exercise_id, seconds, warmup)
-                  VALUES (?, ?, ?, ?, ?)";
-        $params = array($workoutId, $typeValue, $exerciseId, $secondsValue, $warmupValue);
+          $exerciseId = $exerciseRow['id'];
+          $stmt = $conn->prepare("INSERT INTO workout_sequences(workout_id, type, exercise_id, seconds, warmup) VALUES (?, ?, ?, ?, ?)");
+          $stmt->bind_param("isiii", $workoutId, $typeValue, $exerciseId, $secondsValue, $warmupValue);
+          $stmt->execute();
       } else {
-        // Exercise not found, handle the error accordingly
-        die("Error: Exercise not found for name '$exerciseValue'");
+          // Exercise not found, handle the error accordingly
+          die("Error: Exercise not found for name '$exerciseValue'");
       }
     } else {
       // Insert the workout type into the database table without exercise_id
