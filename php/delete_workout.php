@@ -1,31 +1,27 @@
 <?php
 require_once 'db_connect.php';
 require_once 'db_query.php';
+require_once 'db_post.php';
 
 // Get the workout ID from the request payload
 $requestPayload = file_get_contents('php://input');
 $data = json_decode($requestPayload, true);
 $workoutId = $data['workoutId'];
 
-// Delete user selected workouts associated with the workout ID
-$deleteUserSelectedWorkoutsQuery = "DELETE FROM user_selected_workouts WHERE workout_id = $workoutId";
-$queryResult = query($conn, $deleteUserSelectedWorkoutsQuery);
+$deleteUserSelectedWorkoutsQuery = "DELETE FROM user_selected_workouts WHERE workout_id = ?";
+post($conn, $deleteUserSelectedWorkoutsQuery, [$workoutId]);
 
-// Delete workout log items associated with the workout ID
-$deleteLogItemsQuery = "DELETE FROM workout_log_items WHERE workout_log_id IN (SELECT id FROM workout_logs WHERE workout_id = $workoutId)";
-$queryResult = query($conn, $deleteLogItemsQuery);
+$deleteLogItemsQuery = "DELETE FROM workout_log_items WHERE workout_log_id IN (SELECT id FROM workout_logs WHERE workout_id = ?)";
+post($conn, $deleteLogItemsQuery, [$workoutId]);
 
-// Delete workout sequences associated with the workout ID
-$deleteSequencesQuery = "DELETE FROM workout_sequences WHERE workout_id = $workoutId";
-$queryResult = query($conn, $deleteSequencesQuery);
+$deleteSequencesQuery = "DELETE FROM workout_sequences WHERE workout_id = ?";
+post($conn, $deleteSequencesQuery, [$workoutId]);
 
-// Delete workout logs associated with the workout ID
-$deleteLogsQuery = "DELETE FROM workout_logs WHERE workout_id = $workoutId";
-$queryResult = query($conn, $deleteLogsQuery);
+$deleteLogsQuery = "DELETE FROM workout_logs WHERE workout_id = ?";
+post($conn, $deleteLogsQuery, [$workoutId]);
 
-// Delete the workout
-$deleteWorkoutQuery = "DELETE FROM workouts WHERE id = $workoutId";
-$queryResult = query($conn, $deleteWorkoutQuery);
+$deleteWorkoutQuery = "DELETE FROM workouts WHERE id = ?";
+$queryResult = post($conn, $deleteWorkoutQuery, [$workoutId]);
 
 if ($queryResult) {
   // Return a success message or any other response

@@ -20,7 +20,9 @@
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
     // Perform the database operation to create the user account
-    $query = "INSERT INTO users (name, email, password) VALUES ('$name', '$email', '$hashedPassword')";
+    $query = "INSERT INTO users (name, email, password) VALUES (?, ?, ?)";
+    post($conn, $query, [$name, $email, $hashedPassword]);
+
 
     // Execute the query
     if (query($conn, $query)) {

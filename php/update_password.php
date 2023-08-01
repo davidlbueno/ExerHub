@@ -1,6 +1,7 @@
 <?php
+session_start(); // Start the session if not already started
+
 require_once 'php/db_connect.php';
-require_once 'php/db_query.php';
 require_once 'php/db_post.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -11,25 +12,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Get the current password from the database
     $getPasswordQuery = "SELECT password FROM users WHERE id = ?";
-    $stmt = mysqli_prepare($conn, $getPasswordQuery);
-    mysqli_stmt_bind_param($stmt, 's', $userId);
-    mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
-    $row = mysqli_fetch_assoc($result);
+    $result = post($conn, $getPasswordQuery, [$userId]);
+    $row = $result[0];
     $password = $row['password'];
-
 
     // Check if the current password matches the password in the database
     if (password_verify($currentPassword, $password)) {
       // Update the password in the database
       $updatePasswordQuery = "UPDATE users SET password = ? WHERE id = ?";
       $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
-      $stmt = mysqli_prepare($conn, $updatePasswordQuery);
-      mysqli_stmt_bind_param($stmt, 'ss', $hashedPassword, $userId);
-      $result = mysqli_stmt_execute($stmt);
+      $result = post($conn, $updatePasswordQuery, [$hashedPassword, $userId]);
 
-
-      if ($stmt) {
+      if ($result['success']) {
         echo "success";
       } else {
         echo "failed";
@@ -39,3 +33,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
   }
 }
+?>

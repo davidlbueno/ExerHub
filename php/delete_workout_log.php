@@ -10,13 +10,11 @@ $logId = $data['log_Id']; // Use log_Id instead of logId
 // Print the logId to the web console
 echo "<script>console.log('logId:', " . json_encode($logId) . ");</script>";
 
-// Delete workout log items associated with the workout ID
-$deleteLogItemsQuery = "DELETE FROM workout_log_items WHERE workout_log_id = $logId";
-$queryResult = query($conn, $deleteLogItemsQuery);
+$deleteLogItemsQuery = "DELETE FROM workout_log_items WHERE workout_log_id = ?";
+post($conn, $deleteLogItemsQuery, [$logId]);
 
-// Delete workout logs associated with the workout ID
-$deleteLogsQuery = "DELETE FROM workout_logs WHERE id = $logId;";
-$queryResult = query($conn, $deleteLogsQuery);
+$deleteLogsQuery = "DELETE FROM workout_logs WHERE id = ?";
+post($conn, $deleteLogsQuery, [$logId]);
 
 if ($queryResult) {
   // Return a success message or any other response

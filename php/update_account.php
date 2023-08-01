@@ -1,26 +1,23 @@
 <?php
-session_start();
+session_start(); // Start the session if not already started
 
 require_once 'php/db_connect.php';
-require_once 'php/db_query.php';
+require_once 'php/db_post.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  if (isset($_POST['name']) && isset($_POST['userId'])) {
-    $name = $_POST['name'];
-    $userId = $_POST['userId'];
+  if (isset($_POST['newName']) && isset($_POST['userId'])) {
+    $new_name = $_POST['newName'];
+    $user_id = $_POST['userId'];
 
-    // Update the name in the database
-    $updateNameQuery = "UPDATE users SET name = ? WHERE id = ?";
-    $updateNameParams = array($name, $userId);
-    $stmt = query($conn,$updateNameQuery, $updateNameParams);
+    // Update the user's name in the database
+    $query = "UPDATE users SET name = ? WHERE id = ?";
+    $result = post($conn, $query, [$new_name, $user_id]);
 
-    if ($stmt) {
-      $_SESSION['user_name'] = $name; 
+    if ($result['success']) {
       echo "success";
     } else {
       echo "failed";
     }
   }
 }
-
 ?>

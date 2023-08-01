@@ -13,6 +13,6 @@ $user_id = $_SESSION['user_id'];
 $new_name = $_POST['name'];
 
 $query = "UPDATE users SET name = ? WHERE id = ?";
-query($conn, $query, [$new_name, $user_id]);
+post($conn, $query, [$new_name, $user_id]);
 
 echo 'success';

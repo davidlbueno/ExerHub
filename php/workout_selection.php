@@ -14,7 +14,7 @@ $workout_id = $_POST['workout_id'];
 $selected = $_POST['selected'];
 
 if ($selected == "true") {
-    query($conn, "INSERT INTO user_selected_workouts (user_id, workout_id) VALUES ($user_id, $workout_id)");
+    post($conn, "INSERT INTO user_selected_workouts (user_id, workout_id) VALUES (?, ?)", [$user_id, $workout_id]);
 } else {
-    query($conn, "DELETE FROM user_selected_workouts WHERE user_id = $user_id AND workout_id = $workout_id");
+    post($conn, "DELETE FROM user_selected_workouts WHERE user_id = ? AND workout_id = ?", [$user_id, $workout_id]);
 }
