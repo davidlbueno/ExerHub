@@ -1,35 +1,11 @@
-function createWorkoutLogEntry(userId, workoutId, workoutStartTime, workoutEndTime) {
-  const query = "INSERT INTO workout_logs (user_id, workout_id, start_time, end_time) VALUES (?, ?, ?, ?)";
-  const params = [userId, workoutId, workoutStartTime, workoutEndTime];
-  console.log("Workout Start Time: " + workoutStartTime);
-  console.log(query);
-  console.log(params);
-
-  return new Promise((resolve, reject) => {
-    $.post('php/db.php', { query, params })
-      .done(resolve)
-      .fail(reject);
-  });
+async function createWorkoutLogEntry(userId, workoutId, workoutStartTime, workoutEndTime) {
+  const params = { workoutLogEntry: true, userId, workoutId, workoutStartTime, workoutEndTime };
+  return $.post('php/create_log_items.php', params);
 }
 
-function createWorkoutLogItemEntry(userId, workoutLogId, exerciseType, exerciseId, exerciseTime, exerciseReps, warmup) {
-  let query;
-  let params;
-  if (exerciseType === 'Rest') {
-    query = "INSERT INTO workout_log_items (workout_log_id, exercise_type, exercise_time) VALUES (?, ?, ?)";
-    params = [workoutLogId, exerciseType, exerciseTime];
-  } else {
-    query = "INSERT INTO workout_log_items (workout_log_id, exercise_type, exercise_id, exercise_time, reps, warmup) VALUES (?, ?, ?, ?, ?, ?)";
-    params = [workoutLogId, exerciseType, exerciseId, exerciseTime, exerciseReps, warmup];
-  }
-  console.log(query);
-  console.log(params);
-
-  return new Promise((resolve, reject) => {
-    $.post('php/db.php', { query, params })
-      .done(resolve)
-      .fail(reject);
-  });
+async function createWorkoutLogItemEntry(userId, workoutLogId, exerciseType, exerciseId, exerciseTime, exerciseReps, warmup) {
+  const params = { workoutLogItemEntry: true, userId, workoutLogId, exerciseType, exerciseId, exerciseTime, exerciseReps, warmup };
+  return $.post('php/create_log_items.php', params);
 }
 
 function formatTime(seconds) {
