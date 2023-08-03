@@ -134,8 +134,10 @@
       $('#selected-exercise-name').text(exerciseName);
       let query = "SELECT e.name, p.progression_exercise_id, p.threshold, p.sequence_order FROM progressions p JOIN exercises e ON p.progression_exercise_id = e.id WHERE p.exercise_id = ?";
       let params = [selectedExerciseId];
-      $.post('../php/db_query.php', { query, params }, null, 'json')
-        .done((data) => {
+      console.log('selectedExerciseId:', selectedExerciseId);
+      $.get('php/get_progressions.php', { exercise_id: selectedExerciseId }, null, 'json')
+      .done((data) => {
+          console.log('Parsed response:', data);
           data.sort((a, b) => a.sequence_order - b.sequence_order); // Sort by sequence_order
           let exerciseItemsHtml = data.map((progressionExercise) => {
             return `
@@ -153,8 +155,8 @@
           exerciseItems.html(exerciseItemsHtml);
           $('#no-progressions').css('display', data.length === 0 ? 'block' : 'none');
         })
-        .fail((err) => {
-            console.log("ERROR: " + err);
+        .fail((jqXHR, textStatus, errorThrown) => {
+              console.log(`ERROR: ${textStatus}, ${errorThrown}, ${jqXHR.responseText}`);
       });
     }
   }
