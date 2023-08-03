@@ -198,11 +198,10 @@
   let exerciseItemsList = exerciseItems.find('.exercise-item');
   let progressionExercises = [];
 
-  let query = "SELECT * FROM progressions WHERE exercise_id = ?";
-  let params = [selectedExerciseId];
-  $.post('../php/db_post.php', { query, params }, null, 'json')
+  $.get('php/get_progressions.php', { exercise_id: selectedExerciseId }, null, 'json')
     .done((data) => {
       let progressions = data;
+      console.log('progressions:', progressions);
       function saveExercise(i) {
         if (i >= exerciseItemsList.length) return;
         let exerciseItem = $(exerciseItemsList[i]);
@@ -218,10 +217,10 @@
           nextExerciseId
         });
         let existingRecord = progressions.find((record) => record.progression_exercise_id === exerciseId);
+        console.log('existingRecord:', existingRecord);
         if (existingRecord) {
-          let updateQuery = "UPDATE progressions SET threshold = ?, sequence_order = ?, next_exercise_id = ? WHERE exercise_id = ? AND progression_exercise_id = ?";
           let updateParams = [repsThreshold, listItemNumber, nextExerciseId, selectedExerciseId, exerciseId];
-          $.post('../php/db_post.php', { query: updateQuery, params: updateParams }, null, 'json')
+          $.post('php/update_progression.php', { params: updateParams }, null, 'json')
             .done((data) => {
               console.log(data);
               saveExercise(i + 1);
@@ -231,9 +230,15 @@
               saveExercise(i + 1);
             });
         } else {
-          let insertQuery = "INSERT INTO progressions (exercise_id, progression_exercise_id, sequence_order, next_exercise_id, threshold) VALUES (?, ?, ?, ?, ?)";
           let insertParams = [selectedExerciseId, exerciseId, listItemNumber, nextExerciseId, repsThreshold];
-          $.post('../php/db_post.php', { query: insertQuery, params: insertParams }, null, 'json')
+          $.post('php/insert_progression.php', { 
+            exercise_id: insertParams[0], 
+            progression_exercise_id: insertParams[1], 
+            sequence_order: insertParams[2], 
+            next_exercise_id: insertParams[3], 
+            threshold: insertParams[4] 
+          }, null, 'json')
+
             .done((data) => {
               console.log(data);
               saveExercise(i + 1);
@@ -248,9 +253,13 @@
       });
       if (deletedItems.length > 0) {
         let deleteParams = [selectedExerciseId, ...deletedItems.map((item) => item.progression_exercise_id)];
-        let placeholders = deletedItems.map(() => "?").join(", ");
-        let deleteQuery = `DELETE FROM progressions WHERE exercise_id = ? AND progression_exercise_id IN (${placeholders})`;
-        $.post('../php/db_post.php', { query: deleteQuery, params: deleteParams }, null, 'json')
+        $.post('php/update_progression.php', { 
+          threshold: updateParams[0], 
+          sequence_order: updateParams[1], 
+          next_exercise_id: updateParams[2], 
+          exercise_id: updateParams[3], 
+          progression_exercise_id: updateParams[4] 
+        }, null, 'json')
           .done((data) => {
             console.log(data);
             saveExercise(0);
@@ -267,6 +276,7 @@
       console.log(`ERROR: ${textStatus}, ${errorThrown}, ${jqXHR.responseText}`);
     });
   }
+
 
   function deleteExerciseProgressions() {
   let query = "DELETE FROM progressions WHERE exercise_id = ?";
