@@ -258,8 +258,11 @@
         return !Array.from(exerciseItemsList).some((item) => parseInt(item.dataset.progressionExerciseId) === record.progression_exercise_id);
       });
       if (deletedItems.length > 0) {
-        let deleteParams = [selectedExerciseId, ...deletedItems.map((item) => item.progression_exercise_id)];
-        $.post('php/delete_progression.php', { params: deleteParams }, null, 'json')
+        let deleteParams = {
+          exercise_id: selectedExerciseId,
+          progression_exercise_ids: deletedItems.map((item) => item.progression_exercise_id)
+        };
+        $.post('php/delete_progression.php', deleteParams, null, 'json')
           .done((data) => {
             console.log(data);
             saveExercise(0);
