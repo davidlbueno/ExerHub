@@ -220,7 +220,13 @@
         console.log('existingRecord:', existingRecord);
         if (existingRecord) {
           let updateParams = [repsThreshold, listItemNumber, nextExerciseId, selectedExerciseId, exerciseId];
-          $.post('php/update_progression.php', { params: updateParams }, null, 'json')
+          $.post('php/update_progression.php', { 
+            exercise_id: selectedExerciseId, 
+            progression_exercise_id: exerciseId, 
+            threshold: repsThreshold, 
+            sequence_order: listItemNumber, 
+            next_exercise_id: nextExerciseId 
+          }, null, 'json')
             .done((data) => {
               console.log(data);
               saveExercise(i + 1);
@@ -253,13 +259,7 @@
       });
       if (deletedItems.length > 0) {
         let deleteParams = [selectedExerciseId, ...deletedItems.map((item) => item.progression_exercise_id)];
-        $.post('php/update_progression.php', { 
-          threshold: updateParams[0], 
-          sequence_order: updateParams[1], 
-          next_exercise_id: updateParams[2], 
-          exercise_id: updateParams[3], 
-          progression_exercise_id: updateParams[4] 
-        }, null, 'json')
+        $.post('php/delete_progression.php', { params: deleteParams }, null, 'json')
           .done((data) => {
             console.log(data);
             saveExercise(0);
