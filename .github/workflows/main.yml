@@ -1,4 +1,4 @@
-name: Deploy to S3
+name: Deploy to S3 and EC2
 
 on:
   push:
@@ -22,3 +22,12 @@ jobs:
 
       - name: Sync files to S3 bucket
         run: aws s3 sync . s3://bwe-site --delete
+
+      - name: Sync files to EC2 instance
+        env:
+          PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+        run: |
+          echo "$PRIVATE_KEY" > private_key.pem
+          chmod 600 private_key.pem
+          rsync -avz -e "ssh -i private_key.pem -o StrictHostKeyChecking=no" --delete ./ ubuntu@YOUR_EC2_IP_ADDRESS:/path/on/ec2/
+          rm -f private_key.pem
