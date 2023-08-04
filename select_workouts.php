@@ -43,7 +43,7 @@ function display_workouts($workouts, $selected_workouts) {
     <?php include 'php/header.php'; ?>
     <title>ExerHub - Select Workouts</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="dark">
 <nav>
