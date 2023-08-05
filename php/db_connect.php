@@ -2,7 +2,7 @@
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-require_once '/home/ubuntu/docker/exerhub/config.php';
+require_once 'config.php';
 
 // Create connection
 $conn = mysqli_connect($host, $user, $password, $database);
