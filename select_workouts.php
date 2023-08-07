@@ -45,7 +45,7 @@ function display_workouts($workouts, $selected_workouts) {
 <body class="dark">
 <nav>
 <div class="nav-wrapper">
-  <span class="brand-logo" style="margin-left: 60px"><a href="index.html"><i class="material-icons">home</i>/</a><a href="workouts.php">Workouts</a>/<span class="sub-page-name">Select Workouts</span></span>
+    <span class="brand-logo" style="margin-left: 60px"><a href="index.html"><i class="material-icons">home</i>/</a><a href="workouts.php">Workouts</a>/<span class="sub-page-name">Select Workouts</span></span>
     <a href="index.html" data-target="side-nav" class="show-on-large sidenav-trigger"><i class="material-icons">menu</i></a>
     <ul class="right" id="top-nav"></ul>
 </div>
