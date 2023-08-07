@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
-  <?php include 'php/header.php'; ?>
+  <?php include 'php/header.php';
+    require_once 'php/db_connect.php';
+    require_once 'php/db_query.php';
+  ?>
   <title>ExerHub - Exercises</title>
   <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
   <script type="text/javascript" src="//code.jquery.com/jquery-3.6.0.min.js"></script>
   <script type="text/javascript" src="//cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <link rel="stylesheet" href="css/style.css">
-  <?php require_once 'php/db_connect.php';
-        require_once 'php/db_query.php';
-  ?>
   <?php
     $result = query($conn, 'SELECT e.name AS exercise_name, e.type AS exercise_type, e.difficulty, m.name AS muscle_name, em.intensity
     FROM exercises e

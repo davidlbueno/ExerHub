@@ -1,40 +1,40 @@
-<?php
-  ini_set('display_errors', 1);
-  ini_set('display_startup_errors', 1);
-  error_reporting(E_ALL);
-  
-  require_once 'php/get_workouts.php';
-  if (isset($_SESSION['user_id'])) {
-      $userId = $_SESSION['user_id'];
-      $workouts = fetchWorkouts($userId);
-  } else {
-      $workouts = fetchWorkouts(null);
-  }
-  // Function to display the fetched workouts
-  function displayWorkouts($workouts) {
-    if (count($workouts) == 0) {
-      echo "<p>No workouts found.</p>";
-    } else {
-      echo "<ul>";
-      foreach ($workouts as $workout) {
-        $avg_difficulty = isset($workout['avg_difficulty']) ? $workout['avg_difficulty'] : 'N/A';
-        echo "<li>
-        <a href='workout.php?workout_id=" . $workout['id'] . "&workout_name=" . urlencode($workout['name']) . "' style='display: block;'>
-          <div class='workout-item' style='display: flex; justify-content: space-between;'>
-            <div>" . $workout['name'] . "</div>
-            <div>Difficulty: " . $avg_difficulty . "</div>
-          </div>
-        </a>
-      </li>";
-      }
-      echo "</ul>";
-    }
-  }
-?>
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
-  <?php include 'php/header.php'; ?>
+  <?php 
+    include 'php/header.php'; 
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+    error_reporting(E_ALL);
+    
+    require_once 'php/get_workouts.php';
+    if (isset($_SESSION['user_id'])) {
+        $userId = $_SESSION['user_id'];
+        $workouts = fetchWorkouts($userId);
+    } else {
+        $workouts = fetchWorkouts(null);
+    }
+    // Function to display the fetched workouts
+    function displayWorkouts($workouts) {
+      if (count($workouts) == 0) {
+        echo "<p>No workouts found.</p>";
+      } else {
+        echo "<ul>";
+        foreach ($workouts as $workout) {
+          $avg_difficulty = isset($workout['avg_difficulty']) ? $workout['avg_difficulty'] : 'N/A';
+          echo "<li>
+          <a href='workout.php?workout_id=" . $workout['id'] . "&workout_name=" . urlencode($workout['name']) . "' style='display: block;'>
+            <div class='workout-item' style='display: flex; justify-content: space-between;'>
+              <div>" . $workout['name'] . "</div>
+              <div>Difficulty: " . $avg_difficulty . "</div>
+            </div>
+          </a>
+        </li>";
+        }
+        echo "</ul>";
+      }
+    }
+  ?>
   <title>ExerHub - Workouts</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <link rel="stylesheet" href="css/style.css">

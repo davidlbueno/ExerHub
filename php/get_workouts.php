@@ -1,7 +1,6 @@
 <?php
   require_once 'php/db_connect.php';
   require_once 'php/db_query.php';
-  session_start();
   if (isset($_SESSION['user_id'])) {
       $userId = $_SESSION['user_id'];
       $workouts = fetchWorkouts($userId);

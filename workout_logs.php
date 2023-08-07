@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
+  <?php include 'php/header.php';
+    require_once 'php/db_connect.php';
+    require_once 'php/db_query.php';
+  ?>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
@@ -8,10 +12,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <link rel="stylesheet" href="css/style.css">
-  <?php include 'php/header.php';
-        require_once 'php/db_connect.php';
-        require_once 'php/db_query.php';
-  ?>
 </head>
 <body class="dark">
   <main class="container">

@@ -1,9 +1,7 @@
 <?php
+require_once 'php/header.php';
 require_once 'php/db_connect.php';
 require_once 'php/db_query.php';
-
-// Start the session
-session_start();
 
 // Check if the form was submitted
 if ($_SERVER["REQUEST_METHOD"] === "POST") {

@@ -4,8 +4,10 @@
   <?php include 'php/header.php';
     require_once 'php/db_connect.php';
     require_once 'php/db_query.php';
-
-    session_start();
+    if (!isset($_SESSION['user_id'])) {
+      header('Location: login.php');
+      exit;
+    }
     $userId = $_SESSION['user_id'];
     $is_admin = $_SESSION['is_admin'];
   ?>

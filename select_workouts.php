@@ -1,8 +1,7 @@
 <?php
+require_once 'php/header.php';
 require_once 'php/db_connect.php';
 require_once 'php/db_query.php';
-
-session_start();
 
 if (!isset($_SESSION['user_id'])) {
     header('Location: login.php');
