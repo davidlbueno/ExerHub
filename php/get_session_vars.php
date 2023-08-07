@@ -1,6 +1,6 @@
 <?php
 session_start();
-$userId = $_SESSION{'user_id'};
+$userId = $_SESSION['user_id'];
 $userName = $_SESSION['user_name'];
 $isAdmin = $_SESSION['is_admin'];
 $response = [
