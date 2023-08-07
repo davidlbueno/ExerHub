@@ -1,10 +1,10 @@
+<?php include 'php/header.php';
+  require_once 'php/db_connect.php';
+  require_once 'php/db_query.php';
+?>
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
-  <?php include 'php/header.php';
-    require_once 'php/db_connect.php';
-    require_once 'php/db_query.php';
-  ?>
   <title>BWE - Workout</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
@@ -21,7 +21,6 @@
   <ul class="sidenav" id="side-nav"></ul>
   <main class="container">
   <?php
-    session_start();
     $userId = $_SESSION['user_id'];
     // print the user id to the console
     echo "<script>console.log('userId: $userId')</script>";

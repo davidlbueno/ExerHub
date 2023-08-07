@@ -1,11 +1,12 @@
+<?php include 'php/header.php';
+  require_once 'php/db.php';
+?>
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
-  <?php include 'php/header.php'; ?>
   <title>ExerHub - Create Account</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <link rel="stylesheet" href="css/style.css">
-  <?php require_once 'php/db.php'; ?>
 </head>
 <body class="dark">
 <nav>

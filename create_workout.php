@@ -1,6 +1,3 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
-<head>
 <?php
   include 'php/header.php';
   if (!isset($_SESSION['user_id'])) {
@@ -10,6 +7,9 @@
   require_once 'php/db_connect.php';
   require_once 'php/db_query.php';
 ?>
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
   <title>ExerHub - Create Workout</title>
   <link rel="stylesheet" href="css/style.css">
   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>

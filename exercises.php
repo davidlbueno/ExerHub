@@ -1,10 +1,10 @@
+<?php include 'php/header.php';
+  require_once 'php/db_connect.php';
+  require_once 'php/db_query.php';
+?>
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
-  <?php include 'php/header.php';
-    require_once 'php/db_connect.php';
-    require_once 'php/db_query.php';
-  ?>
   <title>ExerHub - Exercises</title>
   <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
   <script type="text/javascript" src="//code.jquery.com/jquery-3.6.0.min.js"></script>

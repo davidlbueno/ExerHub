@@ -1,16 +1,16 @@
+<?php include 'php/header.php';
+  require_once 'php/db_connect.php';
+  require_once 'php/db_query.php';
+  if (!isset($_SESSION['user_id'])) {
+    header('Location: login.php');
+    exit;
+  }
+  $userId = $_SESSION['user_id'];
+  $is_admin = $_SESSION['is_admin'];
+?>
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
-  <?php include 'php/header.php';
-    require_once 'php/db_connect.php';
-    require_once 'php/db_query.php';
-    if (!isset($_SESSION['user_id'])) {
-      header('Location: login.php');
-      exit;
-    }
-    $userId = $_SESSION['user_id'];
-    $is_admin = $_SESSION['is_admin'];
-  ?>
   <title>ExerHub - Edit Workout</title>
   <link rel="stylesheet" href="css/style.css">
   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
