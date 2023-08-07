@@ -56,10 +56,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
   <script>
     var sessionVars = {
-      username: <?php echo isset($_SESSION['user_name']) ? $_SESSION['user_name'] : ''; ?>,
+      username: '<?php echo isset($_SESSION['user_name']) ? $_SESSION['user_name'] : ''; ?>',
       isAdmin: <?php echo isset($_SESSION['is_admin']) && $_SESSION['is_admin'] ? 'true' : 'false'; ?>
     };
-  </script>
+</script>
 </head>
 <body class="dark">
   <!-- Navigation bar -->
