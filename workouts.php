@@ -2,11 +2,7 @@
 <html lang="en" data-theme="dark">
 <head>
   <?php 
-    include 'php/header.php'; 
-    ini_set('display_errors', 1);
-    ini_set('display_startup_errors', 1);
-    error_reporting(E_ALL);
-    
+    include 'php/header.php';   
     require_once 'php/get_workouts.php';
     if (isset($_SESSION['user_id'])) {
         $userId = $_SESSION['user_id'];
