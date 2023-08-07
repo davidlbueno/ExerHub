@@ -9,7 +9,6 @@
   <?php require_once 'php/db_connect.php'; ?>
   <?php require_once 'php/db_query.php'; ?>
   <?php
-  session_start();
   $userId = $_SESSION['user_id'];
   $query = "SELECT name, email FROM users WHERE id = $userId";
   $result = query($conn, $query);
