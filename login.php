@@ -42,16 +42,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
   echo "Invalid email or password.";
 }
 ?>
-
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
-<head>
-  <?php include 'php/header.php'; ?>
   <link rel="stylesheet" href="css/style.css">
   <title>ExerHub - Login</title>
-  <!-- Import Material UI scripts -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-
   <script>
     var sessionVars = {
       username: '<?php echo isset($_SESSION['user_name']) ? $_SESSION['user_name'] : ''; ?>',

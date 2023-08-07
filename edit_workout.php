@@ -8,9 +8,6 @@
   $userId = $_SESSION['user_id'];
   $is_admin = $_SESSION['is_admin'];
 ?>
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
-<head>
   <title>ExerHub - Edit Workout</title>
   <link rel="stylesheet" href="css/style.css">
   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>

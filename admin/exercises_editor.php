@@ -1,6 +1,8 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
-<head>
+<?php
+  include '../php/header.php'; 
+  require_once '../php/db_connect.php';
+  require_once '../php/db_query.php'; 
+?>
   <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>ExerHub - Admin: Exercises Editor</title>
@@ -11,9 +13,6 @@
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="css/admin.css">
   <?php
-    include '../php/header.php'; 
-    require_once '../php/db_connect.php';
-    require_once '../php/db_query.php'; 
     $exercises = queryExercises($conn);
     $muscles = query($conn, 'SELECT * FROM muscles');
     function queryExercises($conn) {

@@ -1,11 +1,7 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
-<head>
   <?php include '../php/header.php';
     require_once '../php/db_connect.php';
     require_once '../php/db_query.php';
 
-    session_start();
     $userId = $_SESSION['user_id'];
     $is_admin = $_SESSION['is_admin'];
   ?>

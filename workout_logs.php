@@ -2,9 +2,6 @@
   require_once 'php/db_connect.php';
   require_once 'php/db_query.php';
 ?>
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
-<head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
