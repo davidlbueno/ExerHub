@@ -1,18 +1,12 @@
 <?php
-// get_aws_credentials.php
-
-// Function to get AWS credentials
-function getAwsCredentials() {
-  $awsCredsFile = 'awscreds.json';
-
-  // Read the JSON file and parse its contents
-  $jsonContents = file_get_contents($awsCredsFile);
-  $credentials = json_decode($jsonContents, true);
-
-  return $credentials;
+function get_aws_creds() {
+    return array(
+        'key' => getenv('ACCESS_KEY_ID'),
+        'secret' => getenv('SECRET_ACCESS_KEY'),
+        'region' => getenv('REGION')
+    );
 }
 
-// Return the AWS credentials as JSON response
 header('Content-Type: application/json');
-echo json_encode(getAwsCredentials());
+echo json_encode(get_aws_creds());
 ?>
