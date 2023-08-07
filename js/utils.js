@@ -58,8 +58,13 @@ async function getAwsCredentials() {
 async function speak(text) {
   try {
     const awsCredentials = await getAwsCredentials();
-    console.log(awsCredentials);
-    AWS.config.update(awsCredentials);
+
+    AWS.config.update({
+        accessKeyId: awsCredentials.key,
+        secretAccessKey: awsCredentials.secret,
+        region: awsCredentials.region
+    });
+
     const polly = new AWS.Polly();
 
     // Set the parameters for the SynthesizeSpeech operation
