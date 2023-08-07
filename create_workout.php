@@ -1,22 +1,21 @@
 <?php
-session_start();
-if (!isset($_SESSION['user_id'])) {
+  include 'php/header.php';
+  if (!isset($_SESSION['user_id'])) {
     header('Location: login.php');
     exit;
-}
+  }
+  require_once 'php/db_connect.php';
+  require_once 'php/db_query.php';
 ?>
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
-  <?php include 'php/header.php'; ?>
+  <?php  ?>
   <title>ExerHub - Create Workout</title>
   <link rel="stylesheet" href="css/style.css">
   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
-  <?php require_once 'php/db_connect.php';
-        require_once 'php/db_query.php';
-  ?>
 </head>
 <body class="dark">
   <nav>
