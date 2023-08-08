@@ -1,5 +1,7 @@
-<?php
-require_once 'php/header.php';
+<?php 
+$pageTitle = "ExerHub - Login";
+include 'php/session.php';
+include 'php/header.php'; 
 require_once 'php/db_connect.php';
 require_once 'php/db_query.php';
 
@@ -34,7 +36,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       // Set a session variable for user login status
       $_SESSION['logged_in'] = true;
 
-      header("Location: index.html");
+      // Redirect the user to the home page
+      header("Location: index.php");
       exit;
     }
   }
@@ -42,16 +45,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
   echo "Invalid email or password.";
 }
 ?>
-  <link rel="stylesheet" href="css/style.css">
-  <title>ExerHub - Login</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-  <script>
+</head>
+<script>
     var sessionVars = {
       username: '<?php echo isset($_SESSION['user_name']) ? $_SESSION['user_name'] : ''; ?>',
       isAdmin: <?php echo isset($_SESSION['is_admin']) && $_SESSION['is_admin'] ? 'true' : 'false'; ?>
     };
 </script>
-</head>
 <body class="dark">
   <!-- Navigation bar -->
 <nav>
