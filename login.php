@@ -1,10 +1,8 @@
 <?php 
 $pageTitle = "ExerHub - Login";
 include 'php/session.php';
-include 'php/header.php'; 
 require_once 'php/db_connect.php';
 require_once 'php/db_query.php';
-
 // Check if the form was submitted
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
   // Retrieve the form data
@@ -37,15 +35,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       $_SESSION['logged_in'] = true;
 
       // Redirect the user to the home page
-      header("Location: index.php");
+      header("Location: /index.html");
       exit;
     }
   }
   // Handle the case when authentication fails
   echo "Invalid email or password.";
 }
+include 'php/header.php'; 
 ?>
-</head>
 <script>
     var sessionVars = {
       username: '<?php echo isset($_SESSION['user_name']) ? $_SESSION['user_name'] : ''; ?>',
