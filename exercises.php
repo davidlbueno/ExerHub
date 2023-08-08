@@ -1,36 +1,39 @@
-<?php include 'php/header.php';
+<?php
+  $pageTitle = "ExerHub - Exercises";
+  include 'php/session.php';
   require_once 'php/db_connect.php';
   require_once 'php/db_query.php';
 ?>
-  <title>ExerHub - Exercises</title>
-  <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
-  <script type="text/javascript" src="//code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script type="text/javascript" src="//cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-  <link rel="stylesheet" href="css/style.css">
-  <?php
-    $result = query($conn, 'SELECT e.name AS exercise_name, e.type AS exercise_type, e.difficulty, m.name AS muscle_name, em.intensity
-    FROM exercises e
-    JOIN exercise_muscles em ON e.id = em.exercise_id
-    JOIN muscles m ON m.id = em.muscle_id');
-    $exercises = array();
-    while ($row = mysqli_fetch_assoc($result)) {
-      $exerciseName = $row['exercise_name'];
-      $muscleName = $row['muscle_name'];
-      $intensity = $row['intensity'];
-      $exerciseType = $row['exercise_type'];
-      $exerciseDifficulty = $row['difficulty'];
-      if (!isset($exercises[$exerciseName])) {
-        $exercises[$exerciseName] = array(
-        'muscles' => array(),
-        'type' => $exerciseType,
-        'difficulty' => $exerciseDifficulty
-        );
-      }
-      $exercises[$exerciseName]['muscles'][$muscleName] = $intensity;
+
+<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
+<?php require_once 'php/header.php'; ?>
+
+<script type="text/javascript" src="//code.jquery.com/jquery-3.6.0.min.js"></script>
+<script type="text/javascript" src="//cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+
+<?php
+  $result = query($conn, 'SELECT e.name AS exercise_name, e.type AS exercise_type, e.difficulty, m.name AS muscle_name, em.intensity
+  FROM exercises e
+  JOIN exercise_muscles em ON e.id = em.exercise_id
+  JOIN muscles m ON m.id = em.muscle_id');
+  $exercises = array();
+  while ($row = mysqli_fetch_assoc($result)) {
+    $exerciseName = $row['exercise_name'];
+    $muscleName = $row['muscle_name'];
+    $intensity = $row['intensity'];
+    $exerciseType = $row['exercise_type'];
+    $exerciseDifficulty = $row['difficulty'];
+    if (!isset($exercises[$exerciseName])) {
+      $exercises[$exerciseName] = array(
+      'muscles' => array(),
+      'type' => $exerciseType,
+      'difficulty' => $exerciseDifficulty
+      );
     }
-  ?>
-</head>
+    $exercises[$exerciseName]['muscles'][$muscleName] = $intensity;
+  }
+?>
+
 <body class="dark">
   <nav>
     <div class="nav-wrapper">

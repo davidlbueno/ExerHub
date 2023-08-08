@@ -1,19 +1,20 @@
-<?php include 'php/header.php';
-  require_once 'php/db_connect.php';
-  require_once 'php/db_query.php';
-  if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php');
-    exit;
-  }
-  $userId = $_SESSION['user_id'];
-  $is_admin = $_SESSION['is_admin'];
+<?php
+$pageTitle = "ExerHub - Edit Workout";
+include 'php/session.php';
+require_once 'php/db_connect.php';
+require_once 'php/db_query.php';
+if (!isset($_SESSION['user_id'])) {
+  header('Location: login.php');
+  exit;
+}
+$userId = $_SESSION['user_id']; 
+$is_admin = $_SESSION['is_admin'];
+require_once 'php/header.php';
 ?>
-  <title>ExerHub - Edit Workout</title>
-  <link rel="stylesheet" href="css/style.css">
-  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-  <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
-</head>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
+
 <body class="dark">
   <nav>
     <div class="nav-wrapper">

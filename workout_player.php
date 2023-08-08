@@ -1,13 +1,14 @@
-<?php include 'php/header.php';
-  require_once 'php/db_connect.php';
-  require_once 'php/db_query.php';
+<?php
+$pageTitle = "ExerHub - Workout Player";
+include 'php/session.php';
+require_once 'php/header.php';
+require_once 'php/db_connect.php';
+require_once 'php/db_query.php';
 ?>
-  <title>ExerHub - Workout Player</title>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <script src="https://sdk.amazonaws.com/js/aws-sdk-2.958.0.min.js"></script>
-  <link rel="stylesheet" href="css/style.css">
-</head>
+
 <body class="dark">
   <main class="container">
     <?php
@@ -65,7 +66,7 @@
                   </li>
                 <?php
               } else {
-                if ($warmup === '1') {
+                if ($warmup === 1) {
                   ?>
                   <li class="exercise-list-item warmup" data-seconds="<?= $seconds ?>" data-exercise-id="<?= $exerciseId ?>">
                     <strong><?= $exerciseType ?></strong> - <?= $exerciseName ?> (<?= $seconds ?> seconds) - Warmup

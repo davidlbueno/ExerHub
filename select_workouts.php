@@ -1,12 +1,13 @@
 <?php
-require_once 'php/header.php';
+$pageTitle = "ExerHub - Select Workouts";
+include 'php/session.php';
 require_once 'php/db_connect.php';
 require_once 'php/db_query.php';
-
 if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php');
-    exit;
+  header('Location: login.php');
+  exit;
 }
+require_once 'php/header.php';
 
 $user_id = $_SESSION['user_id'];
 
@@ -35,10 +36,7 @@ function display_workouts($workouts, $selected_workouts) {
   }
 }
 ?>
-    <title>ExerHub - Select Workouts</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    <link rel="stylesheet" href="css/style.css">
-</head>
+
 <body class="dark">
 <nav>
 <div class="nav-wrapper">

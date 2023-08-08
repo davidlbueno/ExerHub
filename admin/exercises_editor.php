@@ -1,48 +1,51 @@
 <?php
-  include '../php/header.php'; 
-  require_once '../php/db_connect.php';
-  require_once '../php/db_query.php'; 
+$pageTitle = "ExerHub - Admin: Exercises Editor";
+include '../php/session.php';
+require_once '../php/db_connect.php';
+require_once '../php/db_query.php';
+if (!isset($_SESSION['user_id'])) {
+  header('Location: login.php');
+  exit;
+}
+$userId = $_SESSION['user_id']; 
+$is_admin = $_SESSION['is_admin'];
 ?>
-  <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>ExerHub - Admin: Exercises Editor</title>
-  <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
-  <script type="text/javascript" src="//code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script type="text/javascript" src="//cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-  <link rel="stylesheet" href="../css/style.css">
-  <link rel="stylesheet" href="css/admin.css">
-  <?php
-    $exercises = queryExercises($conn);
-    $muscles = query($conn, 'SELECT * FROM muscles');
-    function queryExercises($conn) {
-        $result = query($conn, 'SELECT e.id AS exercise_id, e.name AS exercise_name, e.type AS exercise_type, e.difficulty, m.name AS muscle_name, em.intensity
-          FROM exercises e
-          JOIN exercise_muscles em ON e.id = em.exercise_id
-          JOIN muscles m ON m.id = em.muscle_id');
-        $exercises = array();
-        while ($row = mysqli_fetch_assoc($result)) {
-            $exerciseId = $row['exercise_id'];
-            $exerciseName = $row['exercise_name'];
-            $muscleName = $row['muscle_name'];
-            $intensity = $row['intensity'];
-            $exerciseType = $row['exercise_type'];
-            $exerciseDifficulty = $row['difficulty'];
-            
-            if (!isset($exercises[$exerciseName])) {
-                $exercises[$exerciseName] = array(
-                    'exercise_id' => $exerciseId,
-                    'muscles' => array(),
-                    'type' => $exerciseType,
-                    'difficulty' => $exerciseDifficulty
-                );
-            }
-            $exercises[$exerciseName]['muscles'][$muscleName] = $intensity;
-        }
-        return $exercises;
-    }
-  ?>
-</head>
+<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
+<?php require_once '../php/header.php'; ?>
+<link rel="stylesheet" type="text/css" href="css/admin.css">
+<script type="text/javascript" src="//code.jquery.com/jquery-3.6.0.min.js"></script>
+<script type="text/javascript" src="//cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+<?php
+  $exercises = queryExercises($conn);
+  $muscles = query($conn, 'SELECT * FROM muscles');
+  function queryExercises($conn) {
+      $result = query($conn, 'SELECT e.id AS exercise_id, e.name AS exercise_name, e.type AS exercise_type, e.difficulty, m.name AS muscle_name, em.intensity
+        FROM exercises e
+        JOIN exercise_muscles em ON e.id = em.exercise_id
+        JOIN muscles m ON m.id = em.muscle_id');
+      $exercises = array();
+      while ($row = mysqli_fetch_assoc($result)) {
+          $exerciseId = $row['exercise_id'];
+          $exerciseName = $row['exercise_name'];
+          $muscleName = $row['muscle_name'];
+          $intensity = $row['intensity'];
+          $exerciseType = $row['exercise_type'];
+          $exerciseDifficulty = $row['difficulty'];
+          
+          if (!isset($exercises[$exerciseName])) {
+              $exercises[$exerciseName] = array(
+                  'exercise_id' => $exerciseId,
+                  'muscles' => array(),
+                  'type' => $exerciseType,
+                  'difficulty' => $exerciseDifficulty
+              );
+          }
+          $exercises[$exerciseName]['muscles'][$muscleName] = $intensity;
+      }
+      return $exercises;
+  }
+?>
+
 <body class="dark">
   <nav>
     <div class="nav-wrapper">

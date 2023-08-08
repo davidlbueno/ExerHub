@@ -1,10 +1,11 @@
-<?php include 'php/header.php';
-  require_once 'php/db.php';
+<?php
+$pageTitle = "ExerHub - Create Account";
+include 'php/session.php';
+require_once 'php/header.php';
+require_once 'php/db_connect.php';
+require_once 'php/db_query.php';
 ?>
-  <title>ExerHub - Create Account</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-  <link rel="stylesheet" href="css/style.css">
-</head>
+
 <body class="dark">
 <nav>
   <div class="nav-wrapper">
