@@ -1,0 +1,10 @@
+nav, nav .nav-wrapper i, nav a.sidenav-trigger, nav a.sidenav-trigger i {
+  height: 46px !important;
+  line-height: 46px !important;
+}
+
+nav #top-nav {
+  height: 46px !important;
+  line-height: 46px !important;
+  margin: 0px !important;
+}

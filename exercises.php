@@ -3,11 +3,13 @@ $pageTitle = "ExerHub - Exercises";
 include 'php/session.php';
 require_once 'php/db_connect.php';
 require_once 'php/db_query.php';
+require_once 'php/header.php'; 
 ?> 
 <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
-<?php require_once 'php/header.php'; ?>
+
 <script type="text/javascript" src="//code.jquery.com/jquery-3.6.0.min.js"></script>
 <script type="text/javascript" src="//cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" href="css/datatables.css">
 
 <?php
   $result = query($conn, 'SELECT e.name AS exercise_name, e.type AS exercise_type, e.difficulty, m.name AS muscle_name, em.intensity

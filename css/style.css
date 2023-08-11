@@ -100,7 +100,7 @@ select:disabled {
   height: 36px !important;
   line-height: 36px !important;
   padding: 0 8px !important;
-  margin: 5px !important;
+  margin: 0px 5px 5px 0px !important;
 }
 
 .btn, .btn-large, .btn-small, .btn-flat {
@@ -109,16 +109,16 @@ select:disabled {
 
 
 table.dataTable tbody tr {
-  background-color: #1e1e1e;
+  background-color: #1e1e1e !important;
  }
 
 table.dataTable tbody tr:hover {
-  background-color: #616161;
+  background-color: #616161 !important;
 }
 
 #save-workout-btn.btn[disabled] {
   background-color: #2f2f2f !important;
-  color: #525252 !important;
+  color: #cacaca !important;
 }
 
 .copy-del-btn {

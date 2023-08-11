@@ -3,6 +3,7 @@ $pageTitle = "ExerHub - Admin: Exercises Editor";
 include '../php/session.php';
 require_once '../php/db_connect.php';
 require_once '../php/db_query.php';
+require_once '../php/header.php'; 
 if (!isset($_SESSION['user_id'])) {
   header('Location: login.php');
   exit;
@@ -11,7 +12,6 @@ $userId = $_SESSION['user_id'];
 $is_admin = $_SESSION['is_admin'];
 ?>
 <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
-<?php require_once '../php/header.php'; ?>
 <link rel="stylesheet" type="text/css" href="css/admin.css">
 <script type="text/javascript" src="//code.jquery.com/jquery-3.6.0.min.js"></script>
 <script type="text/javascript" src="//cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
