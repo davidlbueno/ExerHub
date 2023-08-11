@@ -39,3 +39,7 @@ border: 1px solid rgb(45, 45, 45);
 tr td {
 color: rgb(50, 50, 50);
 }
+
+tbody tr:hover {
+cursor: pointer;
+}

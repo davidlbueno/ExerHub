@@ -22,20 +22,20 @@ body.dark p {
 /* Navigation bar */
 nav {
   background-color: #a10000;
-  height: 48px;
-  line-height: 48px;
+  height: 46px;
+  line-height: 46px;
   
 }
 
 nav a {
-  height: 48px !important;
-  line-height: 48px !important;
+  height: 46px !important;
+  line-height: 46px !important;
   color: #ffffff;
 }
 
 nav i{
-  height: 48px !important;
-  line-height: 48px !important;
+  height: 46px !important;
+  line-height: 46px !important;
   margin-right: 2px !important;
 }
 
@@ -43,7 +43,7 @@ nav i{
   float: left;
   position: relative;
   z-index: 1;
-  height: 48px;
+  height: 46px;
   margin: 0 18px;
 }
 
@@ -54,7 +54,7 @@ nav i{
 }
 
 nav .brand-logo {
-  height: 48px;
+  height: 46px;
   font-size: 20px;
   left: auto !important;
   transform: none !important;
@@ -100,6 +100,7 @@ select:disabled {
   height: 36px !important;
   line-height: 36px !important;
   padding: 0 8px !important;
+  margin: 5px !important;
 }
 
 .btn, .btn-large, .btn-small, .btn-flat {
