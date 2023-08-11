@@ -99,7 +99,13 @@ select:disabled {
   color: #ffffff;
   height: 36px !important;
   line-height: 36px !important;
+  padding: 0 8px !important;
 }
+
+.btn, .btn-large, .btn-small, .btn-flat {
+  padding: 0 8px !important;
+}
+
 
 table.dataTable tbody tr {
   background-color: #1e1e1e;

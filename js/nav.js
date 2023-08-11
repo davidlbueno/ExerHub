@@ -61,7 +61,7 @@ function updateNavigation(sessionVars) {
     sideNav.appendChild(li);
   });
 
- // Add username to sideNav
+ // Add my account link to sideNav
  if (sessionVars.userName) {
   const usernameLink = document.createElement('a');
   usernameLink.textContent = 'My Account';
@@ -78,7 +78,8 @@ function updateNavigation(sessionVars) {
     a.className = 'btn';
     a.textContent = item.title;
     a.href = item.href;
-    a.style.marginLeft = '10px'; // Add margin between buttons if desired
+    a.style.marginLeft = '0px';
+    a.style.marginRight = '5px';
     topNav.appendChild(a);
   });
   // Add CSS style to align the buttons to the right
