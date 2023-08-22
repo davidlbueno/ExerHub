@@ -45,4 +45,5 @@ require_once 'php/db_query.php';
   }
 </script>
 </body>
+<?php include 'php/footer.php'; ?>
 </html>

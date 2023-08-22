@@ -63,4 +63,5 @@ require_once 'php/db_query.php';
   </main>
   <script src="js/nav.js"></script>
 </body>
+<?php include 'php/footer.php'; ?>
 </html>

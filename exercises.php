@@ -93,4 +93,5 @@ require_once 'php/header.php';
     });
   </script>
 </body>
+<?php include 'php/footer.php'; ?>
 </html>
