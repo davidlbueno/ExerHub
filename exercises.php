@@ -92,6 +92,6 @@ require_once 'php/header.php';
       $('.dataTables_filter').hide();
     });
   </script>
+  <?php include 'html/footer.html'; ?>
 </body>
-<?php include 'php/footer.php'; ?>
 </html>

@@ -6,7 +6,7 @@ require_once 'php/db_connect.php';
 require_once 'php/db_query.php';
 ?>
 
-<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 
 <body class="dark">
 <nav>
@@ -44,6 +44,6 @@ require_once 'php/db_query.php';
     });
   }
 </script>
+<?php include 'html/footer.html'; ?>
 </body>
-<?php include 'php/footer.php'; ?>
 </html>

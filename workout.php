@@ -116,6 +116,6 @@ require_once 'php/db_query.php';
       });
     });
   </script>
+  <?php include 'html/footer.html'; ?>
 </body>
-<?php include 'php/footer.php'; ?>
 </html>
