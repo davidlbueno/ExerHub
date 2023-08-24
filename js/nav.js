@@ -7,8 +7,7 @@ const sideNavItems = [
   { title: 'Logs', href: 'logs.php' },
 ];
 let topNavItems = [
-  { title: 'Log In', href: 'login.php' },
-  { title: 'Create Account', href: 'create_account.php' },
+  { title: 'X', href: 'login.php' },
 ];
 if (window.location.pathname.includes('create_account.php')) {
   topNavItems = topNavItems.filter(item => item.title !== 'Create Account');
@@ -38,11 +37,11 @@ function fetchSessionVars() {
 function updateNavigation(sessionVars) {
   window.sessionVars = sessionVars;
   console.log(sessionVars);
-  if (sessionVars.userName) {
-    topNavItems = topNavItems.filter(item => item.title !== 'Create Account');
-    topNavItems = topNavItems.filter(item => item.title !== 'Log In');
-    topNavItems.push({ title: 'Logout', href: 'php/logout.php' });
-  }
+  //if (sessionVars.userName) {
+  //  topNavItems = topNavItems.filter(item => item.title !== 'Create Account');
+  //  topNavItems = topNavItems.filter(item => item.title !== 'Log In');
+  //  topNavItems.push({ title: 'Logout', href: 'php/logout.php' });
+  //}
   const topNav = document.querySelector('#top-nav');
   const sideNav = document.querySelector('#side-nav');
   // Initialize sideNav
@@ -69,6 +68,28 @@ function updateNavigation(sessionVars) {
   usernameLink.className = 'btn';
   usernameLink.href = 'account.php';
   sideNav.appendChild(usernameLink);
+// Add logout link to sideNav
+  const logoutLink = document.createElement('a');
+  logoutLink.textContent = 'Logout';
+  logoutLink.style.display = 'block';
+  logoutLink.className = 'btn';
+  logoutLink.href = 'php/logout.php';
+  sideNav.appendChild(logoutLink);
+} else {
+  // Add login link to sideNav
+  const loginLink = document.createElement('a');
+  loginLink.textContent = 'Login';
+  loginLink.style.display = 'block';
+  loginLink.className = 'btn';
+  loginLink.href = 'login.php';
+  sideNav.appendChild(loginLink);
+  // Add create account link to sideNav
+  const createAccountLink = document.createElement('a');
+  createAccountLink.textContent = 'Create Account';
+  createAccountLink.style.display = 'block';
+  createAccountLink.className = 'btn';
+  createAccountLink.href = 'create_account.php';
+  sideNav.appendChild(createAccountLink);
 }
 
   // Add items to topNav
