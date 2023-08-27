@@ -35,7 +35,6 @@ require_once 'php/header.php';
 
 <body class="dark">
 <?php include 'html/nav.html'; ?>
-  <ul class="sidenav" id="side-nav"></ul>
   <main class="container">
     <h2>Exercises</h2>
     <table id="exercise-table">

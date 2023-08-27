@@ -12,7 +12,6 @@ require_once 'php/header.php';
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <body class="dark">
 <?php include 'html/nav.html'; ?>
-  <ul class="sidenav" id="side-nav"></ul>
   <main class="container">
   <?php
     $userId = $_SESSION['user_id'];

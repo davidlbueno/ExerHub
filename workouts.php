@@ -37,7 +37,6 @@ require_once 'php/db_query.php';
 ?>
 <body class="dark">
 <?php include 'html/nav.html'; ?>
-  <ul class="sidenav" id="side-nav"></ul>
   <main class="container">
   <div class="row">
   <div class="col s12" style="text-align: center; margin: 5px; display: flex; justify-content: center; flex-wrap: wrap;">

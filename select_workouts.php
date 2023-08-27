@@ -38,7 +38,6 @@ function display_workouts($workouts, $selected_workouts) {
 ?>
 <body class="dark">
 <?php include 'html/nav.html'; ?>
-  <ul class="sidenav" id="side-nav"></ul>
   <main class="container">
     <h6>Public Workouts</h6>
     <label>

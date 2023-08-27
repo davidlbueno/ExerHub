@@ -7,14 +7,7 @@ require_once 'php/db_query.php';
 ?>
 
 <body class="dark">
-  <nav>
-    <div class="nav-wrapper">
-      <span class="brand-logo" style="margin-left: 60px" id="dynamic-navbar"></span>
-      <a href="index.html" data-target="side-nav" class="show-on-large sidenav-trigger"><i class="material-icons">menu</i></a>
-      <ul class="right" id="top-nav"></ul>
-    </div>
-  </nav>
-<ul class="sidenav" id="side-nav"></ul>
+<?php include 'html/nav.html'; ?>
 <main class="container">
   <div class="row">
     <div class="col s8">

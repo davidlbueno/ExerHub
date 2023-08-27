@@ -17,14 +17,7 @@ $userId = $_SESSION['user_id'];
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
 <body class="dark">
-<nav>
-    <div class="nav-wrapper">
-      <span class="brand-logo" style="margin-left: 60px" id="dynamic-navbar"></span>
-      <a href="index.html" data-target="side-nav" class="show-on-large sidenav-trigger"><i class="material-icons">menu</i></a>
-      <ul class="right" id="top-nav"></ul>
-    </div>
-  </nav>
-<ul class="sidenav" id="side-nav"></ul>
+<?php include 'html/nav.html'; ?>
 <main>
 <div class="container">
   <h4>Account</h4>

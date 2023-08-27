@@ -51,17 +51,7 @@ include 'php/header.php';
     };
 </script>
 <body class="dark">
-  <!-- Navigation bar -->
-<nav>
-  <div class="nav-wrapper">
-    <span class="brand-logo" style="margin-left: 60px"><a href="index.html">ExerHub</a><span class="sub-page-name"><a href="workouts.php">/</a>Login</span></span>
-    <a href="index.html" data-target="side-nav" class="show-on-large sidenav-trigger"><i class="material-icons">menu</i></a>
-    <ul class="right" id="top-nav"></ul>
-  </div>
-</nav>
-<!-- side navigation bar -->
-<ul class="sidenav" id="side-nav"></ul>
-<!-- Main content -->
+<?php include 'html/nav.html'; ?>
 <main>
   <div class="container">
     <h4>Welcome Back</h4>

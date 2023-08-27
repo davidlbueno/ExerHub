@@ -15,7 +15,6 @@ require_once 'php/header.php';
 
 <body class="dark">
 <?php include 'html/nav.html'; ?>
-  <ul class="sidenav" id="side-nav"></ul>
   <main class="container">
   <div class="row">
     <div class="row">

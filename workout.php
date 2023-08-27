@@ -10,7 +10,6 @@ require_once 'php/db_query.php';
 
 <body class="dark">
   <?php include 'html/nav.html'; ?>
-  <ul class="sidenav" id="side-nav"></ul>
   <main class="container">
     <?php
     $workoutId = $_GET['workout_id'] ?? null;
