@@ -15,7 +15,7 @@ body.dark {
 }
 
 .container {
-  width: 96%;
+  width: 95%;
   margin: 0 auto;
 }
 
@@ -111,7 +111,7 @@ select:disabled {
   height: 36px !important;
   line-height: 36px !important;
   padding: 0 8px !important;
-  margin: 0px 3px 3px 0px !important;
+  margin: 0px 0px 0px 0px !important;
 }
 
 .btn, .btn-large, .btn-small, .btn-flat {
