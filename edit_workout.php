@@ -1,6 +1,7 @@
 <?php
 $pageTitle = "Edit Workout";
 include 'php/session.php';
+require_once 'php/header.php';
 require_once 'php/db_connect.php';
 require_once 'php/db_query.php';
 if (!isset($_SESSION['user_id'])) {
@@ -9,7 +10,6 @@ if (!isset($_SESSION['user_id'])) {
 }
 $userId = $_SESSION['user_id']; 
 $is_admin = $_SESSION['is_admin'];
-require_once 'php/header.php';
 ?>
 
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>

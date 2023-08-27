@@ -75,6 +75,6 @@ function display_workouts($workouts, $selected_workouts) {
       });
   });
   </script>
-  <?php include 'php/footer.php'; ?>
+  <?php include 'html/footer.html'; ?>
 </body>
 </html>
