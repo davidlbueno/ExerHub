@@ -26,9 +26,7 @@ require_once 'php/db_query.php';
                 WHERE ws.workout_id = $workoutId";
       $result = query($conn,$query);
       ?>
-      <div class="container">
-        <div class="player-content" style="display: flex; flex-direction: column;">
-          <div class="upper-row" style="display: flex;">
+      <div class="upper-row" style="display: flex;">
             <div class="upper-left-column" style="flex: 1;">
               <h4 id="playerTitle"></h4>
               <div class="controls">
@@ -47,6 +45,8 @@ require_once 'php/db_query.php';
               <h5 class="countdown-clock">00:00:00</h5>
             </div>
           </div>
+      <div class="container">
+        <div class="player-content" style="display: flex; flex-direction: column;">
           <div>
           <ol class="workout-list">
             <?php
