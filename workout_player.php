@@ -26,7 +26,7 @@ require_once 'php/db_query.php';
                 WHERE ws.workout_id = $workoutId";
       $result = query($conn,$query);
       ?>
-      <div class="upper-row" style="display: flex;">
+      <div class="upper-row" style="display: flex; max-width: 1000px; margin: 0 auto;">
             <div class="upper-left-column" style="flex: 1;">
               <h4 id="playerTitle"></h4>
               <div class="controls">
