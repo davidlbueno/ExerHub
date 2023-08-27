@@ -1,12 +1,11 @@
 <?php
-$pageTitle = "ExerHub - Exercises";
+$pageTitle = "Exercises";
 include 'php/session.php';
 require_once 'php/db_connect.php';
 require_once 'php/db_query.php';
 require_once 'php/header.php'; 
 ?> 
 <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
-
 <script type="text/javascript" src="//code.jquery.com/jquery-3.6.0.min.js"></script>
 <script type="text/javascript" src="//cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
 <link rel="stylesheet" href="css/datatables.css">
@@ -35,13 +34,7 @@ require_once 'php/header.php';
 ?>
 
 <body class="dark">
-  <nav>
-    <div class="nav-wrapper">
-    <span class="brand-logo" style="margin-left: 60px"><a href="index.html"><i class="material-icons">home</i>/</a><span class="sub-page-name">Exercises</span></span>
-      <a href="index.html" data-target="side-nav" class="show-on-large sidenav-trigger"><i class="material-icons">menu</i></a>
-      <ul class="right" id="top-nav"></ul>
-    </div>
-  </nav>
+<?php include 'html/nav.html'; ?>
   <ul class="sidenav" id="side-nav"></ul>
   <main class="container">
     <h2>Exercises</h2>

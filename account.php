@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "ExerHub - Account";
+$pageTitle = "Account";
 include 'php/session.php';
 require_once 'php/header.php';
 require_once 'php/db_connect.php';
@@ -18,12 +18,12 @@ $userId = $_SESSION['user_id'];
 
 <body class="dark">
 <nav>
-  <div class="nav-wrapper">
-    <span class="brand-logo" style="margin-left: 60px"><a href="index.html"><i class="material-icons">home</i></a><span class="sub-page-name"><a href="workouts.php">/</a>Account</span></span>
-    <a href="index.html" data-target="side-nav" class="show-on-large sidenav-trigger"><i class="material-icons">menu</i></a>
-    <ul class="right" id="top-nav"></ul>
-  </div>
-</nav>
+    <div class="nav-wrapper">
+      <span class="brand-logo" style="margin-left: 60px" id="dynamic-navbar"></span>
+      <a href="index.html" data-target="side-nav" class="show-on-large sidenav-trigger"><i class="material-icons">menu</i></a>
+      <ul class="right" id="top-nav"></ul>
+    </div>
+  </nav>
 <ul class="sidenav" id="side-nav"></ul>
 <main>
 <div class="container">
@@ -161,5 +161,6 @@ $userId = $_SESSION['user_id'];
   });
 </script>
 <script>document.getElementById("email").focus();</script>
+<?php include 'html/footer.html'; ?>
 </body>
 </html>

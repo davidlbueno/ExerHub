@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "ExerHub - Edit Workout";
+$pageTitle = "Edit Workout";
 include 'php/session.php';
 require_once 'php/db_connect.php';
 require_once 'php/db_query.php';
@@ -16,13 +16,7 @@ require_once 'php/header.php';
 <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
 
 <body class="dark">
-  <nav>
-    <div class="nav-wrapper">
-      <span class="brand-logo" style="margin-left: 60px"><a href="index.html"><i class="material-icons">home</i></a><span class="sub-page-name"><a href="workouts.php">/Workouts/</a>Edit</span></span>
-      <a href="index.html" data-target="side-nav" class="top-left"><i class="material-icons">menu</i></a>
-      <ul class="right" id="top-nav"></ul>
-    </div>
-  </nav>
+<?php include 'html/nav.html'; ?>
   <ul class="sidenav" id="side-nav"></ul>
   <main class="container">
     <div class="row">
@@ -146,5 +140,6 @@ require_once 'php/header.php';
     }
   });
 </script>
+<?php include 'html/footer.html'; ?>
 </body>
 </html>

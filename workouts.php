@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "ExerHub - Workouts";
+$pageTitle = "Workouts";
 include 'php/session.php';
 require_once 'php/header.php';
 require_once 'php/db_connect.php';
@@ -35,15 +35,8 @@ require_once 'php/db_query.php';
     }
   }
 ?>
-
 <body class="dark">
-<nav>
-<div class="nav-wrapper">
-  <span class="brand-logo" style="margin-left: 60px"><a href="index.html"><i class="material-icons">home</i>/</a><span class="sub-page-name">Workouts</span></span>
-    <a href="index.html" data-target="side-nav" class="show-on-large sidenav-trigger"><i class="material-icons">menu</i></a>
-    <ul class="right" id="top-nav"></ul>
-</div>
-</nav>
+<?php include 'html/nav.html'; ?>
   <ul class="sidenav" id="side-nav"></ul>
   <main class="container">
   <div class="row">

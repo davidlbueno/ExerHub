@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "ExerHub - Logs";
+$pageTitle = "Logs";
 include 'php/session.php';
 require_once 'php/db_connect.php';
 require_once 'php/db_query.php';
@@ -10,15 +10,8 @@ if (!isset($_SESSION['user_id'])) {
 require_once 'php/header.php';
 ?>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-
 <body class="dark">
-  <nav>
-    <div class="nav-wrapper">
-      <span class="brand-logo" style="margin-left: 60px"><a href="index.html"><i class="material-icons">home</i>/</a><span class="sub-page-name">Logs</span></span>
-      <a href="index.html" data-target="side-nav" class="show-on-large sidenav-trigger"><i class="material-icons">menu</i></a>
-      <ul class="right" id="top-nav"></ul>
-    </div>
-  </nav>
+<?php include 'html/nav.html'; ?>
   <ul class="sidenav" id="side-nav"></ul>
   <main class="container">
   <?php
@@ -60,5 +53,6 @@ require_once 'php/header.php';
     ?>
   </main>
   <script src="js/nav.js"></script>
+  <?php include 'html/footer.html'; ?>
 </body>
 </html>

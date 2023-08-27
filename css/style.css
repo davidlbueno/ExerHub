@@ -108,6 +108,9 @@ select:disabled {
   padding: 0 8px !important;
 }
 
+.back-button .material-icons {
+  line-height: 46px !important;
+}
 
 table.dataTable tbody tr {
   background-color: #1e1e1e !important;

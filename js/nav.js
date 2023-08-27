@@ -7,13 +7,16 @@ const sideNavItems = [
   { title: 'Logs', href: 'logs.php' },
 ];
 let topNavItems = [
-  { title: 'X', href: 'login.php' },
+  { title: 'arrow_back', href: 'javascript:;', class: 'back-button' },
 ];
 if (window.location.pathname.includes('create_account.php')) {
   topNavItems = topNavItems.filter(item => item.title !== 'Create Account');
 }
 if (window.location.pathname.includes('login.php')) {
   topNavItems = topNavItems.filter(item => item.title !== 'Log In');
+}
+if (window.location.pathname.includes('index.html')) {
+  topNavItems = topNavItems.filter(item => item.title !== 'arrow_back');
 }
 // Function to fetch session variables from the server
 function fetchSessionVars() {
@@ -93,16 +96,26 @@ function updateNavigation(sessionVars) {
 }
 
   // Add items to topNav
-  topNavItems.forEach((item) => {
-    const a = document.createElement('a');
-    // Add materialize class to topNav buttons
-    a.className = 'btn';
-    a.textContent = item.title;
-    a.href = item.href;
-    a.style.marginLeft = '0px';
-    a.style.marginRight = '5px';
-    topNav.appendChild(a);
-  });
+topNavItems.forEach((item) => {
+  const a = document.createElement('a');
+  a.href = item.href;
+  a.className = item.class;
+
+  const span = document.createElement('span');
+  span.className = 'material-icons';
+  span.textContent = item.title;
+
+  a.appendChild(span);
+
+  a.onclick = function(event) {
+    event.preventDefault(); // Prevent default navigation
+    if (item.title === 'arrow_back') {
+      history.back();
+    }
+  };
+  
+  topNav.appendChild(a);
+});
   // Add CSS style to align the buttons to the right
   topNav.style.textAlign = 'right';
   // Make top-nav always visible
@@ -110,4 +123,15 @@ function updateNavigation(sessionVars) {
 }
 document.addEventListener('DOMContentLoaded', function () {
   fetchSessionVars().then(updateNavigation);
+  // Get the current page title and URL
+  const pageTitle = document.title;
+  const pageURL = window.location.pathname.split('/').pop();
+  // Get the dynamic-navbar element
+  const dynamicNavbar = document.getElementById("dynamic-navbar");
+  // Create the dynamic content
+  const a = document.createElement('a');
+  a.href = pageURL;
+  a.textContent = pageTitle;
+  // Append the dynamic content to the navbar
+  dynamicNavbar.appendChild(a);
 });

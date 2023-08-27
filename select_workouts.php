@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "ExerHub - Select Workouts";
+$pageTitle = "Select Workouts";
 include 'php/session.php';
 require_once 'php/db_connect.php';
 require_once 'php/db_query.php';
@@ -36,15 +36,8 @@ function display_workouts($workouts, $selected_workouts) {
   }
 }
 ?>
-
 <body class="dark">
-<nav>
-<div class="nav-wrapper">
-    <span class="brand-logo" style="margin-left: 60px"><a href="index.html"><i class="material-icons">home</i>/</a><a href="workouts.php">Workouts</a>/<span class="sub-page-name">Select Workouts</span></span>
-    <a href="index.html" data-target="side-nav" class="show-on-large sidenav-trigger"><i class="material-icons">menu</i></a>
-    <ul class="right" id="top-nav"></ul>
-</div>
-</nav>
+<?php include 'html/nav.html'; ?>
   <ul class="sidenav" id="side-nav"></ul>
   <main class="container">
     <h6>Public Workouts</h6>
@@ -82,5 +75,6 @@ function display_workouts($workouts, $selected_workouts) {
       });
   });
   </script>
+  <?php include 'php/footer.php'; ?>
 </body>
 </html>
