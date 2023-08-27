@@ -15,7 +15,7 @@ body.dark {
 }
 
 .container {
-  width: 91%;
+  width: 90%;
   margin: 0 auto;
 }
 
@@ -110,7 +110,7 @@ select:disabled {
   color: #ffffff;
   height: 36px !important;
   line-height: 36px !important;
-  padding: 0 8px !important;
+  padding: 0 6px !important;
   margin: 0px 0px 0px 0px !important;
 }
 
