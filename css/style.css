@@ -14,11 +14,6 @@ body.dark {
   padding-bottom: 50px;
 }
 
-/* add padding to the containter class to account for the footer */
-.container {
-  padding-bottom: 100px;
-}
-
 .modal.modal-dark {
   background-color: #252525;
 }

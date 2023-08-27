@@ -17,7 +17,6 @@ $is_admin = $_SESSION['is_admin'];
 
 <body class="dark">
 <?php include 'html/nav.html'; ?>
-  <ul class="sidenav" id="side-nav"></ul>
   <main class="container">
     <div class="row">
       <div class="row">
@@ -106,7 +105,7 @@ $is_admin = $_SESSION['is_admin'];
     </div>
   </div>
   <div class="row">
-    <div class="col s12">
+    <div class="col s12" style="padding-bottom: 50px;">
       <button id="add-type-btn" class="btn">Add Item</button>
       <button id="clear-list-btn" class="btn">Clear List</button>
       <button id="save-workout-btn" class="btn">Update Workout</button>
