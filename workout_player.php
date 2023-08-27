@@ -99,7 +99,7 @@ require_once 'php/db_query.php';
           <a href="workout.php?workout_id=<?= urlencode($workoutId) ?>&workout_name=<?= urlencode($workoutName) ?>" class="close-btn">
             <i class="material-icons">close</i>
           </a>
-          <div class="footer" style="background-color: #252525;">
+          <div>
             <button id="saveWorkoutBtn" class="btn" >Save Workout</button>
             <button id="viewLogBtn" class="btn" >View Log</button>
           </div>
