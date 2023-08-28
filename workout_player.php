@@ -44,7 +44,7 @@ require_once 'php/db_query.php';
               <label for="countdown-clock" id="currentExerciseName"></h6>
             </div>
           </div>
-      <div class="container">
+      <div>
         <div class="player-content" style="display: flex; flex-direction: column;">
           <div>
           <ol class="workout-list">
