@@ -35,6 +35,11 @@ document.addEventListener('DOMContentLoaded', function () {
           exerciseDetails.style.display = 'none';
         }
       }
+
+      // Scroll the container to keep the active item in view
+      if (li.classList.contains('active')) {
+        li.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
     });
 
     const exerciseType = item.querySelector('strong').textContent.trim();

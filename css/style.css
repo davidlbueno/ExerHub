@@ -283,7 +283,7 @@ li.selected {
 }
 
 .workout-list li.active {
-  background-color: #b90000; /* Add your desired background color */
+  background-color: #b90000;
   border: 2px solid #cccccc; 
 }
 
