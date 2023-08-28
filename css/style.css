@@ -300,12 +300,6 @@ li.selected {
   background-color: rgb(0, 115, 255) !important;
 }
 
-.workout-list li.active::marker {
-  background-color: #b10000; /* Replace with your desired background color */
-  border-radius: 50%; /* Optional, to make the background rounded */
-  padding: 0 5px; /* Optional, to add some padding around the number */
-}
-
 .progress-bar {
   position: relative;
 }
