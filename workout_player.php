@@ -58,7 +58,7 @@ require_once 'php/db_query.php';
               if ($exerciseType === 'Rest') {
                 ?>
                 <li class="rest" data-seconds="<?= $seconds ?>">
-                    <strong>Rest</strong> - (<?= $seconds ?> seconds)
+                    <strong>Rest</strong> - (<?= $seconds ?>s)
                     <div class="exercise-details">
                       Actual Seconds: <span class="actualSeconds">0</span>
                     </div>
@@ -68,7 +68,7 @@ require_once 'php/db_query.php';
                 if ($warmup === 1) {
                   ?>
                   <li class="exercise-list-item warmup" data-seconds="<?= $seconds ?>" data-exercise-id="<?= $exerciseId ?>">
-                    <strong><?= $exerciseType ?></strong> - <?= $exerciseName ?> (<?= $seconds ?> seconds) - Warmup
+                    <strong><?= $exerciseType ?></strong> - <?= $exerciseName ?> (<?= $seconds ?>s) - Warmup
                     <div class="exercise-details">
                       Actual Reps: <input type="number" class="repsInput" max="999" placeholder="Reps" style="width: 70px; height: 30px">
                       Actual Seconds: <span class="actualSeconds">0</span>
@@ -78,7 +78,7 @@ require_once 'php/db_query.php';
                 } else {
                   ?>
                   <li class="exercise-list-item" data-seconds="<?= $seconds ?>" data-exercise-id="<?= $exerciseId ?>">
-                    <strong><?= $exerciseType ?></strong> - <?= $exerciseName ?> (<?= $seconds ?> seconds)
+                    <strong><?= $exerciseType ?></strong> - <?= $exerciseName ?> (<?= $seconds ?>s)
                     <div class="exercise-details">
                       Actual Reps: <input type="number" class="repsInput" max="999" placeholder="Reps" style="width: 70px; height: 30px">
                       Actual Seconds: <span class="actualSeconds">0</span>
