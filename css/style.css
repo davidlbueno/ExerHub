@@ -19,6 +19,17 @@ body.dark {
   margin: 0 auto;
 }
 
+.player-content {
+  overflow-y: auto;
+  max-height: calc(100vh - 120px); /* 95px is the height of the title and upper-row divs */
+  scrollbar-width: none; /* For Firefox */
+}
+
+/* Hide scrollbar for Chrome, Safari, and Opera */
+.player-content::-webkit-scrollbar {
+  display: none;
+}
+
 .modal.modal-dark {
   background-color: #252525;
 }

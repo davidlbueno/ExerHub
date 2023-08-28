@@ -22,25 +22,48 @@ document.addEventListener('DOMContentLoaded', function () {
   const firstSeconds = parseInt(firstItem.textContent.match(/\d+/));
   updateCountdown(firstSeconds);
 
+  // Function to handle the start of the touch event
+  function touchStart(e) {
+    startY = e.touches[0].clientY;
+  }
+
+  // Function to handle the move during the touch event
+  function touchMove(e) {
+    const playerContent = document.querySelector('.player-content');
+    const touch = e.touches[0];
+    const deltaY = startY - touch.clientY;
+
+    playerContent.scrollTop += deltaY;
+    startY = touch.clientY;
+  }
+
+  // Add event listeners for touch events
+  const playerContent = document.querySelector('.player-content');
+  playerContent.addEventListener('touchstart', touchStart, false);
+  playerContent.addEventListener('touchmove', touchMove, false);
+
+  // Your existing setActiveItem function, modified
   function setActiveItem(item) {
-    const activeItem = document.querySelector('.workout-list li.active');
-    activeItem.classList.remove('active');
-    item.classList.add('active');
+  const activeItem = document.querySelector('.workout-list li.active');
+  activeItem.classList.remove('active');
+  item.classList.add('active');
 
-    const listItems = document.querySelectorAll('.workout-list li');
-    listItems.forEach((li) => {
-      if (!li.classList.contains('active')) {
-        const exerciseDetails = li.querySelector('.exercise-details');
-        if (exerciseDetails) {
-          exerciseDetails.style.display = 'none';
-        }
+  const listItems = document.querySelectorAll('.workout-list li');
+  listItems.forEach((li) => {
+    if (!li.classList.contains('active')) {
+      const exerciseDetails = li.querySelector('.exercise-details');
+      if (exerciseDetails) {
+        exerciseDetails.style.display = 'none';
       }
+    }
 
-      // Scroll the container to keep the active item in view
-      if (li.classList.contains('active')) {
-        li.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-    });
+    // Scroll the player-content to keep the active item in view
+    if (li.classList.contains('active')) {
+      const playerContent = document.querySelector('.player-content');
+      const offsetTop = li.offsetTop - playerContent.offsetTop;
+      playerContent.scrollTop = offsetTop;
+    }
+  });
 
     const exerciseType = item.querySelector('strong').textContent.trim();
     document.getElementById('currentExerciseName').textContent = exerciseType === 'Rest' ? 'Rest' : item.innerText.split('-')[1].trim();
@@ -73,6 +96,7 @@ document.addEventListener('DOMContentLoaded', function () {
       listItem.classList.add('active');
       setActiveItem(listItem);
     }
+    window.scrollTo(0, 0);
 
     const exerciseType = item.querySelector('strong').textContent;
     if (exerciseType === 'Rest') {

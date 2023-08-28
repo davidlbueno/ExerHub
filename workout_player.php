@@ -9,7 +9,7 @@ require_once 'php/db_query.php';
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="https://sdk.amazonaws.com/js/aws-sdk-2.958.0.min.js"></script>
 
-<body class="dark">
+<body class="dark" style="padding-bottom: 0px;"> <!-- Remove this to allow room for the footer -->
   <main class="container">
     <?php
     $userId = $_GET['user_id'] ?? null;
