@@ -284,6 +284,7 @@ li.selected {
 
 .workout-list li.active {
   background-color: #b90000; /* Add your desired background color */
+  border: 2px solid #cccccc; 
 }
 
 /* CSS styles for the rest list items */
@@ -297,6 +298,12 @@ li.selected {
 
 .workout-list li.warmup.active {
   background-color: rgb(0, 115, 255) !important;
+}
+
+.workout-list li.active::marker {
+  background-color: #b10000; /* Replace with your desired background color */
+  border-radius: 50%; /* Optional, to make the background rounded */
+  padding: 0 5px; /* Optional, to add some padding around the number */
 }
 
 .progress-bar {
