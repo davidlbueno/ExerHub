@@ -28,7 +28,6 @@ require_once 'php/db_query.php';
       ?>
       <div class="upper-row" style="display: flex; max-width: 1000px;">
             <div class="upper-left-column" style="flex: 1; min-width: 150px;">
-              <h4 id="playerTitle"></h4>
               <div class="controls">
                 <button id="playPauseBtn" class="btn"><i class="material-icons">play_arrow</i></button>
                 <button id="prevBtn" class="btn"><i class="material-icons">skip_previous</i></button>
@@ -41,7 +40,6 @@ require_once 'php/db_query.php';
               </div>
             </div>
             <div class="upper-right-column" style="flex: 1;">
-              <h6 id="currentExerciseName"></h6>
               <h5 class="countdown-clock">00:00:00</h5>
             </div>
           </div>

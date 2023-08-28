@@ -355,12 +355,13 @@ li.selected {
 
 .countdown-clock {
   font-family: "Courier New", monospace;
-  font-size: 40px;
+  font-size: 35px;
   letter-spacing: -2px;
   text-align: center;
   background-color: #1b1b1b;
-  padding: 2px;
   border: 1px solid #525252;
+  margin-top: 0px;
+  line-height: 1;
 }
 
 .exercise-details {
