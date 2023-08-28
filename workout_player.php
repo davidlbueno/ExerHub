@@ -41,6 +41,7 @@ require_once 'php/db_query.php';
             </div>
             <div class="upper-right-column" style="flex: 1;">
               <h5 class="countdown-clock">00:00:00</h5>
+              <label for="countdown-clock" id="currentExerciseName"></h6>
             </div>
           </div>
       <div class="container">
