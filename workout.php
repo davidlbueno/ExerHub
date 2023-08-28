@@ -34,7 +34,7 @@ require_once 'php/db_query.php';
                 <div id="workout-length" style="display: inline-block;">0:00</div>
               </div>
             </div>';
-      echo "<ol>";
+      echo "<ol style='padding-left: 28px;'>";
       // Create the list items based on the retrieved data
       while ($row = mysqli_fetch_assoc($result)) {
         $type = $row['type'];
