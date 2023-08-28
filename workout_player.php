@@ -47,7 +47,7 @@ require_once 'php/db_query.php';
       <div>
         <div class="player-content" style="display: flex; flex-direction: column;">
           <div>
-          <ol class="workout-list" style="padding-left: 22px;">
+          <ol class="workout-list" style="padding-left: 26px;">
             <?php
             while ($row = mysqli_fetch_assoc($result)) {
               $exerciseId = $row['exercise_id'];
