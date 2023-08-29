@@ -44,8 +44,20 @@ function getDifficulty($workoutId) {
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom"></script>
 
-<div class="chart-container" style="width: 80%; margin-left: 10%; margin-top: 5px;">
-  <canvas id="myChart" width="50" height="10"></canvas>
+<style>
+  /* Responsive chart container */
+  .chart-container {
+    width: 90%; /* Full width */
+    min-height: 200px; /* Specified height */
+    max-height: 300px; /* Maximum height */
+    margin-top: 5px;
+    margin-left: 5%;
+    position: relative; /* If you want to position text or anything else inside */
+  }
+</style>
+
+<div class="chart-container">
+  <canvas id="myChart"></canvas>
   <button id="prevButton" type="button" class="btn btn-default">Previous</button>
   <button id="nextButton" type="button" class="btn btn-default">Next</button>
 </div>
@@ -84,21 +96,24 @@ var initialHeights = workoutHeights.slice(-14);
 
 // Create the datasets array
 var datasets = [
-    {
-        data: initialHeights,
-        backgroundColor: 'rgba(75, 192, 192, 0.2)'
-    }
-];
+      {
+          data: initialHeights,
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+          xAxisID: 'x'  // Specify which x-axis to use
+      }
+  ];
 
   // Create the chart
   var ctx = document.getElementById("myChart");
   var myChart = new Chart(ctx, {
       type: 'bar',
       data: {
-          labels: initialDates,
-          datasets: datasets
+        labels: initialDates,
+        datasets: datasets
       },
       options: {
+        responsive: true,
+        maintainAspectRatio: false,
         plugins: {
           legend: {
             display: false
@@ -139,7 +154,8 @@ var datasets = [
             }
           },
           y: {
-            stacked: true
+            stacked: true,
+            display: false
           }
         }
       }
@@ -171,6 +187,19 @@ document.getElementById('nextButton').addEventListener('click', function() {
         updateChart(currentIndex, currentIndex + 14);
     }
 });
+
+// Function to set the chart height
+function setChartHeight() {
+  var windowHeight = window.innerHeight;
+  var chartHeight = windowHeight * 0.2; // 20% of the window height
+  document.querySelector('.chart-container').style.height = chartHeight + 'px';
+}
+
+// Set the initial chart height
+setChartHeight();
+
+// Update the chart height whenever the window is resized
+window.addEventListener('resize', setChartHeight);
 
 // Initialize the chart with the last 14 days
 updateChart(currentIndex, currentIndex + 14);
