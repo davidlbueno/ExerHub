@@ -38,10 +38,12 @@ function getDifficulty($workoutId) {
 
     return $difficulty;
 }
+
 ?>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/0.7.7/chartjs-plugin-zoom.min.js"></script>
+
 
 <div class="chart-container" style="width: 80%; margin-left: 10%; margin-top: 5px;">
     <div>
