@@ -38,17 +38,14 @@ function getDifficulty($workoutId) {
 
     return $difficulty;
 }
-
 ?>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/0.7.7/chartjs-plugin-zoom.min.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom"></script>
 
 <div class="chart-container" style="width: 80%; margin-left: 10%; margin-top: 5px;">
   <canvas id="myChart" width="50" height="10"></canvas>
-</div>
-<div>
   <button id="prevButton" type="button" class="btn btn-default">Previous</button>
   <button id="nextButton" type="button" class="btn btn-default">Next</button>
 </div>
@@ -93,57 +90,60 @@ var datasets = [
     }
 ];
 
-// Create the chart
-var ctx = document.getElementById("myChart");
-var myChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: initialDates,
-        datasets: datasets
-    },
-    options: {
-      legend: {
-        display: false
+  // Create the chart
+  var ctx = document.getElementById("myChart");
+  var myChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+          labels: initialDates,
+          datasets: datasets
       },
-      scales: {
+      options: {
+        plugins: {
+          legend: {
+            display: false
+          },
+          zoom: {
+            pan: {
+                enabled: true,
+                mode: 'x'
+            },
+            zoom: {
+                enabled: true,
+                mode: 'x'
+            }
+          }
+        },
+        scales: {
           x: {
-              stacked: true,
-              type: 'time',
-              time: {
-                  unit: 'day'
-              },
-              ticks: {
-                  autoSkip: false
-              }
+            type: 'time',
+            position: 'bottom',
+            time: {
+                unit: 'day'
+            },
+            stacked: true
+          },
+          x1: {
+            type: 'time',
+            position: 'top',
+            time: {
+                unit: 'day',
+                displayFormats: {
+                    day: 'ddd'
+                }
+            },
+            ticks: {
+                callback: function(value, index, values) {
+                    return new Date(value).toLocaleDateString('en-US', { weekday: 'short' });
+                }
+            }
           },
           y: {
-              stacked: true
+            stacked: true
           }
-      },
-      pan: {
-          enabled: true,
-          mode: 'x'
-      },
-      zoom: {
-          enabled: true,
-          mode: 'x',
+        }
       }
-    }
-});
-
-// Add Chart.js zoom plugin
-Chart.pluginService.register({
-    beforeInit: function(chart) {
-        chart.options.pan = {
-            enabled: true,
-            mode: 'x'
-        };
-        chart.options.zoom = {
-            enabled: true,
-            mode: 'x',
-        };
-    }
-});
+  });
 
 // Initialize variables to keep track of the current date range
 var currentIndex = allDates.length - 14;
