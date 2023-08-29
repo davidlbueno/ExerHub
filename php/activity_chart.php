@@ -83,13 +83,13 @@ function getDifficulty($workoutId) {
 <!-- echo all retrieved workout data -->
 <?php
   echo "<pre>";
-  print_r($workoutData);
+  print_r($workoutDataJson);
   echo "</pre>";
 ?>
 
 <script>
   var workoutData = <?php echo $workoutDataJson; ?>;
-var labels = Object.keys(workoutData);
+  var labels = Object.keys(workoutData);
 
 // Find the earliest and latest dates
 var earliestDate = new Date(labels[0]);
@@ -103,6 +103,9 @@ for (var d = new Date(earliestDate); d <= latestDate; d.setDate(d.getDate() + 1)
 
 // Initialize data arrays
 var workoutHeights = [];
+
+var dateLabel = new Date(tooltipItem[0].label).toISOString().split('T')[0];
+  var workoutForDay = workoutData[dateLabel];
 
 // Populate data arrays
 for (var i = 0; i < allDates.length; i++) {
@@ -157,25 +160,30 @@ var myChart = new Chart(ctx, {
           mode: 'x'
         }
       },
-    // Display WorkoutName, Time and Duration on hover
-    tooltips: {
-      callbacks: {
-        title: function(tooltipItem) {
-          var workout = workoutData[tooltipItem[0].label][0];
-          return workout.workoutName;
-        },
-        label: function(tooltipItem) {
-          var workout = workoutData[tooltipItem.label][0];
-          var time = new Date(workout.time).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric' });
-          var duration = Math.round(workout.duration / 60);
-          return time + ' (' + duration + ' min)';
-        },
-        afterLabel: function(tooltipItem) {
-          var workout = workoutData[tooltipItem.label][0];
-          return 'Difficulty: ' + workout.difficulty;
+      tooltip: {
+        callbacks: {
+          title: function(tooltipItem) {
+            var dateLabel = new Date(tooltipItem[0].label).toISOString().split('T')[0];
+            var workoutForDay = workoutData[dateLabel];
+            if (workoutForDay && workoutForDay.length > 0) {
+              return workoutForDay.map(function(workout) {
+                return workout.workoutName + ' at ' + workout.time.split(' ')[1];
+              }).join(', ');
+            }
+            return dateLabel;
+          },
+          label: function(tooltipItem) {
+            var dateLabel = new Date(tooltipItem[0].label).toISOString().split('T')[0];
+            var workoutForDay = workoutData[dateLabel];
+            if (workoutForDay && workoutForDay.length > 0) {
+              return workoutForDay.map(function(workout) {
+                return 'Duration: ' + workout.duration + ' seconds';
+              }).join(', ');
+            }
+            return '';
+          }
         }
       }
-    }
     },
     // when a user clicks on a bar, open the workout log url
     onClick: function(e) {
