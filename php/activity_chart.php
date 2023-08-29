@@ -76,7 +76,6 @@ labels.forEach(function(label) {
 // Create the datasets array
 var datasets = [
     {
-        label: 'Workouts',
         data: workoutHeights,
         backgroundColor: 'rgba(75, 192, 192, 0.2)'
     }
@@ -91,15 +90,18 @@ var myChart = new Chart(ctx, {
         datasets: datasets
     },
     options: {
-        scales: {
-            x: {
-                stacked: true,
-            },
-            y: {
-                stacked: true
-            }
-        }
+      legend: {
+        display: false
+      },
+      scales: {
+          x: {
+              stacked: true,
+          },
+          y: {
+              stacked: true
+          }
+      }
     }
 });
 
-<script>
+</script>

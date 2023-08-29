@@ -1,5 +1,6 @@
 <?php
 include 'php/session.php';
+require_once 'php/header.php';
 require_once 'php/db_connect.php';
 require_once 'php/db_query.php';
 $userId = $_SESSION['user_id'];
