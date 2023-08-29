@@ -1,3 +1,50 @@
+<?php
+$logsQuery = "SELECT id, start_time, end_time, workout_id FROM workout_logs WHERE user_id = $userId";
+$logsResult = query($conn, $logsQuery);
+
+$workoutData = [];
+
+while ($logRow = mysqli_fetch_assoc($logsResult)) {
+    $workoutId = $logRow['workout_id'];
+    $startTime = $logRow['start_time'];
+    $endTime = $logRow['end_time'];
+
+    $duration = strtotime($endTime) - strtotime($startTime);
+    $avgDifficulty = getDifficulty($workoutId);
+
+    $height = $duration * $avgDifficulty;
+
+    $day = date("Y-m-d", strtotime($startTime));
+    $workoutData[$day][] = ['height' => $height, 'workoutId' => $workoutId];
+}
+
+// Sort the array by day
+ksort($workoutData);
+
+// Convert PHP array to JavaScript object
+$workoutDataJson = json_encode($workoutData);
+
+function getDifficulty($workoutId) {
+    // I have a workouts table with a a workout_sequence_id columns that references a workout_sequences table 
+    // which has an exercise_id column that references an exercises table which has a difficulty column.
+    // I want to get the average difficulty of all exercises in a workout.
+    // I'm not sure if this is the best way to do it, but it works for me.
+    global $conn;
+    $query = "SELECT exercise_id FROM workout_sequences WHERE workout_id = $workoutId";
+    $result = query($conn, $query);
+    $row = mysqli_fetch_assoc($result);
+    $exerciseId = $row['exercise_id'];
+
+    $query = "SELECT difficulty FROM exercises WHERE id = $exerciseId";
+    $result = query($conn, $query);
+    $row = mysqli_fetch_assoc($result);
+    $difficulty = $row['difficulty'];
+
+    return $difficulty;
+}
+
+?>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
 
 <div class="chart-container" style="width: 80%; margin-left: 10%; margin-top: 5px;">
@@ -12,40 +59,62 @@
 </div>
 
 <script>
-    var ctx = document.getElementById("myChart");
-    var myChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ["Mon", "Tue", "Wed", "Thur", "Fri", "Sat", "Sun"],
-            datasets: [{
-                label: 'Push',
-                data: [12,,,5,,,12],
-                backgroundColor: "rgba(255,153,0,0.4)"
-            }, {
-                label: 'Pull',
-                data: [,29,,,24,,],
-                backgroundColor: "rgba(0,153,255,0.4)"
-            }, {
-                label: 'Legs',
-                data: [,,54,,,35,],
-                backgroundColor: "rgba(255,0,0,0.4)"
-            }]
-        },
-        options: {
-          legend: {
-            display: false,
-          },
-          scales: {
-              xAxes: [{
-                  stacked: true
-              }],
-              yAxes: [{
-                  stacked: true,
-                  ticks: {
-                      beginAtZero:true
-                  }
-              }]
+  var workoutData = <?php echo $workoutDataJson; ?>;
+  var labels = Object.keys(workoutData);
+
+  // Initialize data arrays for each workout type
+  var cardioData = [];
+  var strengthData = [];
+
+  // Populate data arrays
+  labels.forEach(function(label) {
+      var dayData = workoutData[label];
+      var cardioHeight = 0;
+      var strengthHeight = 0;
+
+      dayData.forEach(function(workout) {
+          if (workout.workoutId === 'Cardio') {  // Replace with actual workout ID or type
+              cardioHeight += workout.height;
+          } else if (workout.workoutId === 'Strength') {  // Replace with actual workout ID or type
+              strengthHeight += workout.height;
           }
-        }
-    });
+      });
+
+      cardioData.push(cardioHeight);
+      strengthData.push(strengthHeight);
+  });
+
+  // Create the datasets array
+  var datasets = [
+      {
+          label: 'Cardio',
+          data: cardioData,
+          backgroundColor: 'rgba(255, 99, 132, 0.2)'
+      },
+      {
+          label: 'Strength',
+          data: strengthData,
+          backgroundColor: 'rgba(54, 162, 235, 0.2)'
+      }
+  ];
+
+  // Create the chart
+  var ctx = document.getElementById("myChart");
+  var myChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+          labels: labels,
+          datasets: datasets
+      },
+      options: {
+          scales: {
+              x: {
+                  stacked: true,
+              },
+              y: {
+                  stacked: true
+              }
+          }
+      }
+  });
   </script>
