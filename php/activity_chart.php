@@ -25,10 +25,6 @@ ksort($workoutData);
 $workoutDataJson = json_encode($workoutData);
 
 function getDifficulty($workoutId) {
-    // I have a workouts table with a a workout_sequence_id columns that references a workout_sequences table 
-    // which has an exercise_id column that references an exercises table which has a difficulty column.
-    // I want to get the average difficulty of all exercises in a workout.
-    // I'm not sure if this is the best way to do it, but it works for me.
     global $conn;
     $query = "SELECT exercise_id FROM workout_sequences WHERE workout_id = $workoutId";
     $result = query($conn, $query);
