@@ -16,6 +16,9 @@ while ($logRow = mysqli_fetch_assoc($logsResult)) {
 
     $day = date("Y-m-d", strtotime($startTime));
     $workoutData[$day][] = [
+      'time' => $startTime,
+      'duration' => $duration,
+      'difficulty' => $avgDifficulty,
       'height' => $height, 
       'workoutId' => $workoutId, 
       'workoutName' => getWorkoutName($workoutId),  // Assuming you have a function to get the workout name
@@ -77,6 +80,13 @@ function getDifficulty($workoutId) {
   <button id="nextButton" type="button" class="btn btn-default">Next</button>
 </div>
 
+<!-- echo all retrieved workout data -->
+<?php
+  echo "<pre>";
+  print_r($workoutData);
+  echo "</pre>";
+?>
+
 <script>
   var workoutData = <?php echo $workoutDataJson; ?>;
 var labels = Object.keys(workoutData);
@@ -95,15 +105,19 @@ for (var d = new Date(earliestDate); d <= latestDate; d.setDate(d.getDate() + 1)
 var workoutHeights = [];
 
 // Populate data arrays
-allDates.forEach(function(label) {
-    var totalHeight = 0;
-    if (workoutData[label]) {
-        workoutData[label].forEach(function(workout) {
-            totalHeight += workout.height;
-        });
+for (var i = 0; i < allDates.length; i++) {
+    var date = allDates[i];
+    if (workoutData[date]) {
+        var workouts = workoutData[date];
+        var totalHeight = 0;
+        for (var j = 0; j < workouts.length; j++) {
+            totalHeight += workouts[j].height;
+        }
+        workoutHeights.push(totalHeight);
+    } else {
+        workoutHeights.push(0);
     }
-    workoutHeights.push(totalHeight);
-});
+}
 
 // Limit to last 14 days initially
 var initialDates = allDates.slice(-14);
@@ -119,90 +133,89 @@ var datasets = [
 ];
 
   // Create the chart
-  var ctx = document.getElementById("myChart");
-  var myChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: initialDates,
-      datasets: datasets
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            display: false
-          },
-          zoom: {
-            pan: {
-                enabled: true,
-                mode: 'x'
-            },
-            zoom: {
-                enabled: true,
-                mode: 'x'
-            }
-          },
-          tooltip: {
-            callbacks: {
-              label: function(context) {
-                var label = context.label || '';
-                var workoutDay = workoutData[label];
-                if (workoutDay) {
-                  var workout = workoutDay[context.dataIndex];
-                  if (workout) {
-                    return workout.workoutName;
-                  }
-                }
-                return label;
-              }
-            }
-          },
-          onClick: function(evt) {
-            var activePoint = myChart.getElementsAtEventForMode(evt, 'nearest', { intersect: true }, true)[0];
-            if (activePoint) {
-              var label = myChart.data.labels[activePoint.index];
-              var workoutDay = workoutData[label];
-              if (workoutDay) {
-                var workout = workoutDay[activePoint.index];
-                if (workout && workout.workoutLogURL) {
-                  window.location.href = workout.workoutLogURL;
-                }
-              }
-            }
-          }
+var ctx = document.getElementById("myChart");
+var myChart = new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: initialDates,
+    datasets: datasets
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: false
+      },
+      zoom: {
+        pan: {
+          enabled: true,
+          mode: 'x'
         },
-        scales: {
-          x: {
-            type: 'time',
-            position: 'bottom',
-            time: {
-                unit: 'day'
-            },
-            stacked: true
-          },
-          x1: {
-            type: 'time',
-            position: 'top',
-            time: {
-                unit: 'day',
-                displayFormats: {
-                    day: 'ddd'
-                }
-            },
-            ticks: {
-                callback: function(value, index, values) {
-                    return new Date(value).toLocaleDateString('en-US', { weekday: 'short' });
-                }
-            }
-          },
-          y: {
-            stacked: true,
-            display: false
-          }
+        zoom: {
+          enabled: true,
+          mode: 'x'
+        }
+      },
+    // Display WorkoutName, Time and Duration on hover
+    tooltips: {
+      callbacks: {
+        title: function(tooltipItem) {
+          var workout = workoutData[tooltipItem[0].label][0];
+          return workout.workoutName;
+        },
+        label: function(tooltipItem) {
+          var workout = workoutData[tooltipItem.label][0];
+          var time = new Date(workout.time).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric' });
+          var duration = Math.round(workout.duration / 60);
+          return time + ' (' + duration + ' min)';
+        },
+        afterLabel: function(tooltipItem) {
+          var workout = workoutData[tooltipItem.label][0];
+          return 'Difficulty: ' + workout.difficulty;
         }
       }
-  });
+    }
+    },
+    // when a user clicks on a bar, open the workout log url
+    onClick: function(e) {
+      var element = myChart.getElementAtEvent(e);
+      if (element.length > 0) {
+        var workout = workoutData[element[0].label][0];
+        window.open(workout.workoutLogURL);
+      }
+    },  
+    scales: {
+      x: {
+        type: 'time',
+        position: 'bottom',
+        time: {
+          unit: 'day'
+        },
+        stacked: true
+      },
+      x1: {
+        type: 'time',
+        position: 'top',
+        time: {
+          unit: 'day',
+          displayFormats: {
+            day: 'ddd'
+          }
+        },
+        ticks: {
+          callback: function(value, index, values) {
+            return new Date(value).toLocaleDateString('en-US', { weekday: 'short' });
+          }
+        }
+      },
+      y: {
+        stacked: true,
+        display: false
+      }
+    }
+  }
+});
 
 // Initialize variables to keep track of the current date range
 var currentIndex = allDates.length - 14;
