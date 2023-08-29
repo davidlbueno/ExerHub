@@ -1,4 +1,5 @@
 <?php
+$pageTitle = "ExerHub";
 include 'php/session.php';
 require_once 'php/header.php';
 require_once 'php/db_connect.php';
@@ -20,14 +21,7 @@ $userId = $_SESSION['user_id'];
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 </head>
 <body class="dark">
-<nav>
-  <div class="nav-wrapper">
-    <a href="index.html" class="brand-logo" style="margin-left: 60px;">ExerHub</a>
-    <a href="index.html" data-target="side-nav" class="show-on-large sidenav-trigger"><i class="material-icons">menu</i></a>
-    <ul class="right" id="top-nav"></ul>
-    <ul class="sidenav" id="side-nav"></ul>
-  </div>
-</nav>
+<?php include 'html/nav.html'; ?>
 <main>
   <?php include 'php/activity_chart.php';?>
   <div class="container">
