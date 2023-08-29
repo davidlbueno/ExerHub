@@ -15,7 +15,12 @@ while ($logRow = mysqli_fetch_assoc($logsResult)) {
     $height = $duration * $avgDifficulty;
 
     $day = date("Y-m-d", strtotime($startTime));
-    $workoutData[$day][] = ['height' => $height, 'workoutId' => $workoutId];
+    $workoutData[$day][] = [
+      'height' => $height, 
+      'workoutId' => $workoutId, 
+      'workoutName' => getWorkoutName($workoutId),  // Assuming you have a function to get the workout name
+      'workoutLogURL' => "workout_log.php?id={$logRow['id']}"  // Assuming the URL structure
+    ];
 }
 
 // Sort the array by day
@@ -23,6 +28,16 @@ ksort($workoutData);
 
 // Convert PHP array to JavaScript object
 $workoutDataJson = json_encode($workoutData);
+
+// Function to get the workout name
+function getWorkoutName($workoutId) {
+    global $conn;
+    $query = "SELECT name FROM workouts WHERE id = $workoutId";
+    $result = query($conn, $query);
+    $row = mysqli_fetch_assoc($result);
+    $name = $row['name'];
+    return $name;
+}
 
 function getDifficulty($workoutId) {
     global $conn;
@@ -96,22 +111,22 @@ var initialHeights = workoutHeights.slice(-14);
 
 // Create the datasets array
 var datasets = [
-      {
-          data: initialHeights,
-          backgroundColor: 'rgba(75, 192, 192, 0.2)',
-          xAxisID: 'x'  // Specify which x-axis to use
-      }
-  ];
+  {
+    data: initialHeights,
+    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+    xAxisID: 'x'  // Specify which x-axis to use
+  }
+];
 
   // Create the chart
   var ctx = document.getElementById("myChart");
   var myChart = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: initialDates,
-        datasets: datasets
-      },
-      options: {
+    type: 'bar',
+    data: {
+      labels: initialDates,
+      datasets: datasets
+    },
+    options: {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
@@ -126,6 +141,34 @@ var datasets = [
             zoom: {
                 enabled: true,
                 mode: 'x'
+            }
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                var label = context.label || '';
+                var workoutDay = workoutData[label];
+                if (workoutDay) {
+                  var workout = workoutDay[context.dataIndex];
+                  if (workout) {
+                    return workout.workoutName;
+                  }
+                }
+                return label;
+              }
+            }
+          },
+          onClick: function(evt) {
+            var activePoint = myChart.getElementsAtEventForMode(evt, 'nearest', { intersect: true }, true)[0];
+            if (activePoint) {
+              var label = myChart.data.labels[activePoint.index];
+              var workoutDay = workoutData[label];
+              if (workoutDay) {
+                var workout = workoutDay[activePoint.index];
+                if (workout && workout.workoutLogURL) {
+                  window.location.href = workout.workoutLogURL;
+                }
+              }
             }
           }
         },
