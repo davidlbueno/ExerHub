@@ -46,15 +46,11 @@ function getDifficulty($workoutId) {
 
 
 <div class="chart-container" style="width: 80%; margin-left: 10%; margin-top: 5px;">
-    <div>
-        <div>
-            <canvas id="myChart" width="50" height="10"></canvas>
-        </div>
-        <div>
-        <button id="prevButton" type="button" class="btn btn-default">Previous</button>
-        <button id="nextButton" type="button" class="btn btn-default">Next</button>
-        </div>
-    </div>
+  <canvas id="myChart" width="50" height="10"></canvas>
+</div>
+<div>
+  <button id="prevButton" type="button" class="btn btn-default">Previous</button>
+  <button id="nextButton" type="button" class="btn btn-default">Next</button>
 </div>
 
 <script>
