@@ -104,9 +104,6 @@ for (var d = new Date(earliestDate); d <= latestDate; d.setDate(d.getDate() + 1)
 // Initialize data arrays
 var workoutHeights = [];
 
-var dateLabel = new Date(tooltipItem[0].label).toISOString().split('T')[0];
-  var workoutForDay = workoutData[dateLabel];
-
 // Populate data arrays
 for (var i = 0; i < allDates.length; i++) {
     var date = allDates[i];
@@ -163,24 +160,42 @@ var myChart = new Chart(ctx, {
       tooltip: {
         callbacks: {
           title: function(tooltipItem) {
-            var dateLabel = new Date(tooltipItem[0].label).toISOString().split('T')[0];
-            var workoutForDay = workoutData[dateLabel];
-            if (workoutForDay && workoutForDay.length > 0) {
-              return workoutForDay.map(function(workout) {
-                return workout.workoutName + ' at ' + workout.time.split(' ')[1];
-              }).join(', ');
+            if (tooltipItem[0] && tooltipItem[0].label) {
+              var dateStr = tooltipItem[0].label.split(",")[0] + ", " + tooltipItem[0].label.split(",")[1].trim();
+              var dateLabel = new Date(dateStr);
+              if (isNaN(dateLabel.getTime())) {
+                console.error("Invalid date:", tooltipItem[0].label);
+                return "Invalid date";
+              }
+              dateLabel = dateLabel.toISOString().split('T')[0];
+              var workoutForDay = workoutData[dateLabel];
+              if (workoutForDay && workoutForDay.length > 0) {
+                return workoutForDay.map(function(workout) {
+                  return workout.workoutName + ' at ' + workout.time.split(' ')[1];
+                }).join(', ');
+              }
+              return dateLabel;
             }
-            return dateLabel;
+            return "No date available";
           },
           label: function(tooltipItem) {
-            var dateLabel = new Date(tooltipItem[0].label).toISOString().split('T')[0];
-            var workoutForDay = workoutData[dateLabel];
-            if (workoutForDay && workoutForDay.length > 0) {
-              return workoutForDay.map(function(workout) {
-                return 'Duration: ' + workout.duration + ' seconds';
-              }).join(', ');
+            if (tooltipItem[0] && tooltipItem[0].label) {
+              var dateStr = tooltipItem[0].label.split(",")[0] + ", " + tooltipItem[0].label.split(",")[1].trim();
+              var dateLabel = new Date(dateStr);
+              if (isNaN(dateLabel.getTime())) {
+                console.error("Invalid date:", tooltipItem[0].label);
+                return "Invalid date";
+              }
+              dateLabel = dateLabel.toISOString().split('T')[0];
+              var workoutForDay = workoutData[dateLabel];
+              if (workoutForDay && workoutForDay.length > 0) {
+                return workoutForDay.map(function(workout) {
+                  return 'Duration: ' + workout.duration + ' seconds';
+                }).join(', ');
+              }
+              return '';
             }
-            return '';
+            return "No data available";
           }
         }
       }
