@@ -56,61 +56,50 @@ function getDifficulty($workoutId) {
 
 <script>
   var workoutData = <?php echo $workoutDataJson; ?>;
-  var labels = Object.keys(workoutData);
+var labels = Object.keys(workoutData);
 
-  // Initialize data arrays for each workout type
-  var cardioData = [];
-  var strengthData = [];
+// Initialize data arrays
+var workoutHeights = [];
 
-  // Populate data arrays
-  labels.forEach(function(label) {
-      var dayData = workoutData[label];
-      var cardioHeight = 0;
-      var strengthHeight = 0;
+// Populate data arrays
+labels.forEach(function(label) {
+    var dayData = workoutData[label];
+    var totalHeight = 0;
 
-      dayData.forEach(function(workout) {
-          if (workout.workoutId === 'Cardio') {  // Replace with actual workout ID or type
-              cardioHeight += workout.height;
-          } else if (workout.workoutId === 'Strength') {  // Replace with actual workout ID or type
-              strengthHeight += workout.height;
-          }
-      });
+    dayData.forEach(function(workout) {
+        totalHeight += workout.height;
+    });
 
-      cardioData.push(cardioHeight);
-      strengthData.push(strengthHeight);
-  });
+    workoutHeights.push(totalHeight);
+});
 
-  // Create the datasets array
-  var datasets = [
-      {
-          label: 'Cardio',
-          data: cardioData,
-          backgroundColor: 'rgba(255, 99, 132, 0.2)'
-      },
-      {
-          label: 'Strength',
-          data: strengthData,
-          backgroundColor: 'rgba(54, 162, 235, 0.2)'
-      }
-  ];
+// Create the datasets array
+var datasets = [
+    {
+        label: 'Workouts',
+        data: workoutHeights,
+        backgroundColor: 'rgba(75, 192, 192, 0.2)'
+    }
+];
 
-  // Create the chart
-  var ctx = document.getElementById("myChart");
-  var myChart = new Chart(ctx, {
-      type: 'bar',
-      data: {
-          labels: labels,
-          datasets: datasets
-      },
-      options: {
-          scales: {
-              x: {
-                  stacked: true,
-              },
-              y: {
-                  stacked: true
-              }
-          }
-      }
-  });
-  </script>
+// Create the chart
+var ctx = document.getElementById("myChart");
+var myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: labels,
+        datasets: datasets
+    },
+    options: {
+        scales: {
+            x: {
+                stacked: true,
+            },
+            y: {
+                stacked: true
+            }
+        }
+    }
+});
+
+<script>
