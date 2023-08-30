@@ -23,7 +23,7 @@ require_once 'php/header.php';
         </div>
         <div class="row">
           <div class="col s12">
-            <label for="workout-length" style="display: inline-block;">Workout Length</label>
+          <h8>Workout Length</h8>
           <div id="workout-length" style="display: inline-block;">0:00</div>
         </div>
     </div>
