@@ -1,62 +1,37 @@
 <?php
-$logsQuery = "SELECT id, start_time, end_time, workout_id FROM workout_logs WHERE user_id = $userId";
-$logsResult = query($conn, $logsQuery);
+// Combine queries to fetch all required data in one go
+$query = "SELECT wl.id, wl.start_time, wl.end_time, wl.workout_id, w.name as workout_name, e.difficulty
+          FROM workout_logs wl
+          JOIN workouts w ON wl.workout_id = w.id
+          JOIN workout_sequences ws ON wl.workout_id = ws.workout_id
+          JOIN exercises e ON ws.exercise_id = e.id
+          WHERE wl.user_id = $userId
+          ORDER BY wl.start_time ASC";
+
+$result = query($conn, $query);
 
 $workoutData = [];
 
-while ($logRow = mysqli_fetch_assoc($logsResult)) {
-    $workoutId = $logRow['workout_id'];
-    $startTime = $logRow['start_time'];
-    $endTime = $logRow['end_time'];
+while ($row = mysqli_fetch_assoc($result)) {
+    $day = date("Y-m-d", strtotime($row['start_time']));
+    $duration = strtotime($row['end_time']) - strtotime($row['start_time']);
+    $height = $duration * $row['difficulty'];
 
-    $duration = strtotime($endTime) - strtotime($startTime);
-    $avgDifficulty = getDifficulty($workoutId);
-
-    $height = $duration * $avgDifficulty;
-
-    $day = date("Y-m-d", strtotime($startTime));
     $workoutData[$day][] = [
-      'time' => $startTime,
-      'duration' => $duration,
-      'difficulty' => $avgDifficulty,
-      'height' => $height, 
-      'workoutId' => $workoutId, 
-      'workoutName' => getWorkoutName($workoutId),  // Assuming you have a function to get the workout name
-      'workoutLogURL' => "workout_log.php?log_id={$logRow['id']}"  // Assuming the URL structure
+        'time' => $row['start_time'],
+        'duration' => $duration,
+        'difficulty' => $row['difficulty'],
+        'height' => $height,
+        'workoutId' => $row['workout_id'],
+        'workoutName' => $row['workout_name'],
+        'workoutLogURL' => "workout_log.php?log_id={$row['id']}"
     ];
 }
 
-// Sort the array by day
 ksort($workoutData);
-
-// Convert PHP array to JavaScript object
 $workoutDataJson = json_encode($workoutData);
-
-// Function to get the workout name
-function getWorkoutName($workoutId) {
-    global $conn;
-    $query = "SELECT name FROM workouts WHERE id = $workoutId";
-    $result = query($conn, $query);
-    $row = mysqli_fetch_assoc($result);
-    $name = $row['name'];
-    return $name;
-}
-
-function getDifficulty($workoutId) {
-    global $conn;
-    $query = "SELECT exercise_id FROM workout_sequences WHERE workout_id = $workoutId";
-    $result = query($conn, $query);
-    $row = mysqli_fetch_assoc($result);
-    $exerciseId = $row['exercise_id'];
-
-    $query = "SELECT difficulty FROM exercises WHERE id = $exerciseId";
-    $result = query($conn, $query);
-    $row = mysqli_fetch_assoc($result);
-    $difficulty = $row['difficulty'];
-
-    return $difficulty;
-}
 ?>
+
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
