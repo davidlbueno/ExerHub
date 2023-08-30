@@ -208,7 +208,7 @@ var myChart = new Chart(ctx, {
       },
       y: {
         stacked: true,
-        display: false
+        display: true
       }
     }
   }
