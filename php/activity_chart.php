@@ -1,11 +1,11 @@
 <?php
 // Combine queries to fetch all required data in one go
-$query = "SELECT wl.id, wl.start_time, wl.end_time, wl.workout_id, w.name as workout_name, ROUND(AVG(e.difficulty)) as avg_difficulty
+$query = "SELECT wl.id, wl.start_time, wl.end_time, wl.workout_id, w.name as workout_name, ROUND(AVG(e.difficulty)) as avg_difficulty, GROUP_CONCAT(e.type) as exercise_types
           FROM workout_logs wl
           JOIN workouts w ON wl.workout_id = w.id
           JOIN workout_sequences ws ON wl.workout_id = ws.workout_id
           JOIN exercises e ON ws.exercise_id = e.id
-          WHERE wl.user_id = $userId
+          WHERE wl.user_id = $userId AND e.type NOT IN ('Rest', 'Warmup')
           GROUP BY wl.id
           ORDER BY wl.start_time ASC";
 
@@ -18,6 +18,14 @@ while ($row = mysqli_fetch_assoc($result)) {
   $duration = strtotime($row['end_time']) - strtotime($row['start_time']);
   $intensity = $duration * $row['avg_difficulty'];
 
+  // Determine workout_type based on exercise_types
+  $exercise_types = explode(",", $row['exercise_types']);
+  $unique_types = array_unique($exercise_types);
+  $workout_type = "Mixed";
+  if (count($unique_types) === 1) {
+      $workout_type = $unique_types[0];
+  }
+
   $workoutData[$day][] = [
       'time' => $row['start_time'],
       'duration' => $duration,
@@ -25,7 +33,8 @@ while ($row = mysqli_fetch_assoc($result)) {
       'intensity' => $intensity,
       'workoutId' => $row['workout_id'],
       'workoutName' => $row['workout_name'],
-      'workoutLogURL' => "workout_log.php?log_id={$row['id']}"
+      'workoutLogURL' => "workout_log.php?log_id={$row['id']}",
+      'workout_type' => $workout_type
   ];
 }
 
