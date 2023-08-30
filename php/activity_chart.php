@@ -16,17 +16,17 @@ $workoutData = [];
 while ($row = mysqli_fetch_assoc($result)) {
   $day = date("Y-m-d", strtotime($row['start_time']));
   $duration = strtotime($row['end_time']) - strtotime($row['start_time']);
-  $height = $duration * $row['avg_difficulty'];
+  $intensity = $duration * $row['avg_difficulty'];  // Renamed variable from $height to $intensity
 
-    $workoutData[$day][] = [
-        'time' => $row['start_time'],
-        'duration' => $duration,
-        'difficulty' => $row['avg_difficulty'],
-        'height' => $height,
-        'workoutId' => $row['workout_id'],
-        'workoutName' => $row['workout_name'],
-        'workoutLogURL' => "workout_log.php?log_id={$row['id']}"
-    ];
+  $workoutData[$day][] = [
+      'time' => $row['start_time'],
+      'duration' => $duration,
+      'difficulty' => $row['avg_difficulty'],
+      'intensity' => $intensity,  // Renamed key from 'height' to 'intensity'
+      'workoutId' => $row['workout_id'],
+      'workoutName' => $row['workout_name'],
+      'workoutLogURL' => "workout_log.php?log_id={$row['id']}"
+  ];
 }
 
 ksort($workoutData);
@@ -61,42 +61,42 @@ $workoutDataJson = json_encode($workoutData);
   // write wokroutData to screen
   document.write(JSON.stringify(workoutData));
 
-// Find the earliest and latest dates
-var earliestDate = new Date(labels[0]);
-var latestDate = new Date(labels[labels.length - 1]);
+  // Find the earliest and latest dates
+  var earliestDate = new Date(labels[0]);
+  var latestDate = new Date(labels[labels.length - 1]);
 
-// Generate an array of all dates between earliest and latest
-var allDates = [];
-for (var d = new Date(earliestDate); d <= latestDate; d.setDate(d.getDate() + 1)) {
-    allDates.push(new Date(d).toISOString().split('T')[0]);
-}
+  // Generate an array of all dates between earliest and latest
+  var allDates = [];
+  for (var d = new Date(earliestDate); d <= latestDate; d.setDate(d.getDate() + 1)) {
+      allDates.push(new Date(d).toISOString().split('T')[0]);
+  }
 
-// Initialize data arrays
-var workoutHeights = [];
+  // Initialize data arrays
+  var workoutIntensities = [];  // Renamed from workoutHeights to workoutIntensities
 
-// Populate data arrays
-for (var i = 0; i < allDates.length; i++) {
-    var date = allDates[i];
-    if (workoutData[date]) {
-        var workouts = workoutData[date];
-        var totalHeight = 0;
-        for (var j = 0; j < workouts.length; j++) {
-            totalHeight += workouts[j].height;
-        }
-        workoutHeights.push(totalHeight);
-    } else {
-        workoutHeights.push(0);
-    }
-}
+  // Populate data arrays
+  for (var i = 0; i < allDates.length; i++) {
+      var date = allDates[i];
+      if (workoutData[date]) {
+          var workouts = workoutData[date];
+          var totalIntensity = 0;  // Renamed from totalHeight to totalIntensity
+          for (var j = 0; j < workouts.length; j++) {
+              totalIntensity += workouts[j].intensity;  // Renamed from workouts[j].height to workouts[j].intensity
+          }
+          workoutIntensities.push(totalIntensity);  // Renamed from workoutHeights to workoutIntensities
+      } else {
+          workoutIntensities.push(0);  // Renamed from workoutHeights to workoutIntensities
+      }
+  }
 
 // Limit to last 14 days initially
 var initialDates = allDates.slice(-14);
-var initialHeights = workoutHeights.slice(-14);
+var initialIntensities = workoutIntensities.slice(-14);  // Renamed from initialHeights to initialIntensities
 
 // Create the datasets array
 var datasets = [
   {
-    data: initialHeights,
+    data: initialIntensities,
     backgroundColor: 'rgba(75, 192, 192, 0.2)',
     xAxisID: 'x'  // Specify which x-axis to use
   }
@@ -220,7 +220,7 @@ var currentIndex = allDates.length - 14;
 // Function to update the chart
 function updateChart(startIndex, endIndex) {
     myChart.data.labels = allDates.slice(startIndex, endIndex);
-    myChart.data.datasets[0].data = workoutHeights.slice(startIndex, endIndex);
+    myChart.data.datasets[0].data = workoutIntensities.slice(startIndex, endIndex);  // Renamed from workoutHeights to workoutIntensities
     myChart.update();
 }
 
