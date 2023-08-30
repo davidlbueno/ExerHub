@@ -1,11 +1,12 @@
 <?php
 // Combine queries to fetch all required data in one go
-$query = "SELECT wl.id, wl.start_time, wl.end_time, wl.workout_id, w.name as workout_name, e.difficulty
+$query = "SELECT wl.id, wl.start_time, wl.end_time, wl.workout_id, w.name as workout_name, ROUND(AVG(e.difficulty)) as avg_difficulty
           FROM workout_logs wl
           JOIN workouts w ON wl.workout_id = w.id
           JOIN workout_sequences ws ON wl.workout_id = ws.workout_id
           JOIN exercises e ON ws.exercise_id = e.id
           WHERE wl.user_id = $userId
+          GROUP BY wl.id
           ORDER BY wl.start_time ASC";
 
 $result = query($conn, $query);
@@ -13,14 +14,14 @@ $result = query($conn, $query);
 $workoutData = [];
 
 while ($row = mysqli_fetch_assoc($result)) {
-    $day = date("Y-m-d", strtotime($row['start_time']));
-    $duration = strtotime($row['end_time']) - strtotime($row['start_time']);
-    $height = $duration * $row['difficulty'];
+  $day = date("Y-m-d", strtotime($row['start_time']));
+  $duration = strtotime($row['end_time']) - strtotime($row['start_time']);
+  $height = $duration * $row['avg_difficulty'];
 
     $workoutData[$day][] = [
         'time' => $row['start_time'],
         'duration' => $duration,
-        'difficulty' => $row['difficulty'],
+        'difficulty' => $row['avg_difficulty'],
         'height' => $height,
         'workoutId' => $row['workout_id'],
         'workoutName' => $row['workout_name'],
@@ -57,6 +58,8 @@ $workoutDataJson = json_encode($workoutData);
 <script>
   var workoutData = <?php echo $workoutDataJson; ?>;
   var labels = Object.keys(workoutData);
+  // write wokroutData to screen
+  document.write(JSON.stringify(workoutData));
 
 // Find the earliest and latest dates
 var earliestDate = new Date(labels[0]);
@@ -119,10 +122,6 @@ var myChart = new Chart(ctx, {
           enabled: true,
           mode: 'x'
         },
-        zoom: {
-          enabled: true,
-          mode: 'x'
-        }
       },
       tooltip: {
         callbacks: {
