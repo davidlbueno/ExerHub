@@ -61,7 +61,6 @@ require_once 'php/header.php';
     </label>
   </div>
 </div>
-
   <div class="row">
     <div class="col s12">
       <button id="add-type-btn" class="btn">Add Item</button>
