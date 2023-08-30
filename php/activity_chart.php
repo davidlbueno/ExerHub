@@ -16,13 +16,13 @@ $workoutData = [];
 while ($row = mysqli_fetch_assoc($result)) {
   $day = date("Y-m-d", strtotime($row['start_time']));
   $duration = strtotime($row['end_time']) - strtotime($row['start_time']);
-  $intensity = $duration * $row['avg_difficulty'];  // Renamed variable from $height to $intensity
+  $intensity = $duration * $row['avg_difficulty'];
 
   $workoutData[$day][] = [
       'time' => $row['start_time'],
       'duration' => $duration,
       'difficulty' => $row['avg_difficulty'],
-      'intensity' => $intensity,  // Renamed key from 'height' to 'intensity'
+      'intensity' => $intensity,
       'workoutId' => $row['workout_id'],
       'workoutName' => $row['workout_name'],
       'workoutLogURL' => "workout_log.php?log_id={$row['id']}"
@@ -72,26 +72,26 @@ $workoutDataJson = json_encode($workoutData);
   }
 
   // Initialize data arrays
-  var workoutIntensities = [];  // Renamed from workoutHeights to workoutIntensities
+  var workoutIntensities = [];
 
   // Populate data arrays
   for (var i = 0; i < allDates.length; i++) {
       var date = allDates[i];
       if (workoutData[date]) {
           var workouts = workoutData[date];
-          var totalIntensity = 0;  // Renamed from totalHeight to totalIntensity
+          var totalIntensity = 0;
           for (var j = 0; j < workouts.length; j++) {
-              totalIntensity += workouts[j].intensity;  // Renamed from workouts[j].height to workouts[j].intensity
+              totalIntensity += workouts[j].intensity
           }
-          workoutIntensities.push(totalIntensity);  // Renamed from workoutHeights to workoutIntensities
+          workoutIntensities.push(totalIntensity);
       } else {
-          workoutIntensities.push(0);  // Renamed from workoutHeights to workoutIntensities
+          workoutIntensities.push(0);
       }
   }
 
 // Limit to last 14 days initially
 var initialDates = allDates.slice(-14);
-var initialIntensities = workoutIntensities.slice(-14);  // Renamed from initialHeights to initialIntensities
+var initialIntensities = workoutIntensities.slice(-14);
 
 // Create the datasets array
 var datasets = [
