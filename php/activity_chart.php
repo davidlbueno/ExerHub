@@ -22,7 +22,7 @@ while ($logRow = mysqli_fetch_assoc($logsResult)) {
       'height' => $height, 
       'workoutId' => $workoutId, 
       'workoutName' => getWorkoutName($workoutId),  // Assuming you have a function to get the workout name
-      'workoutLogURL' => "workout_log.php?id={$logRow['id']}"  // Assuming the URL structure
+      'workoutLogURL' => "workout_log.php?log_id={$logRow['id']}"  // Assuming the URL structure
     ];
 }
 
@@ -79,13 +79,6 @@ function getDifficulty($workoutId) {
   <button id="prevButton" type="button" class="btn btn-default">Previous</button>
   <button id="nextButton" type="button" class="btn btn-default">Next</button>
 </div>
-
-<!-- echo all retrieved workout data -->
-<?php
-  echo "<pre>";
-  print_r($workoutDataJson);
-  echo "</pre>";
-?>
 
 <script>
   var workoutData = <?php echo $workoutDataJson; ?>;
@@ -201,11 +194,19 @@ var myChart = new Chart(ctx, {
       }
     },
     // when a user clicks on a bar, open the workout log url
-    onClick: function(e) {
-      var element = myChart.getElementAtEvent(e);
-      if (element.length > 0) {
-        var workout = workoutData[element[0].label][0];
-        window.open(workout.workoutLogURL);
+    onClick: function(evt) {
+      var activePoints = myChart.getElementsAtEventForMode(evt, 'nearest', { intersect: true }, true);
+      var firstPoint = activePoints[0];
+      if (firstPoint) {
+        var label = myChart.data.labels[firstPoint.index];
+        var dateLabel = new Date(label).toISOString().split('T')[0];
+        var workoutDay = workoutData[dateLabel];
+        if (workoutDay && workoutDay.length > 0) {
+          var firstWorkout = workoutDay[0];
+          if (firstWorkout && firstWorkout.workoutLogURL) {
+            window.location.href = firstWorkout.workoutLogURL;
+          }
+        }
       }
     },  
     scales: {

@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Create Workout";
-include 'php/session.php';
+include_once 'php/session.php';
 require_once 'php/db_connect.php';
 require_once 'php/db_query.php';
 if (!isset($_SESSION['user_id'])) {
