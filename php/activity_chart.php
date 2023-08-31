@@ -151,17 +151,24 @@ var myChart = new Chart(ctx, {
         },
       },
       // show the workout name, 'time' time from the record (12 hr format 'HH:MM:DD AM'), duration, and difficulty on hover
-        tooltip: {
-            callbacks: {
-            label: function(context) {
-                var workout = context.dataset.label;
-                var time = context.dataset.time;
-                var duration = context.dataset.duration;
-                var difficulty = context.dataset.difficulty;
-                return workout + '\n' + time + '\n' + duration + '\n' + difficulty;
-            }
-            }
+      tooltip: {
+    callbacks: {
+        title: function(context) {
+            var firstPoint = context[0];
+            var dataset = firstPoint.dataset;
+            return dataset.label; // This will set the workoutName as the title
+        },
+        label: function(context) {
+            var time = new Date(context.dataset.time).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+            var duration = new Date(context.dataset.duration * 1000).toISOString().substr(11, 8);
+            var difficulty = context.dataset.difficulty;
+
+            return `Time: ${time}\nDuration: ${duration}\nDifficulty: ${difficulty}`;
         }
+    }
+}
+
+
     },
     onClick: function(evt) {
       var activePoints = myChart.getElementsAtEventForMode(evt, 'nearest', { intersect: true }, true);
