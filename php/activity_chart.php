@@ -270,6 +270,9 @@ hammer.on('panend', function(e) {
     currentIndex = allDates.length - numDays;
   }
   
+  // Update the scrollbar
+  scrollbar.value = currentIndex;  // <-- Add this line
+  
   // Update the chart
   updateChart(currentIndex, currentIndex + numDays);
 });
