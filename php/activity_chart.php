@@ -181,7 +181,14 @@ var myChart = new Chart(ctx, {
 
 var currentIndex = allDates.length - 14;
 
-function updateChart(startIndex, endIndex) {
+// Function to calculate the number of dates to display based on window width
+function calculateNumDates() {
+  var windowWidth = window.innerWidth;
+  return Math.floor(windowWidth / 50); // Adjust the divisor as needed
+}
+
+// Update the updateChart function to take numDays as an argument
+function updateChart(startIndex, endIndex, numDays) {
     var datesToDisplay = allDates.slice(startIndex, endIndex);
     var datasets = [];
     for (var i = 0; i < datesToDisplay.length; i++) {
@@ -212,6 +219,18 @@ function updateChart(startIndex, endIndex) {
     myChart.data.datasets = datasets;
     myChart.update();
 }
+
+// Initialize the chart with the calculated number of dates
+var numDays = calculateNumDates();
+var startIndex = allDates.length - numDays;
+updateChart(startIndex, startIndex + numDays, numDays);
+
+// Update the chart when the window is resized
+window.addEventListener('resize', function() {
+  numDays = calculateNumDates();
+  startIndex = allDates.length - numDays;
+  updateChart(startIndex, startIndex + numDays, numDays);
+});
 
 document.getElementById('prevButton').addEventListener('click', function() {
     if (currentIndex > 0) {
