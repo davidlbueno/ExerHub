@@ -299,6 +299,7 @@ function updateChart(startIndex, endIndex, numDays) {
         }
     }
     myChart.data.datasets = datasets;
+    myChart.options.scales.x1.labels = datesToDisplay.map(date => new Date(date + 'T00:00:00Z').toLocaleDateString('en-US', { weekday: 'short', timeZone: 'UTC' }));
     myChart.update();
 }
 
