@@ -46,49 +46,61 @@ $workoutDataJson = json_encode($workoutData);
     width: 90%; /* Full width */
     height: 200px; /* Specified height */
     margin-top: 5px;
+    margin-bottom: 0px;
     margin-left: 5%;
     position: relative; /* If you want to position text or anything else inside */
   }
 
-  /* Style the scrollbar container */
+/* Style the scrollbar container */
 input[type="range"] {
   -webkit-appearance: none; /* Override default appearance */
   width: 100%; /* Full-width */
-  height: 1px; /* Specified height */
+  height: 10px; /* Specified height */
   background: #333; /* Dark background */
   outline: none; /* Remove outline */
-  opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
-  transition: opacity .2s; /* Transition effects */
+  border: none; /* Remove border */
+  border-radius: 0; /* No rounded corners */
+  opacity: 1; /* No transparency */
   cursor: pointer; /* Cursor on hover */
-}
-
-/* Mouse-over effects */
-input[type="range"]:hover {
-  opacity: 1;
 }
 
 /* Style the scrollbar thumb */
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none; /* Override default appearance */
-  width: 20px; /* Set a specific thumb width */
+  width: 15%; /* Set a specific thumb width */
   height: 10px; /* Specified height */
-  background: #666; /* Dark thumb color */
+  background: #666; /* Grey thumb color */
+  border: none; /* Remove border */
+  border-radius: 0; /* No rounded corners */
   cursor: pointer; /* Cursor on hover */
 }
 
 input[type="range"]::-moz-range-thumb {
-  width: 20px; /* Set a specific thumb width */
+  width: 15%; /* Set a specific thumb width */
   height: 10px; /* Specified height */
-  background: #666; /* Dark thumb color */
+  background: #666; /* Grey thumb color */
+  border: none; /* Remove border */
+  border-radius: 0; /* No rounded corners */
   cursor: pointer; /* Cursor on hover */
 }
+
+/* Remove the track */
+input[type="range"]::-webkit-slider-runnable-track {
+  background: none;
+  border: none;
+}
+
+input[type="range"]::-moz-range-track {
+  background: none;
+  border: none;
+}
+
 
 </style>
 
 <div class="chart-container">
   <canvas id="myChart"></canvas>
   <input type="range" id="chartScrollbar" min="0" max="100" value="100">
-
 </div>
 
 <script>
