@@ -336,23 +336,6 @@ scrollbar.addEventListener('input', function() {
   updateChart(currentIndex, currentIndex + numDays);
 });
 
-// Update the scrollbar when the "Previous" and "Next" buttons are clicked
-document.getElementById('prevButton').addEventListener('click', function() {
-  if (currentIndex > 0) {
-    currentIndex -= 1;
-    scrollbar.value = currentIndex;
-    updateChart(currentIndex, currentIndex + numDays);
-  }
-});
-
-document.getElementById('nextButton').addEventListener('click', function() {
-  if (currentIndex < allDates.length - numDays) {
-    currentIndex += 1;
-    scrollbar.value = currentIndex;
-    updateChart(currentIndex, currentIndex + numDays);
-  }
-});
-
 function setChartHeight() {
   var windowHeight = window.innerHeight;
   var chartHeight = windowHeight * 0.8;
