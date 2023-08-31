@@ -228,6 +228,11 @@ function updateChart(startIndex, endIndex) {
                     label: workout.workoutName,
                     data: [{ x: date, y: workout.intensity }],
                     backgroundColor: getColor(workout.workout_type),
+                    workoutType: workout.workout_type,
+                    time: workout.time,
+                    duration: workout.duration,
+                    difficulty: workout.difficulty,
+                    workoutLogURL: workout.workoutLogURL
                 });
             }
         }
