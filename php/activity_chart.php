@@ -37,6 +37,8 @@ $workoutDataJson = json_encode($workoutData);
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+
 
 <style>
   /* Responsive chart container */
@@ -51,8 +53,6 @@ $workoutDataJson = json_encode($workoutData);
 
 <div class="chart-container">
   <canvas id="myChart"></canvas>
-  <button id="prevButton" type="button" class="btn btn-default">Previous</button>
-  <button id="nextButton" type="button" class="btn btn-default">Next</button>
 </div>
 
 <script>
@@ -61,6 +61,7 @@ var labels = Object.keys(workoutData);
 var earliestDate = new Date(labels[0]);
 var latestDate = new Date(labels[labels.length - 1]);
 var allDates = [];
+
 for (var d = new Date(earliestDate); d <= latestDate; d.setDate(d.getDate() + 1)) {
     allDates.push(new Date(d).toISOString().split('T')[0]);
 }
@@ -193,12 +194,38 @@ var myChart = new Chart(ctx, {
   },
   y: {
     stacked: true,
-    display: true
+    display: false
   }
 }
 }});
 
 var currentIndex = allDates.length - 14;
+
+// Initialize Hammer.js
+var hammer = new Hammer(document.getElementById('myChart'));
+
+// Handle pan events
+hammer.on('panend', function(e) {
+  // Determine the direction of the pan (left or right)
+  var direction = e.direction;
+  
+  // Update the current index based on the direction and distance
+  if (direction === Hammer.DIRECTION_LEFT) {
+    currentIndex += Math.ceil(e.distance / 50); // Adjust the divisor as needed
+  } else if (direction === Hammer.DIRECTION_RIGHT) {
+    currentIndex -= Math.ceil(e.distance / 50); // Adjust the divisor as needed
+  }
+
+  // Boundary checks
+  if (currentIndex < 0) {
+    currentIndex = 0;
+  } else if (currentIndex > allDates.length - numDays) {
+    currentIndex = allDates.length - numDays;
+  }
+  
+  // Update the chart
+  updateChart(currentIndex, currentIndex + numDays);
+});
 
 // Function to calculate the number of dates to display based on window width
 function calculateNumDates() {
@@ -249,20 +276,6 @@ window.addEventListener('resize', function() {
   numDays = calculateNumDates();
   startIndex = allDates.length - numDays;
   updateChart(startIndex, startIndex + numDays, numDays);
-});
-
-document.getElementById('prevButton').addEventListener('click', function() {
-    if (currentIndex > 0) {
-        currentIndex -= 1;
-        updateChart(currentIndex, currentIndex + 14);
-    }
-});
-
-document.getElementById('nextButton').addEventListener('click', function() {
-    if (currentIndex < allDates.length - 14) {
-        currentIndex += 1;
-        updateChart(currentIndex, currentIndex + 14);
-    }
 });
 
 function setChartHeight() {
