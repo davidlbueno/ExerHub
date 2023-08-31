@@ -177,7 +177,7 @@ var myChart = new Chart(ctx, {
   x1: {
     type: 'category',
     position: 'top',
-    labels: datesToDisplay.map(date => new Date(date).toLocaleDateString('en-US', { weekday: 'short' })),
+    labels: datesToDisplay.map(date => new Date(date + 'T00:00:00Z').toLocaleDateString('en-US', { weekday: 'short', timeZone: 'UTC' })),
   },
   y: {
     stacked: true,
