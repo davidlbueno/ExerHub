@@ -58,12 +58,9 @@ $workoutDataJson = json_encode($workoutData);
 
 <script>
 var workoutData = <?php echo $workoutDataJson; ?>;
-document.write(JSON.stringify(workoutData));
-
 var labels = Object.keys(workoutData);
 var earliestDate = new Date(labels[0]);
 var latestDate = new Date(labels[labels.length - 1]);
-
 var allDates = [];
 for (var d = new Date(earliestDate); d <= latestDate; d.setDate(d.getDate() + 1)) {
     allDates.push(new Date(d).toISOString().split('T')[0]);
@@ -89,7 +86,6 @@ if (startIndex < 0) {
     startIndex = 0;
 }
 var datesToDisplay = allDates.slice(startIndex);
-console.log(datesToDisplay);
 
 for (var i = 0; i < datesToDisplay.length; i++) {
     var date = datesToDisplay[i];
