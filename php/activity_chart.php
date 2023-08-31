@@ -46,7 +46,6 @@ $workoutDataJson = json_encode($workoutData);
     width: 90%; /* Full width */
     height: 200px; /* Specified height */
     margin-top: 5px;
-    margin-bottom: 0px;
     margin-left: 5%;
     position: relative; /* If you want to position text or anything else inside */
   }
