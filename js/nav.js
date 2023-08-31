@@ -15,7 +15,7 @@ if (window.location.pathname.includes('create_account.php')) {
 if (window.location.pathname.includes('login.php')) {
   topNavItems = topNavItems.filter(item => item.title !== 'Log In');
 }
-if (window.location.pathname.includes('index.html')) {
+if (window.location.pathname.includes('index.html') || window.location.pathname.includes('index.php')) {
   topNavItems = topNavItems.filter(item => item.title !== 'arrow_back');
 }
 // Function to fetch session variables from the server
