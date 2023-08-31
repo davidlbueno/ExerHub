@@ -93,6 +93,11 @@ input[type="range"]::-moz-range-track {
   border: none;
 }
 
+.chart-container canvas {
+  width: 100% !important;
+  height: auto !important;
+}
+
 </style>
 
 <div class="chart-container">
@@ -320,12 +325,12 @@ var numDays = calculateNumDates();
 var startIndex = allDates.length - numDays;
 updateChart(startIndex, startIndex + numDays, numDays);
 
-// Update the chart when the window is resized
-window.addEventListener('resize', function() {
-  numDays = calculateNumDates();
-  startIndex = allDates.length - numDays;
-  updateChart(startIndex, startIndex + numDays, numDays);
-});
+//// Update the chart when the window is resized
+//window.addEventListener('resize', function() {
+//  numDays = calculateNumDates();
+//  startIndex = allDates.length - numDays;
+//  updateChart(startIndex, startIndex + numDays, numDays);
+//});
 
 // Initialize the scrollbar
 var scrollbar = document.getElementById('chartScrollbar');
@@ -337,11 +342,11 @@ scrollbar.addEventListener('input', function() {
   updateChart(currentIndex, currentIndex + numDays);
 });
 
-function setChartHeight() {
-  var windowHeight = window.innerHeight;
-  var chartHeight = windowHeight * 0.8;
-  document.getElementById('myChart').height = chartHeight;
-}
+//function setChartHeight() {
+//  var windowHeight = window.innerHeight;
+//  var chartHeight = windowHeight * 0.8;
+//  document.getElementById('myChart').height = chartHeight;
+//}
 
 setChartHeight();
 window.addEventListener('resize', setChartHeight);
