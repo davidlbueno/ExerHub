@@ -122,7 +122,13 @@ topNavItems.forEach((item) => {
   topNav.classList.remove('hide');
 }
 document.addEventListener('DOMContentLoaded', function () {
-  fetchSessionVars().then(updateNavigation);
+  fetchSessionVars().then(sessionVars => {
+    updateNavigation(sessionVars);
+    // Redirect to index.php if the user is logged in and on index.html
+    if (sessionVars.userId && window.location.pathname.includes('index.html')) {
+      window.location.href = 'index.php';
+    }
+  });
   // Get the current page title and URL
   const pageTitle = document.title;
   const pageURL = window.location.pathname.split('/').pop();
