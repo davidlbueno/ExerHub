@@ -42,8 +42,7 @@ $workoutDataJson = json_encode($workoutData);
   /* Responsive chart container */
   .chart-container {
     width: 90%; /* Full width */
-    min-height: 200px; /* Specified height */
-    max-height: 300px; /* Maximum height */
+    height: 200px; /* Specified height */
     margin-top: 5px;
     margin-left: 5%;
     position: relative; /* If you want to position text or anything else inside */
