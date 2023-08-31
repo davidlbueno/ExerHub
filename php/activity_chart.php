@@ -1,5 +1,4 @@
 <?php
-// Combine queries to fetch all required data in one go
 $query = "SELECT wl.id, wl.start_time, wl.end_time, wl.workout_id, w.name as workout_name, ROUND(AVG(e.difficulty)) as avg_difficulty, GROUP_CONCAT(e.type) as exercise_types
           FROM workout_logs wl
           JOIN workouts w ON wl.workout_id = w.id
@@ -10,32 +9,25 @@ $query = "SELECT wl.id, wl.start_time, wl.end_time, wl.workout_id, w.name as wor
           ORDER BY wl.start_time ASC";
 
 $result = query($conn, $query);
-
 $workoutData = [];
 
 while ($row = mysqli_fetch_assoc($result)) {
-  $day = date("Y-m-d", strtotime($row['start_time']));
-  $duration = strtotime($row['end_time']) - strtotime($row['start_time']);
-  $intensity = $duration * $row['avg_difficulty'];
-
-  // Determine workout_type based on exercise_types
-  $exercise_types = explode(",", $row['exercise_types']);
-  $unique_types = array_unique($exercise_types);
-  $workout_type = "Mixed";
-  if (count($unique_types) === 1) {
-      $workout_type = $unique_types[0];
-  }
-
-  $workoutData[$day][] = [
-      'time' => $row['start_time'],
-      'duration' => $duration,
-      'difficulty' => $row['avg_difficulty'],
-      'intensity' => $intensity,
-      'workoutId' => $row['workout_id'],
-      'workoutName' => $row['workout_name'],
-      'workoutLogURL' => "workout_log.php?log_id={$row['id']}",
-      'workout_type' => $workout_type
-  ];
+    $day = date("Y-m-d", strtotime($row['start_time']));
+    $duration = strtotime($row['end_time']) - strtotime($row['start_time']);
+    $intensity = $duration * $row['avg_difficulty'];
+    $exercise_types = explode(",", $row['exercise_types']);
+    $unique_types = array_unique($exercise_types);
+    $workout_type = count($unique_types) === 1 ? $unique_types[0] : "Mixed";
+    $workoutData[$day][] = [
+        'time' => $row['start_time'],
+        'duration' => $duration,
+        'difficulty' => $row['avg_difficulty'],
+        'intensity' => $intensity,
+        'workoutId' => $row['workout_id'],
+        'workoutName' => $row['workout_name'],
+        'workoutLogURL' => "workout_log.php?log_id={$row['id']}",
+        'workout_type' => $workout_type
+    ];
 }
 
 ksort($workoutData);
@@ -66,22 +58,17 @@ $workoutDataJson = json_encode($workoutData);
 
 <script>
 var workoutData = <?php echo $workoutDataJson; ?>;
-// write workoutData to the screen
 document.write(JSON.stringify(workoutData));
 
 var labels = Object.keys(workoutData);
-
-// Find the earliest and latest dates
 var earliestDate = new Date(labels[0]);
 var latestDate = new Date(labels[labels.length - 1]);
 
-// Generate an array of all dates between earliest and latest
 var allDates = [];
 for (var d = new Date(earliestDate); d <= latestDate; d.setDate(d.getDate() + 1)) {
     allDates.push(new Date(d).toISOString().split('T')[0]);
 }
 
-// Function to get color based on workout_type
 function getColor(workout_type) {
   switch (workout_type) {
     case 'Push':
@@ -95,10 +82,9 @@ function getColor(workout_type) {
   }
 }
 
-// Create the datasets dynamically
 var datasets = [];
-var numDays = 14; // Number of days to display
-var startIndex = allDates.length - numDays; // Index of the first date to display
+var numDays = 14;
+var startIndex = allDates.length - numDays;
 if (startIndex < 0) {
     startIndex = 0;
 }
@@ -107,8 +93,8 @@ console.log(datesToDisplay);
 
 for (var i = 0; i < datesToDisplay.length; i++) {
     var date = datesToDisplay[i];
-    var workouts = workoutData[date] || []; // If there is no data for the day, use an empty array
-    if (workouts.length === 0) { // If there is no data for the day, add an empty dataset
+    var workouts = workoutData[date] || [];
+    if (workouts.length === 0) {
         datasets.push({
             label: '',
             data: [{ x: date, y: null }],
@@ -131,7 +117,6 @@ for (var i = 0; i < datesToDisplay.length; i++) {
     }
 }
 
-// Create the chart
 var ctx = document.getElementById("myChart");
 var myChart = new Chart(ctx, {
   type: 'bar',
@@ -156,7 +141,7 @@ var myChart = new Chart(ctx, {
             title: function(context) {
                 var firstPoint = context[0];
                 var dataset = firstPoint.dataset;
-                return dataset.label; // This will set the workoutName as the title
+                return dataset.label;
             },
             label: function(context) {
                 var type = context.dataset.workoutType;
@@ -194,9 +179,9 @@ var myChart = new Chart(ctx, {
     stacked: true
   },
   x1: {
-    type: 'category',  // Use a category axis
+    type: 'category',
     position: 'top',
-    labels: datesToDisplay.map(date => new Date(date).toLocaleDateString('en-US', { weekday: 'short' })),  // Convert each date to its short weekday name
+    labels: datesToDisplay.map(date => new Date(date).toLocaleDateString('en-US', { weekday: 'short' })),
   },
   y: {
     stacked: true,
@@ -205,17 +190,15 @@ var myChart = new Chart(ctx, {
 }
 }});
 
-// Initialize variables to keep track of the current date range
 var currentIndex = allDates.length - 14;
 
-// Function to update the chart
 function updateChart(startIndex, endIndex) {
     var datesToDisplay = allDates.slice(startIndex, endIndex);
     var datasets = [];
     for (var i = 0; i < datesToDisplay.length; i++) {
         var date = datesToDisplay[i];
-        var workouts = workoutData[date] || []; // If there is no data for the day, use an empty array
-        if (workouts.length === 0) { // If there is no data for the day, add an empty dataset
+        var workouts = workoutData[date] || [];
+        if (workouts.length === 0) {
             datasets.push({
                 label: '',
                 data: [{ x: date, y: null }],
@@ -241,7 +224,6 @@ function updateChart(startIndex, endIndex) {
     myChart.update();
 }
 
-// Add event listeners to the buttons so they update the chart when clicked
 document.getElementById('prevButton').addEventListener('click', function() {
     if (currentIndex > 0) {
         currentIndex -= 1;
@@ -256,17 +238,12 @@ document.getElementById('nextButton').addEventListener('click', function() {
     }
 });
 
-// Function to set the chart height
 function setChartHeight() {
   var windowHeight = window.innerHeight;
   var chartHeight = windowHeight * 0.8;
   document.getElementById('myChart').height = chartHeight;
 }
 
-// Set the initial chart height
 setChartHeight();
-
-// Update the chart height when the window is resized
 window.addEventListener('resize', setChartHeight);
-
 </script>
