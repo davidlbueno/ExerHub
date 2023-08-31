@@ -103,6 +103,7 @@ if (startIndex < 0) {
     startIndex = 0;
 }
 var datesToDisplay = allDates.slice(startIndex);
+console.log(datesToDisplay);
 
 for (var i = 0; i < datesToDisplay.length; i++) {
     var date = datesToDisplay[i];
@@ -176,47 +177,59 @@ var myChart = new Chart(ctx, {
       }
     },
     scales: {
-      x: {
-        type: 'time',
-        position: 'bottom',
-        time: {
-          unit: 'day'
-        },
-        stacked: true
-      },
-      x1: {
-        type: 'time',
-        position: 'top',
-        time: {
-          unit: 'day',
-          displayFormats: {
-            day: 'ddd'
-          }
-        },
-        ticks: {
-          callback: function(value, index, values) {
-            return new Date(value).toLocaleDateString('en-US', { weekday: 'short' });
-          }
-        }
-      },
-      y: {
-        stacked: true,
-        display: true
-      }
-    }
+  x: {
+    type: 'time',
+    position: 'bottom',
+    time: {
+      unit: 'day'
+    },
+    stacked: true
+  },
+  x1: {
+    type: 'category',  // Use a category axis
+    position: 'top',
+    labels: datesToDisplay.map(date => new Date(date).toLocaleDateString('en-US', { weekday: 'short' })),  // Convert each date to its short weekday name
+  },
+  y: {
+    stacked: true,
+    display: true
   }
-});
+}
+
+}});
 
 // Initialize variables to keep track of the current date range
 var currentIndex = allDates.length - 14;
 
 // Function to update the chart
 function updateChart(startIndex, endIndex) {
-    myChart.data.datasets[0].data = workoutIntensities.slice(startIndex, endIndex);
+    var datesToDisplay = allDates.slice(startIndex, endIndex);
+    var datasets = [];
+    for (var i = 0; i < datesToDisplay.length; i++) {
+        var date = datesToDisplay[i];
+        var workouts = workoutData[date] || []; // If there is no data for the day, use an empty array
+        if (workouts.length === 0) { // If there is no data for the day, add an empty dataset
+            datasets.push({
+                label: '',
+                data: [{ x: date, y: null }],
+                backgroundColor: 'rgba(0, 0, 0, 0)'
+            });
+        } else {
+            for (var j = 0; j < workouts.length; j++) {
+                var workout = workouts[j];
+                datasets.push({
+                    label: workout.workoutName,
+                    data: [{ x: date, y: workout.intensity }],
+                    backgroundColor: getColor(workout.workout_type),
+                });
+            }
+        }
+    }
+    myChart.data.datasets = datasets;
     myChart.update();
 }
 
-// Add event listeners to the buttons
+// Add event listeners to the buttons so they update the chart when clicked
 document.getElementById('prevButton').addEventListener('click', function() {
     if (currentIndex > 0) {
         currentIndex -= 1;
@@ -225,8 +238,7 @@ document.getElementById('prevButton').addEventListener('click', function() {
 });
 
 document.getElementById('nextButton').addEventListener('click', function() {
-    var lastDateInWindow = new Date(allDates[currentIndex + 13]);
-    if (lastDateInWindow < latestDate) {
+    if (currentIndex < allDates.length - 14) {
         currentIndex += 1;
         updateChart(currentIndex, currentIndex + 14);
     }
