@@ -97,20 +97,32 @@ function getColor(workout_type) {
 
 // Create the datasets dynamically
 var datasets = [];
-for (var i = 0; i < allDates.length; i++) {
-  var date = allDates[i];
-  if (workoutData[date]) {
-    var workouts = workoutData[date];
-    for (var j = 0; j < workouts.length; j++) {
-      var workout = workouts[j];
-      datasets.push({
-        label: workout.workoutName,
-        data: [{ x: date, y: workout.intensity }],
-        backgroundColor: getColor(workout.workout_type),
-        workoutLogURL: workout.workoutLogURL  // Custom property for the URL
-      });
+var numDays = 14; // Number of days to display
+var startIndex = allDates.length - numDays; // Index of the first date to display
+if (startIndex < 0) {
+    startIndex = 0;
+}
+var datesToDisplay = allDates.slice(startIndex);
+
+for (var i = 0; i < datesToDisplay.length; i++) {
+    var date = datesToDisplay[i];
+    var workouts = workoutData[date] || []; // If there is no data for the day, use an empty array
+    if (workouts.length === 0) { // If there is no data for the day, add an empty dataset
+        datasets.push({
+            label: '',
+            data: [{ x: date, y: null }],
+            backgroundColor: 'rgba(0, 0, 0, 0)'
+        });
+    } else {
+        for (var j = 0; j < workouts.length; j++) {
+            var workout = workouts[j];
+            datasets.push({
+                label: workout.workoutName,
+                data: [{ x: date, y: workout.intensity }],
+                backgroundColor: getColor(workout.workout_type),
+            });
+        }
     }
-  }
 }
 
 // Create the chart
