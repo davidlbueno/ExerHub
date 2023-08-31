@@ -121,6 +121,7 @@ for (var i = 0; i < datesToDisplay.length; i++) {
                 label: workout.workoutName,
                 data: [{ x: date, y: workout.intensity }],
                 backgroundColor: getColor(workout.workout_type),
+                workoutType: workout.workout_type,
                 time: workout.time,
                 duration: workout.duration,
                 difficulty: workout.difficulty,
@@ -159,15 +160,20 @@ var myChart = new Chart(ctx, {
             return dataset.label; // This will set the workoutName as the title
         },
         label: function(context) {
+            var type = context.dataset.workoutType;
             var time = new Date(context.dataset.time).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
             var duration = new Date(context.dataset.duration * 1000).toISOString().substr(11, 8);
             var difficulty = context.dataset.difficulty;
 
-            return `Time: ${time}\nDuration: ${duration}\nDifficulty: ${difficulty}`;
+            return [
+                `Type: ${type}`,
+                `Time: ${time}`,
+                `Duration: ${duration}`,
+                `Difficulty: ${difficulty}`
+            ];
         }
     }
 }
-
 
     },
     onClick: function(evt) {
