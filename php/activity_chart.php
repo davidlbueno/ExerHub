@@ -39,7 +39,6 @@ $workoutDataJson = json_encode($workoutData);
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
 
-
 <style>
   /* Responsive chart container */
   .chart-container {
@@ -93,7 +92,6 @@ input[type="range"]::-moz-range-track {
   background: none;
   border: none;
 }
-
 
 </style>
 
