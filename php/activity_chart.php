@@ -146,7 +146,26 @@ var myChart = new Chart(ctx, {
                 ];
             }
         }
-    }
+    },
+    zoom: {
+        pan: {
+          enabled: true,
+          mode: 'x',
+          onPan: function() { console.log('Panning'); }
+        },
+        zoom: {
+          wheel: {
+            enabled: false,
+          },
+          drag: {
+            enabled: false,
+          },
+          pinch: {
+            enabled: false,
+          },
+          onZoom: function() { console.log('Zooming'); }
+        }
+      },
     },
     onClick: function(evt) {
       var activePoints = myChart.getElementsAtEventForMode(evt, 'nearest', { intersect: true }, true);
