@@ -126,12 +126,6 @@ var myChart = new Chart(ctx, {
       legend: {
         display: false
       },
-      zoom: {
-        pan: {
-          enabled: true,
-          mode: 'x'
-        },
-      },
       tooltip: {
         callbacks: {
             title: function(context) {
