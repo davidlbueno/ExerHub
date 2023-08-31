@@ -121,6 +121,10 @@ for (var i = 0; i < datesToDisplay.length; i++) {
                 label: workout.workoutName,
                 data: [{ x: date, y: workout.intensity }],
                 backgroundColor: getColor(workout.workout_type),
+                time: workout.time,
+                duration: workout.duration,
+                difficulty: workout.difficulty,
+                workoutLogURL: workout.workoutLogURL
             });
         }
     }
@@ -146,25 +150,18 @@ var myChart = new Chart(ctx, {
           mode: 'x'
         },
       },
-      tooltip: {
-        callbacks: {
-          label: function(tooltipItem, data) {
-            var dataset = myChart.data.datasets[tooltipItem.datasetIndex];
-            var workoutForDay = workoutData[tooltipItem.label];
-            if (workoutForDay && workoutForDay.length > 0) {
-              var workout = workoutForDay.find(w => w.workoutName === dataset.label);
-              if (workout) {
-                return [
-                  'Workout: ' + workout.workoutName,
-                  'Time: ' + new Date(workout.time).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
-                  'Type: ' + workout.workout_type
-                ];
-              }
+      // show the workout name, 'time' time from the record (12 hr format 'HH:MM:DD AM'), duration, and difficulty on hover
+        tooltip: {
+            callbacks: {
+            label: function(context) {
+                var workout = context.dataset.label;
+                var time = context.dataset.time;
+                var duration = context.dataset.duration;
+                var difficulty = context.dataset.difficulty;
+                return workout + '\n' + time + '\n' + duration + '\n' + difficulty;
             }
-            return '';
-          }
+            }
         }
-      }
     },
     onClick: function(evt) {
       var activePoints = myChart.getElementsAtEventForMode(evt, 'nearest', { intersect: true }, true);
@@ -195,7 +192,6 @@ var myChart = new Chart(ctx, {
     display: true
   }
 }
-
 }});
 
 // Initialize variables to keep track of the current date range
