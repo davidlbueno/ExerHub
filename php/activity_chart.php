@@ -65,58 +65,59 @@ $workoutDataJson = json_encode($workoutData);
 </div>
 
 <script>
-  var workoutData = <?php echo $workoutDataJson; ?>;
-  var labels = Object.keys(workoutData);
-  // write wokroutData to screen
-  document.write(JSON.stringify(workoutData));
+var workoutData = <?php echo $workoutDataJson; ?>;
+// write workoutData to the screen
+document.write(JSON.stringify(workoutData));
 
-  // Find the earliest and latest dates
-  var earliestDate = new Date(labels[0]);
-  var latestDate = new Date(labels[labels.length - 1]);
+var labels = Object.keys(workoutData);
 
-  // Generate an array of all dates between earliest and latest
-  var allDates = [];
-  for (var d = new Date(earliestDate); d <= latestDate; d.setDate(d.getDate() + 1)) {
-      allDates.push(new Date(d).toISOString().split('T')[0]);
+// Find the earliest and latest dates
+var earliestDate = new Date(labels[0]);
+var latestDate = new Date(labels[labels.length - 1]);
+
+// Generate an array of all dates between earliest and latest
+var allDates = [];
+for (var d = new Date(earliestDate); d <= latestDate; d.setDate(d.getDate() + 1)) {
+    allDates.push(new Date(d).toISOString().split('T')[0]);
+}
+
+// Function to get color based on workout_type
+function getColor(workout_type) {
+  switch (workout_type) {
+    case 'Push':
+      return 'rgba(28, 123, 255, 0.61)';
+    case 'Pull':
+      return 'rgba(235, 54, 54, 0.6)';
+    case 'Legs':
+      return 'rgba(220, 160, 8, 0.6)';
+    default:
+      return 'rgba(145, 75, 192, 0.6)';
   }
+}
 
-  // Initialize data arrays
-  var workoutIntensities = [];
-
-  // Populate data arrays
-  for (var i = 0; i < allDates.length; i++) {
-      var date = allDates[i];
-      if (workoutData[date]) {
-          var workouts = workoutData[date];
-          var totalIntensity = 0;
-          for (var j = 0; j < workouts.length; j++) {
-              totalIntensity += workouts[j].intensity
-          }
-          workoutIntensities.push(totalIntensity);
-      } else {
-          workoutIntensities.push(0);
-      }
+// Create the datasets dynamically
+var datasets = [];
+for (var i = 0; i < allDates.length; i++) {
+  var date = allDates[i];
+  if (workoutData[date]) {
+    var workouts = workoutData[date];
+    for (var j = 0; j < workouts.length; j++) {
+      var workout = workouts[j];
+      datasets.push({
+        label: workout.workoutName,
+        data: [{ x: date, y: workout.intensity }],
+        backgroundColor: getColor(workout.workout_type),
+        workoutLogURL: workout.workoutLogURL  // Custom property for the URL
+      });
+    }
   }
+}
 
-// Limit to last 14 days initially
-var initialDates = allDates.slice(-14);
-var initialIntensities = workoutIntensities.slice(-14);
-
-// Create the datasets array
-var datasets = [
-  {
-    data: initialIntensities,
-    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-    xAxisID: 'x'  // Specify which x-axis to use
-  }
-];
-
-  // Create the chart
+// Create the chart
 var ctx = document.getElementById("myChart");
 var myChart = new Chart(ctx, {
   type: 'bar',
   data: {
-    labels: initialDates,
     datasets: datasets
   },
   options: {
@@ -134,63 +135,34 @@ var myChart = new Chart(ctx, {
       },
       tooltip: {
         callbacks: {
-          title: function(tooltipItem) {
-            if (tooltipItem[0] && tooltipItem[0].label) {
-              var dateStr = tooltipItem[0].label.split(",")[0] + ", " + tooltipItem[0].label.split(",")[1].trim();
-              var dateLabel = new Date(dateStr);
-              if (isNaN(dateLabel.getTime())) {
-                console.error("Invalid date:", tooltipItem[0].label);
-                return "Invalid date";
+          label: function(tooltipItem, data) {
+            var dataset = myChart.data.datasets[tooltipItem.datasetIndex];
+            var workoutForDay = workoutData[tooltipItem.label];
+            if (workoutForDay && workoutForDay.length > 0) {
+              var workout = workoutForDay.find(w => w.workoutName === dataset.label);
+              if (workout) {
+                return [
+                  'Workout: ' + workout.workoutName,
+                  'Time: ' + new Date(workout.time).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+                  'Type: ' + workout.workout_type
+                ];
               }
-              dateLabel = dateLabel.toISOString().split('T')[0];
-              var workoutForDay = workoutData[dateLabel];
-              if (workoutForDay && workoutForDay.length > 0) {
-                return workoutForDay.map(function(workout) {
-                  return workout.workoutName + ' at ' + workout.time.split(' ')[1];
-                }).join(', ');
-              }
-              return dateLabel;
             }
-            return "No date available";
-          },
-          label: function(tooltipItem) {
-            if (tooltipItem[0] && tooltipItem[0].label) {
-              var dateStr = tooltipItem[0].label.split(",")[0] + ", " + tooltipItem[0].label.split(",")[1].trim();
-              var dateLabel = new Date(dateStr);
-              if (isNaN(dateLabel.getTime())) {
-                console.error("Invalid date:", tooltipItem[0].label);
-                return "Invalid date";
-              }
-              dateLabel = dateLabel.toISOString().split('T')[0];
-              var workoutForDay = workoutData[dateLabel];
-              if (workoutForDay && workoutForDay.length > 0) {
-                return workoutForDay.map(function(workout) {
-                  return 'Duration: ' + workout.duration + ' seconds';
-                }).join(', ');
-              }
-              return '';
-            }
-            return "No data available";
+            return '';
           }
         }
       }
     },
-    // when a user clicks on a bar, open the workout log url
     onClick: function(evt) {
       var activePoints = myChart.getElementsAtEventForMode(evt, 'nearest', { intersect: true }, true);
       var firstPoint = activePoints[0];
       if (firstPoint) {
-        var label = myChart.data.labels[firstPoint.index];
-        var dateLabel = new Date(label).toISOString().split('T')[0];
-        var workoutDay = workoutData[dateLabel];
-        if (workoutDay && workoutDay.length > 0) {
-          var firstWorkout = workoutDay[0];
-          if (firstWorkout && firstWorkout.workoutLogURL) {
-            window.location.href = firstWorkout.workoutLogURL;
-          }
+        var dataset = myChart.data.datasets[firstPoint.datasetIndex];
+        if (dataset && dataset.workoutLogURL) {
+          window.location.href = dataset.workoutLogURL;
         }
       }
-    },  
+    },
     scales: {
       x: {
         type: 'time',
@@ -228,24 +200,22 @@ var currentIndex = allDates.length - 14;
 
 // Function to update the chart
 function updateChart(startIndex, endIndex) {
-    myChart.data.labels = allDates.slice(startIndex, endIndex);
-    myChart.data.datasets[0].data = workoutIntensities.slice(startIndex, endIndex);  // Renamed from workoutHeights to workoutIntensities
+    myChart.data.datasets[0].data = workoutIntensities.slice(startIndex, endIndex);
     myChart.update();
 }
 
 // Add event listeners to the buttons
 document.getElementById('prevButton').addEventListener('click', function() {
     if (currentIndex > 0) {
-        currentIndex -= 1;  // Scroll by one day
+        currentIndex -= 1;
         updateChart(currentIndex, currentIndex + 14);
     }
 });
 
 document.getElementById('nextButton').addEventListener('click', function() {
-    // Check if the last date in the current window is the latest date
     var lastDateInWindow = new Date(allDates[currentIndex + 13]);
     if (lastDateInWindow < latestDate) {
-        currentIndex += 1;  // Scroll by one day
+        currentIndex += 1;
         updateChart(currentIndex, currentIndex + 14);
     }
 });
@@ -253,17 +223,14 @@ document.getElementById('nextButton').addEventListener('click', function() {
 // Function to set the chart height
 function setChartHeight() {
   var windowHeight = window.innerHeight;
-  var chartHeight = windowHeight * 0.2; // 20% of the window height
-  document.querySelector('.chart-container').style.height = chartHeight + 'px';
+  var chartHeight = windowHeight * 0.8;
+  document.getElementById('myChart').height = chartHeight;
 }
 
 // Set the initial chart height
 setChartHeight();
 
-// Update the chart height whenever the window is resized
+// Update the chart height when the window is resized
 window.addEventListener('resize', setChartHeight);
-
-// Initialize the chart with the last 14 days
-updateChart(currentIndex, currentIndex + 14);
 
 </script>
