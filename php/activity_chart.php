@@ -325,13 +325,6 @@ var numDays = calculateNumDates();
 var startIndex = allDates.length - numDays;
 updateChart(startIndex, startIndex + numDays, numDays);
 
-//// Update the chart when the window is resized
-//window.addEventListener('resize', function() {
-//  numDays = calculateNumDates();
-//  startIndex = allDates.length - numDays;
-//  updateChart(startIndex, startIndex + numDays, numDays);
-//});
-
 // Initialize the scrollbar
 var scrollbar = document.getElementById('chartScrollbar');
 scrollbar.max = allDates.length - numDays; // Set the maximum value of the scrollbar
@@ -341,12 +334,6 @@ scrollbar.addEventListener('input', function() {
   currentIndex = parseInt(this.value);
   updateChart(currentIndex, currentIndex + numDays);
 });
-
-//function setChartHeight() {
-//  var windowHeight = window.innerHeight;
-//  var chartHeight = windowHeight * 0.8;
-//  document.getElementById('myChart').height = chartHeight;
-//}
 
 setChartHeight();
 window.addEventListener('resize', setChartHeight);
