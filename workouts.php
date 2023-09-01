@@ -39,21 +39,33 @@ require_once 'php/db_query.php';
 <?php include 'html/nav.html'; ?>
   <main class="container">
   <div class="row">
-  <div class="col s12" style="text-align: center; margin: 5px; display: flex; justify-content: center; flex-wrap: wrap;">
-    <a href="select_workouts.php"><button class="btn" id="selectWorkoutBtn" style="margin: 5px; line-height: 1;">Select Workout</button></a>
-    <a href="create_workout.php"><button class="btn" id="createWorkoutBtn" style="margin: 5px; line-height: 1;">Create Workout</button></a>
-    <a href="create_workout.php"><button class="btn" id="workoutHistoryBtn" style="margin: 5px; line-height: 1;">Workout History</button></a>
-  </div>
+    <div class="col s12" style="margin: 5px; display: flex; justify-content: space-between;">
+        <a href="select_workouts.php">
+            <button class="btn" id="selectWorkoutBtn" style="margin: 5px;">Select Workouts</button>
+        </a>
+        <a href="create_workout.php" class="right">
+            <button class="btn" id="createWorkoutBtn" style="margin: 5px; display: flex; align-items: center;">
+                <span style="font-size: 24px; margin-right: 5px; padding-bottom: 3px;">+</span>
+                <span>Create Workout</span>
+            </button>
+        </a>
+    </div>
+</div>
+
+
   <div class="row">
     <div class="col s12">
       <h6>My Workouts:</h6>
-    <div class="col s12">
-    <?php
-        displayWorkouts($workouts);
-    ?>
+      <div class="col s12">
+        <?php
+            displayWorkouts($workouts);
+        ?><br>
+        <a href="create_workout.php"><button class="btn" id="workoutHistoryBtn" style="margin: 5px; line-height: 1;">Workout History</button></a>
+      </div>
     </div>
-  </main>
-  <script src="js/nav.js"></script>
-  <?php include 'html/footer.html'; ?>
+  </div>
+</main>
+<script src="js/nav.js"></script>
+<?php include 'html/footer.html'; ?>
 </body>
 </html>
