@@ -30,8 +30,10 @@ while ($row = mysqli_fetch_assoc($result)) {
     ];
 }
 
-ksort($workoutData);
-$workoutDataJson = json_encode($workoutData);
+$latestDate = date("Y-m-d");  // Get the current date
+$workoutData[$latestDate] = $workoutData[$latestDate] ?? [];  // Ensure there's an entry for the current date
+ksort($workoutData);  // Sort the array again
+$workoutDataJson = json_encode($workoutData);  // Encode to JSON
 ?>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -109,7 +111,7 @@ input[type="range"]::-moz-range-track {
 var workoutData = <?php echo $workoutDataJson; ?>;
 var labels = Object.keys(workoutData);
 var earliestDate = new Date(labels[0]);
-var latestDate = new Date(labels[labels.length - 1]);
+var latestDate = new Date(labels[labels.length - 1]);  // This will now include the current date
 var allDates = [];
 
 for (var d = new Date(earliestDate); d <= latestDate; d.setDate(d.getDate() + 1)) {
