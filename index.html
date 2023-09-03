@@ -30,11 +30,38 @@
   </div>
 </main>
   <script src="js/nav.js"></script>
+  <!-- Footer-->
+  <style>
+    .button-label {
+    font-size: 10px;
+  }
+  
+  .button-with-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  </style> 
   <div class="footer">
-    <div class="page-buttons">
-      <a href="workouts.php">Workouts</a>
-      <a href="exercises.php">Exercises</a>
-      <a href="progressions.php">Progressions</a>
+    <div style="width: 100%; max-width: 600px; display: flex; justify-content: space-between; padding: 3px 8px 0 8px ">
+      <div style="width: 100%; display: flex; justify-content: space-between; align-items: center;">
+        <div id="logs" class="button-with-label">
+          <a href="logs.php"><img src="assets/logs.webp" alt="logs" style="width: 30px; height: 30px;"></a>
+          <div class="button-label">Logs</div>
+        </div>
+        <div class="button-with-label">
+          <a href="workouts.php"><img src="assets/workouts.webp" alt="workouts" style="width: 30px; height: 30px;"></a>
+          <div class="button-label">Workouts</div>
+        </div>
+        <div class="button-with-label">
+          <a href="exercises.php"><img src="assets/exercises.webp" alt="exercises" style="width: 30px; height: 30px;"></a>
+          <div class="button-label">Exercises</div>
+        </div>
+        <div class="button-with-label">
+          <a href="progressions.php"><img src="assets/progressions.webp" alt="progressions" style="width: 30px; height: 30px;"></a>
+          <div class="button-label">Progressions</div>
+        </div>
+      </div>
     </div>
   </div>
 </body>
