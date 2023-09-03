@@ -31,12 +31,7 @@ $userId = $_SESSION['user_id'];
   </div>
 </main>
   <script src="js/nav.js"></script>
-  <div class="footer">
-    <div class="page-buttons">
-      <a href="workouts.php">Workouts</a>
-      <a href="exercises.php">Exercises</a>
-      <a href="progressions.php">Progressions</a>
-    </div>
+  <<?php include 'html/footer.html'; ?>
   </div>
 </body>
 </html>

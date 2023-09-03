@@ -7,20 +7,22 @@
   bottom: 0 !important;
   width: 100%;
   display: flex;
-  justify-content: space-between;
-}
-
-.footer a {
-  color: #ffffff;
-  text-decoration: none;
-  padding: 10px;
-}
-
-.footer .home-button {
-  flex-grow: 1;
+  justify-content: center; /* Changed from space-between */
 }
 
 .footer .page-buttons {
   display: flex;
   gap: 10px;
+  max-width: 400px; /* Added this line */
+  width: 100%; /* Added this line */
+  justify-content: space-between; /* Added this line */
+}
+
+.footer a {
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.footer .home-button {
+  flex-grow: 1;
 }

@@ -335,6 +335,4 @@ scrollbar.addEventListener('input', function() {
   updateChart(currentIndex, currentIndex + numDays);
 });
 
-setChartHeight();
-window.addEventListener('resize', setChartHeight);
 </script>
