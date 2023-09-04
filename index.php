@@ -1,9 +1,13 @@
 <?php
 $pageTitle = "ExerHub";
 include 'php/session.php';
+if (!isset($_SESSION['user_id'])) {
+  header("Location: index.html");
+}
 require_once 'php/header.php';
 require_once 'php/db_connect.php';
 require_once 'php/db_query.php';
+// if user is not logged in, redirect to index.html
 $userId = $_SESSION['user_id'];
 ?>
 <!DOCTYPE html>
