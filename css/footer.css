@@ -26,3 +26,26 @@
 .footer .home-button {
   flex-grow: 1;
 }
+
+.button-label {
+  font-size: 10px;
+}
+
+.button-with-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.current-page-icon::before {
+  content: "";
+  position: absolute;
+  width: 66px;
+  height: 56px;
+  background-color: rgba(255, 0, 0, 0.2); /* Semi-transparent red */
+  z-index: -1; /* Places it behind the icon */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* Centers it */
+}
