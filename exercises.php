@@ -41,7 +41,7 @@ require_once 'php/header.php';
       <thead>
         <tr>
           <th>Name</th>
-          <th class="type"><select title="Filter by Type"><option value="">All Types</option></select></th>
+          <th><select title="Filter by Type"><option value="">All Types</option></select></th>
           <th>Difficulty</th>
           <th>Muscles (Intensity)</th>
         </tr>
@@ -65,24 +65,29 @@ require_once 'php/header.php';
   <script src="js/nav.js"></script>
   <script>
     $(document).ready(function() {
-      $('#exercise-table').DataTable({
-        paging: false,
-        searching: true,
-        columnDefs: [
-          {orderable: false, targets: [1]}
-        ]
-      }).column(1).every(function() {
-        var column = this;
-        var typeFilter = $(this.header()).find('select')
-        $(document).on('change', '#exercise-table thead select', function() {
-          column.search($(this).val()).draw();
-        });
-        column.data().unique().sort().each(function(d) {
-          typeFilter.append('<option value="' + d + '">' + d + '</option>')
-        });
-      });
-      $('.dataTables_filter').hide();
+  $('#exercise-table').DataTable({
+    paging: false,
+    searching: true,
+    columnDefs: [
+      {orderable: false, targets: [1]}
+    ],
+    initComplete: function(settings, json) {
+      // This block of code will run after the table has been initialized
+      $('#exercise-table thead th:eq(1)').css('padding', '0');
+    }
+  }).column(1).every(function() {
+    var column = this;
+    var typeFilter = $(this.header()).find('select');
+    $(document).on('change', '#exercise-table thead select', function() {
+      column.search($(this).val()).draw();
     });
+    column.data().unique().sort().each(function(d) {
+      typeFilter.append('<option value="' + d + '">' + d + '</option>');
+    });
+  });
+  $('.dataTables_filter').hide();
+});
+
   </script>
   <?php include 'html/footer.html'; ?>
 </body>
