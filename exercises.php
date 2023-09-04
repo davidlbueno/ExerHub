@@ -35,13 +35,13 @@ require_once 'php/header.php';
 
 <body class="dark">
 <?php include 'html/nav.html'; ?>
-  <main class="container">
+  <main class="container" style="width: 100%;">
     <h2>Exercises</h2>
     <table id="exercise-table">
       <thead>
         <tr>
           <th>Name</th>
-          <th class="type">Type:&nbsp;<select title="Filter by Type"><option value="">All Types</option></select></th>
+          <th class="type"><select title="Filter by Type"><option value="">All Types</option></select></th>
           <th>Difficulty</th>
           <th>Muscles (Intensity)</th>
         </tr>

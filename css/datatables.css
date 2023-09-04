@@ -43,3 +43,15 @@ color: rgb(194, 193, 193) !important;
 tbody tr:hover {
 cursor: pointer;
 }
+
+.dataTables_wrapper {
+    overflow-x: auto;
+}
+
+#exercise-table {
+    max-width: 100% !important;
+}
+
+table.dataTable, table.dataTable th, table.dataTable td {
+    box-sizing: border-box !important;
+}
