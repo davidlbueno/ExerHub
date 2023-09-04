@@ -7,6 +7,19 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative;
+}
+
+.current-page-icon::before {
+  content: "";
+  position: absolute;
+  width: 55px;
+  height: 54px;
+  background-color: rgba(255, 0, 0, 0.2); /* Semi-transparent red */
+  z-index: -1; /* Places it behind the icon */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* Centers it */
 }
 </style>
 
@@ -21,15 +34,15 @@
         <a href="logs.php"><img src="assets/logs.webp" alt="logs" style="width: 30px; height: 30px;"></a>
         <div class="button-label">Logs</div>
       </div>
-      <div class="button-with-label">
+      <div id="workouts" class="button-with-label">
         <a href="workouts.php"><img src="assets/workouts.webp" alt="workouts" style="width: 30px; height: 30px;"></a>
         <div class="button-label">Workouts</div>
       </div>
-      <div class="button-with-label">
+      <div id="exercises" class="button-with-label">
         <a href="exercises.php"><img src="assets/exercises.webp" alt="exercises" style="width: 30px; height: 30px;"></a>
         <div class="button-label">Exercises</div>
       </div>
-      <div class="button-with-label">
+      <div id="progressions" class="button-with-label">
         <a href="progressions.php"><img src="assets/progressions.webp" alt="progressions" style="width: 30px; height: 30px;"></a>
         <div class="button-label">Progressions</div>
       </div>
@@ -37,10 +50,24 @@
   </div>
 </div>
 <script>
-  // if the current page is not the home page, then display the home button for the home id, otherwise hide it
-  if (window.location.pathname != "/index.php") {
-    document.getElementById("logs").style.display = "none";
-  } else {
-    document.getElementById("home").style.display = "none";
-  }
+// if the current page is the home page, add the current-page-icon class to the home id
+if (window.location.pathname == "/index.php") {
+  document.getElementById("home").classList.add("current-page-icon");
+}
+// if the current page is the logs page, add the current-page-icon class to the logs id
+if (window.location.pathname == "/logs.php") {
+  document.getElementById("logs").classList.add("current-page-icon");
+}
+// if the current page is the workouts page, add the current-page-icon class to the workouts id
+if (window.location.pathname == "/workouts.php") {
+  document.getElementById("workouts").classList.add("current-page-icon");
+}
+// if the current page is the exercises page, add the current-page-icon class to the exercises id
+if (window.location.pathname == "/exercises.php") {
+  document.getElementById("exercises").classList.add("current-page-icon");
+}
+// if the current page is the progressions page, add the current-page-icon class to the progressions id
+if (window.location.pathname == "/progressions.php") {
+  document.getElementById("progressions").classList.add("current-page-icon");
+}
 </script>
