@@ -34,7 +34,7 @@ $userId = $_SESSION['user_id'];
   </div>
 </main>
   <script src="js/nav.js"></script>
-  <<?php include 'html/footer.html'; ?>
+  <?php include 'html/footer.html'; ?>
   </div>
 </body>
 </html>
