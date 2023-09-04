@@ -71,6 +71,7 @@ include 'php/header.php';
   </div>
 </main>
 <script src="js/nav.js"></script>
+<?php include 'html/footer.html'; ?>
 <script>document.getElementById("email").focus();</script>
 </body>
 </html>

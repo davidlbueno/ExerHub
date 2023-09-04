@@ -25,24 +25,19 @@
   </div>
 </div>
 <script>
-// if the current page is the home page, add the current-page-icon class to the home id
-if (window.location.pathname == "/index.php") {
-  document.getElementById("home").classList.add("current-page-icon");
-}
-// if the current page is the logs page, add the current-page-icon class to the logs id
-if (window.location.pathname == "/logs.php") {
-  document.getElementById("logs").classList.add("current-page-icon");
-}
-// if the current page is the workouts page, add the current-page-icon class to the workouts id
-if (window.location.pathname == "/workouts.php") {
-  document.getElementById("workouts").classList.add("current-page-icon");
-}
-// if the current page is the exercises page, add the current-page-icon class to the exercises id
-if (window.location.pathname == "/exercises.php") {
-  document.getElementById("exercises").classList.add("current-page-icon");
-}
-// if the current page is the progressions page, add the current-page-icon class to the progressions id
-if (window.location.pathname == "/progressions.php") {
-  document.getElementById("progressions").classList.add("current-page-icon");
-}
+  if (window.location.pathname === "/index.html" || window.location.pathname === "/index.php") {
+    document.getElementById("home").classList.add("current-page-icon");
+  }
+  if (window.location.pathname === "/logs.php") {
+    document.getElementById("logs").classList.add("current-page-icon");
+  }
+  if (window.location.pathname === "/workouts.php") {
+    document.getElementById("workouts").classList.add("current-page-icon");
+  }
+  if (window.location.pathname === "/exercises.php") {
+    document.getElementById("exercises").classList.add("current-page-icon");
+  }
+  if (window.location.pathname === "/progressions.php") {
+    document.getElementById("progressions").classList.add("current-page-icon");
+  }
 </script>
