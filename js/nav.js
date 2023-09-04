@@ -1,10 +1,10 @@
 // Define separate arrays for sideNav and topNav items
 const sideNavItems = [
   { title: 'Method', href: '#' },
-  { title: 'Progressions', href: 'progressions.php' },
-  { title: 'Exercises', href: 'exercises.php' },
-  { title: 'Workouts', href: 'workouts.php' },
-  { title: 'Logs', href: 'logs.php' },
+  { title: 'Progressions', href: '/progressions.php' },
+  { title: 'Exercises', href: '/exercises.php' },
+  { title: 'Workouts', href: '/workouts.php' },
+  { title: 'Logs', href: '/logs.php' },
 ];
 let topNavItems = [
   { title: 'arrow_back', href: 'javascript:;', class: 'back-button' },
@@ -65,18 +65,27 @@ function updateNavigation(sessionVars) {
 
  // Add my account link to sideNav
  if (sessionVars.userName) {
+  // if the the user is an admin, add admin, add a link to the admin page
+  if (sessionVars.isAdmin && window.location.pathname.includes('admin') === false) {
+    const adminLink = document.createElement('a');
+    adminLink.textContent = 'Admin';
+    adminLink.style.display = 'block';
+    adminLink.className = 'btn';
+    adminLink.href = 'admin/index.html';
+    sideNav.appendChild(adminLink);
+  }
   const usernameLink = document.createElement('a');
   usernameLink.textContent = 'My Account';
   usernameLink.style.display = 'block';
   usernameLink.className = 'btn';
-  usernameLink.href = 'account.php';
+  usernameLink.href = '/account.php';
   sideNav.appendChild(usernameLink);
 // Add logout link to sideNav
   const logoutLink = document.createElement('a');
   logoutLink.textContent = 'Logout';
   logoutLink.style.display = 'block';
   logoutLink.className = 'btn';
-  logoutLink.href = 'php/logout.php';
+  logoutLink.href = '/php/logout.php';
   sideNav.appendChild(logoutLink);
 } else {
   // Add login link to sideNav
@@ -84,14 +93,14 @@ function updateNavigation(sessionVars) {
   loginLink.textContent = 'Login';
   loginLink.style.display = 'block';
   loginLink.className = 'btn';
-  loginLink.href = 'login.php';
+  loginLink.href = '/login.php';
   sideNav.appendChild(loginLink);
   // Add create account link to sideNav
   const createAccountLink = document.createElement('a');
   createAccountLink.textContent = 'Create Account';
   createAccountLink.style.display = 'block';
   createAccountLink.className = 'btn';
-  createAccountLink.href = 'create_account.php';
+  createAccountLink.href = '/create_account.php';
   sideNav.appendChild(createAccountLink);
 }
 
@@ -124,8 +133,8 @@ topNavItems.forEach((item) => {
 document.addEventListener('DOMContentLoaded', function () {
   fetchSessionVars().then(sessionVars => {
     updateNavigation(sessionVars);
-    // Redirect to index.php if the user is logged in and on index.html
-    if (sessionVars.userId && window.location.pathname.includes('index.html')) {
+    // Redirect to index.php if the user is logged in, not in the admin section and is on index.html
+    if (sessionVars.userId && (!window.location.pathname.includes('admin') && window.location.pathname.includes('index.html'))) {
       window.location.href = 'index.php';
     }
   });
