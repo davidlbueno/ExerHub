@@ -72,7 +72,7 @@ require_once 'php/db_query.php';
           data: JSON.stringify({ log_id: logId }), // Send data as JSON
           success: function(data) {
             console.log(data); // Display the response in the console
-            location.reload();
+            //location.reload();
           }
         });
       }

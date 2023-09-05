@@ -5,24 +5,20 @@ require_once 'db_query.php';
 // Get the workout ID from the request payload
 $requestPayload = file_get_contents('php://input');
 $data = json_decode($requestPayload, true);
-$logId = $data['log_id']; // Use log_Id instead of logId
+$logId = $data['log_id']; // Use log_id instead of logId
 
-// Print the logId to the web console
-echo "<script>console.log('logId:', " . json_encode($logId) . ");</script>";
-
+// Delete log items
 $deleteLogItemsQuery = "DELETE FROM workout_log_items WHERE workout_log_id = ?";
-post($conn, $deleteLogItemsQuery, [$logId]);
+$result1 = query($conn, $deleteLogItemsQuery, [$logId]);
 
+// Delete logs
 $deleteLogsQuery = "DELETE FROM workout_logs WHERE id = ?";
-post($conn, $deleteLogsQuery, [$logId]);
+$result2 = query($conn, $deleteLogsQuery, [$logId]);
 
-$queryResult1 = post($conn, $deleteLogItemsQuery, [$logId]);
-$queryResult2 = post($conn, $deleteLogsQuery, [$logId]);
-
-if ($queryResult1 && $queryResult2) {
+// Check if both queries were successful
+if ($result1['success'] && $result2['success']) {
   echo "Workout log deleted successfully";
 } else {
   echo "Failed to delete workout log";
 }
-
 ?>
