@@ -248,7 +248,7 @@ var myChart = new Chart(ctx, {
       afterDraw: function(chart) {
         console.log("Executing afterDraw hook");  // To check if the hook is being executed
         var ctx = chart.ctx;
-        var xAxis = chart.scales['x1'];  // Ensure this ID matches your x-axis ID
+        var xAxis = chart.scales['x'];  // Changed to 'x' to match the time-based x-axis
         var chartArea = chart.chartArea;
         var currentDate = new Date().toISOString().split('T')[0];  // Get the current date in 'YYYY-MM-DD' format
 
@@ -256,10 +256,8 @@ var myChart = new Chart(ctx, {
         var xCoord = xAxis.getPixelForValue(currentDate);
 
         if (xCoord) {
-            // ctx.save();  // Commented out
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.834)';  // Set the color you want
-            ctx.fillRect(xCoord - xAxis.width / xAxis.ticks.length / 2, chartArea.top, xAxis.width / xAxis.ticks.length, chartArea.bottom - chartArea.top);
-            // ctx.restore();  // Commented out
+          ctx.fillStyle = 'rgba(0, 255, 0, 0.5)';  // Changed to a green color for visibility
+          ctx.fillRect(xCoord - xAxis.width / xAxis.ticks.length / 2, chartArea.top, xAxis.width / xAxis.ticks.length, chartArea.bottom - chartArea.top);
         }
       },
     },
