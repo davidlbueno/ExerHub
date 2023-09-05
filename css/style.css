@@ -89,6 +89,7 @@ nav .brand-logo {
 /* Mobile navigation bar */
 .sidenav {
   background-color: #2e2e2e;
+  width: 200px !important;
 }
 
 .sidenav a {
