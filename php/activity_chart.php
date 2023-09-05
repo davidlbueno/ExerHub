@@ -39,7 +39,6 @@ $workoutDataJson = json_encode($workoutData);  // Encode to JSON
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/1.0.2/chartjs-plugin-annotation.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
 
 <style>
@@ -226,8 +225,8 @@ var myChart = new Chart(ctx, {
                 ];
             }
         }
-      },
-      zoom: {
+    },
+    zoom: {
         pan: {
           enabled: true,
           mode: 'x',
@@ -246,15 +245,6 @@ var myChart = new Chart(ctx, {
           onZoom: function() { console.log('Zooming'); }
         }
       },
-    },
-    annotation: {
-      annotations: [{
-        type: 'box',
-        xScaleID: 'x',
-        xMin: "<?php echo $latestDate; ?>",
-        xMax: "<?php echo $latestDate; ?>",
-        backgroundColor: 'rgba(0, 255, 0, 0.3)'
-      }]
     },
     onClick: function(evt) {
       var activePoints = myChart.getElementsAtEventForMode(evt, 'nearest', { intersect: true }, true);
