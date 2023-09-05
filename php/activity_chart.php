@@ -201,23 +201,6 @@ var myChart = new Chart(ctx, {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-        afterDraw: function(chart) {
-        console.log('Drawing');
-        var ctx = chart.ctx;
-        var xAxis1 = chart.scales['x1'];
-        var chartArea = chart.chartArea;
-        var currentDate = "<?php echo $latestDate; ?>";  // Get the current date from PHP
-
-        // Find the x-coordinate for the current date
-        var xCoord = xAxis1.getPixelForValue(currentDate);
-
-        if (xCoord) {
-          ctx.save();  // Save the current state
-          ctx.fillStyle = 'rgba(200, 200, 200, 0.6)';  // Set the fill color
-          ctx.fillRect(xCoord - xAxis1.width / xAxis1.ticks.length / 2, chartArea.top - xAxis1.height, xAxis1.width / xAxis1.ticks.length, xAxis1.height);
-          ctx.restore();  // Restore the state
-        }
-      },
       legend: {
         display: false
       },
