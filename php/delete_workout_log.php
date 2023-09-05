@@ -16,11 +16,13 @@ post($conn, $deleteLogItemsQuery, [$logId]);
 $deleteLogsQuery = "DELETE FROM workout_logs WHERE id = ?";
 post($conn, $deleteLogsQuery, [$logId]);
 
-if ($queryResult) {
-  // Return a success message or any other response
+$queryResult1 = post($conn, $deleteLogItemsQuery, [$logId]);
+$queryResult2 = post($conn, $deleteLogsQuery, [$logId]);
+
+if ($queryResult1 && $queryResult2) {
   echo "Workout log deleted successfully";
 } else {
-  // Return an error message or any other response
   echo "Failed to delete workout log";
 }
+
 ?>
