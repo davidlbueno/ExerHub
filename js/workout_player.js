@@ -255,10 +255,15 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   saveWorkoutBtn.addEventListener('click', async function () {
-    const lastItem = document.querySelector('.workout-list li:last-child');
-    const workoutEndTime = lastItem.dataset.itemStopTime || null;
-    console.log("Workout startTime: " + workoutStartTime + ", stopTime: " + workoutEndTime);
-    let workoutLogId;
+    // Convert workoutStartTime and workoutEndTime to local time
+    const convertToClientTime = (isoString) => {
+      const date = new Date(isoString);
+      const offsetMinutes = date.getTimezoneOffset();
+      const localDate = new Date(date.getTime() - (offsetMinutes * 60 * 1000));
+      return localDate.toISOString().slice(0, 19).replace('T', ' ');
+    };        
+    const workoutStartTime = convertToClientTime(new Date().toISOString());
+    const workoutEndTime = convertToClientTime(new Date().toISOString());
 
     try {
       const workoutLogResponse = await createWorkoutLogEntry(userId, workoutId, workoutStartTime, workoutEndTime);
