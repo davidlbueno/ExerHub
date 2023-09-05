@@ -125,7 +125,11 @@ function getColor(workout_type) {
     case 'Pull':
       return 'rgba(235, 54, 54, 0.6)';
     case 'Legs':
-      return 'rgba(220, 160, 8, 0.6)';
+      return 'rgba(17, 245, 13, 0.6)';
+    case 'Core':
+      return 'rgba(236, 255, 27, 0.6)';
+    case 'Mixed':
+      return 'rgba(145, 75, 192, 0.6)';
     default:
       return 'rgba(145, 75, 192, 0.6)';
   }
@@ -139,6 +143,15 @@ if (startIndex < 0) {
 }
 var datesToDisplay = allDates.slice(startIndex);
 
+// Existing code
+var datasets = [];
+// ...
+
+function adjustColor(color, factor) {
+    var [r, g, b, a] = color.match(/\d+/g);
+    return `rgba(${Math.min(255, r * factor)}, ${Math.min(255, g * factor)}, ${Math.min(255, b * factor)}, ${a / 255})`;
+}
+
 for (var i = 0; i < datesToDisplay.length; i++) {
     var date = datesToDisplay[i];
     var workouts = workoutData[date] || [];
@@ -149,18 +162,35 @@ for (var i = 0; i < datesToDisplay.length; i++) {
             backgroundColor: 'rgba(0, 0, 0, 0)'
         });
     } else {
+        // Group workouts by type and sort them
+        var groupedWorkouts = {};
         for (var j = 0; j < workouts.length; j++) {
             var workout = workouts[j];
-            datasets.push({
-                label: workout.workoutName,
-                data: [{ x: date, y: workout.intensity }],
-                backgroundColor: getColor(workout.workout_type),
-                workoutType: workout.workout_type,
-                time: workout.time,
-                duration: workout.duration,
-                difficulty: workout.difficulty,
-                workoutLogURL: workout.workoutLogURL
-            });
+            if (!groupedWorkouts[workout.workout_type]) {
+                groupedWorkouts[workout.workout_type] = [];
+            }
+            groupedWorkouts[workout.workout_type].push(workout);
+        }
+
+        // Generate datasets
+        for (var type in groupedWorkouts) {
+            var typeWorkouts = groupedWorkouts[type];
+            for (var k = 0; k < typeWorkouts.length; k++) {
+                var workout = typeWorkouts[k];
+                var baseColor = getColor(workout.workout_type);
+                var adjustedColor = k % 2 === 0 ? baseColor : adjustColor(baseColor, 1.2);  // Adjust color for alternate bars
+
+                datasets.push({
+                    label: workout.workoutName,
+                    data: [{ x: date, y: workout.intensity }],
+                    backgroundColor: adjustedColor,
+                    workoutType: workout.workout_type,
+                    time: workout.time,
+                    duration: workout.duration,
+                    difficulty: workout.difficulty,
+                    workoutLogURL: workout.workoutLogURL
+                });
+            }
         }
     }
 }
