@@ -245,21 +245,6 @@ var myChart = new Chart(ctx, {
           onZoom: function() { console.log('Zooming'); }
         }
       },
-      afterDraw: function(chart) {
-        console.log("Executing afterDraw hook");  // To check if the hook is being executed
-        var ctx = chart.ctx;
-        var xAxis = chart.scales['x'];  // Changed to 'x' to match the time-based x-axis
-        var chartArea = chart.chartArea;
-        var currentDate = new Date().toISOString().split('T')[0];  // Get the current date in 'YYYY-MM-DD' format
-
-        // Find the x-coordinate for the current date
-        var xCoord = xAxis.getPixelForValue(currentDate);
-
-        if (xCoord) {
-          ctx.fillStyle = 'rgba(0, 255, 0, 0.5)';  // Changed to a green color for visibility
-          ctx.fillRect(xCoord - xAxis.width / xAxis.ticks.length / 2, chartArea.top, xAxis.width / xAxis.ticks.length, chartArea.bottom - chartArea.top);
-        }
-      },
     },
     onClick: function(evt) {
       var activePoints = myChart.getElementsAtEventForMode(evt, 'nearest', { intersect: true }, true);
