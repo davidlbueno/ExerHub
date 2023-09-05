@@ -1,6 +1,6 @@
 <?php
-require_once 'php/db_connect.php';
-require_once 'php/db_query.php';
+require_once 'db_connect.php';
+require_once 'db_query.php';
 
 // Get the workout ID from the request payload
 $requestPayload = file_get_contents('php://input');
