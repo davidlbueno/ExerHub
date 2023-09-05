@@ -69,7 +69,7 @@ require_once 'php/db_query.php';
         $.ajax({
           url: 'php/delete_workout_log.php',
           type: 'POST',
-          data: JSON.stringify({ log_Id: logId }), // Send data as JSON
+          data: JSON.stringify({ log_id: logId }), // Send data as JSON
           success: function(data) {
             console.log(data); // Display the response in the console
             location.reload();

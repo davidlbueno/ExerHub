@@ -5,7 +5,7 @@ require_once 'php/db_query.php';
 // Get the workout ID from the request payload
 $requestPayload = file_get_contents('php://input');
 $data = json_decode($requestPayload, true);
-$logId = $data['log_Id']; // Use log_Id instead of logId
+$logId = $data['log_id']; // Use log_Id instead of logId
 
 // Print the logId to the web console
 echo "<script>console.log('logId:', " . json_encode($logId) . ");</script>";
