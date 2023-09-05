@@ -52,6 +52,25 @@ require_once 'php/header.php';
     ?>
   </main>
   <script src="js/nav.js"></script>
+  <script>
+    $(document).ready(function() {
+      $('.delete-btn').click(function(e) {
+        e.preventDefault();
+        if (confirm('Are you sure you want to delete this workout log?')) {
+          const logId = $(this).data('log-id');
+          $.ajax({
+            url: 'php/delete_workout_log.php',
+            type: 'POST',
+            data: JSON.stringify({ log_id: logId }),
+            success: function(data) {
+              console.log(data);
+              location.reload();
+            }
+          });
+        }
+      });
+    });
+  </script>
   <?php include 'html/footer.html'; ?>
 </body>
 </html>
