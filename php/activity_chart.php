@@ -143,10 +143,6 @@ if (startIndex < 0) {
 }
 var datesToDisplay = allDates.slice(startIndex);
 
-// Existing code
-var datasets = [];
-// ...
-
 function adjustColor(color, factor) {
     var [r, g, b, a] = color.match(/\d+/g);
     return `rgba(${Math.min(255, r * factor)}, ${Math.min(255, g * factor)}, ${Math.min(255, b * factor)}, ${a / 255})`;
