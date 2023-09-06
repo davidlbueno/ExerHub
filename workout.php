@@ -14,10 +14,11 @@ require_once 'php/db_query.php';
     <?php
     $workoutId = $_GET['workout_id'] ?? null;
     if ($workoutId) {
-      $query = "SELECT name, is_public FROM workouts WHERE id = $workoutId";
+      $query = "SELECT name, user_id, is_public FROM workouts WHERE id = $workoutId";
       $result = query($conn, $query);
       $row = mysqli_fetch_assoc($result);
       $workoutName = $row['name'];
+      $userId = $row['user_id'];
       $isPublic = $row['is_public'];
       echo "<h4 style='display: inline-block;'>$workoutName</h4>";
       if ($isPublic) {
@@ -54,23 +55,9 @@ require_once 'php/db_query.php';
       }
       echo "</ol>";
       echo "<button class='btn' id='startWorkoutBtn'>Start Workout</button> ";
-      if ($_SESSION) {
-        if ($_SESSION["user_id"]) {
-          if ($isPublic) {
-            if ($_SESSION["is_admin"]) {
-              echo "<button class='btn' id='editBtn'>Edit Workout</button> ";
-            }
-          } else {
-            echo "<button class='btn' id +" . "'editBtn'>Edit Workout</button> ";
-            echo "<button class='btn' id='viewLogBtn'>View Log</button> "; 
-          }
-        }
-      } else {
-        echo "<button class='btn' id='editBtn' disabled='true'>Edit Workout</button> ";
-        echo "<button class='btn' id='viewLogBtn' disabled='true'>View Log</button> ";
-        echo "<p>* Log in to edit or view logs.</p>";
-      }
-    }
+      echo "<button class='btn' id='editBtn'>Edit Workout</button> ";
+      echo "<button class='btn' id='viewLogBtn'>View Log</button> ";
+    } 
   ?>
   </main>
   <script src="js/nav.js"></script>
@@ -84,6 +71,7 @@ require_once 'php/db_query.php';
       fetchSessionVars().then(sessionVars => {
         const workoutId = <?php echo json_encode($workoutId); ?>;
         const workoutName = <?php echo json_encode($workoutName); ?>;
+        const workoutUserId = <?php echo json_encode($userId); ?>;
         const userId = sessionVars.userId;
         const isAdmin = sessionVars.isAdmin;
 
@@ -111,23 +99,30 @@ require_once 'php/db_query.php';
           const workoutPlayerUrl = `workout_player.php?user_id=${userId}&workout_id=${workoutId}`;
           window.location.href = workoutPlayerUrl;
         });
-        
+        // Initialize buttons as disabled
+        editBtn.disabled = true;
+        viewLogBtn.disabled = true;
+
+        // Enable buttons based on conditions
         if (userId) {
-          if (viewLogBtn) {
-            viewLogBtn.addEventListener('click', function () {
-              window.location.href = 'workout_logs.php?workout_id=' + workoutId + '&user_id=' + userId;
+          // User is logged in
+          viewLogBtn.disabled = false; // Enable "View Logs" button for logged-in users
+          
+          viewLogBtn.addEventListener('click', function () {
+            window.location.href = `workout_logs.php?workout_id=${workoutId}&user_id=${userId}`;
+          });
+
+          if (userId === workoutUserId || isAdmin) {
+            // User is the owner or an admin
+            editBtn.disabled = false; // Enable "Edit" button
+            
+            editBtn.addEventListener('click', function () {
+              const editUrl = `edit_workout.php?workout_id=${workoutId}&workout_name=${encodeURIComponent(workoutName)}`;
+              window.location.href = editUrl;
             });
-            if (isAdmin) {
-              if (editBtn) {
-                editBtn.addEventListener('click', function () {
-                const editUrl = `edit_workout.php?workout_id=${workoutId}&workout_name=${encodeURIComponent(workoutName)}`;
-                window.location.href = editUrl;
-                });
-              }
-            }
-            calculateWorkoutLength();
           }
         }
+      calculateWorkoutLength();
       });
     });
 
