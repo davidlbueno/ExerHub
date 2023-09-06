@@ -46,7 +46,7 @@ function beep(duration, frequency, volume, type, callback) {
 async function getAwsCredentials() {
   return new Promise((resolve, reject) => {
     $.ajax({
-      url: '../php/get_aws_creds.php',
+      url: '../secrets/get_aws_creds.php',
       type: 'GET',
       dataType: 'json',
       success: resolve,
