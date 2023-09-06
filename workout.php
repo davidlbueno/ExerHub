@@ -54,29 +54,39 @@ require_once 'php/db_query.php';
       }
       echo "</ol>";
       echo "<button class='btn' id='startWorkoutBtn'>Start Workout</button> ";
-      if (!isset($_SESSION['user_id'])) { 
-        echo "<button class='btn' id='editBtn' disabled='true'>Edit Workout</button> ";
-        echo "<button class='btn' id='viewLogBtn' disabled='true'>View Log</button>";
-        echo "<p>* Log in to edit or view logs.</p>";
+      if ($_SESSION) {
+        if ($_SESSION["user_id"]) {
+          if ($isPublic) {
+            if ($_SESSION["is_admin"]) {
+              echo "<button class='btn' id='editBtn'>Edit Workout</button> ";
+            }
+          } else {
+            echo "<button class='btn' id +" . "'editBtn'>Edit Workout</button> ";
+            echo "<button class='btn' id='viewLogBtn'>View Log</button> "; 
+          }
+        }
       } else {
-        echo "<button class='btn' id='editBtn'>Edit Workout</button> ";
-        echo "<button class='btn id='viewLogBtn'>View Log</button>";
+        echo "<button class='btn' id='editBtn' disabled='true'>Edit Workout</button> ";
+        echo "<button class='btn' id='viewLogBtn' disabled='true'>View Log</button> ";
+        echo "<p>* Log in to edit or view logs.</p>";
       }
-      
-    } else {
-      echo "<p>No Workout ID provided.</p>";
     }
-    ?>
+  ?>
   </main>
   <script src="js/nav.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
+      // Fetch or define DOM elements
+      const startWorkoutBtn = document.getElementById("startWorkoutBtn");
+      const viewLogBtn = document.getElementById("viewLogBtn");
+      const editBtn = document.getElementById("editBtn");
+
       fetchSessionVars().then(sessionVars => {
         const workoutId = <?php echo json_encode($workoutId); ?>;
         const workoutName = <?php echo json_encode($workoutName); ?>;
         const userId = sessionVars.userId;
+        const isAdmin = sessionVars.isAdmin;
 
-        // Function to calculate total workout time and display it in the workout-length div
         function calculateWorkoutLength() {
           const workoutLength = document.getElementById("workout-length");
           let totalSeconds = 0;
@@ -101,18 +111,26 @@ require_once 'php/db_query.php';
           const workoutPlayerUrl = `workout_player.php?user_id=${userId}&workout_id=${workoutId}`;
           window.location.href = workoutPlayerUrl;
         });
-
-        editBtn.addEventListener('click', function () {
-          const editUrl = `edit_workout.php?workout_id=${workoutId}&workout_name=${encodeURIComponent(workoutName)}`;
-          window.location.href = editUrl;
-        });
-
-        viewLogBtn.addEventListener('click', function () {
-          window.location.href = 'workout_logs.php?workout_id=' + workoutId + '&user_id=' + userId;
-        });
-        calculateWorkoutLength();
+        
+        if (userId) {
+          if (viewLogBtn) {
+            viewLogBtn.addEventListener('click', function () {
+              window.location.href = 'workout_logs.php?workout_id=' + workoutId + '&user_id=' + userId;
+            });
+            if (isAdmin) {
+              if (editBtn) {
+                editBtn.addEventListener('click', function () {
+                const editUrl = `edit_workout.php?workout_id=${workoutId}&workout_name=${encodeURIComponent(workoutName)}`;
+                window.location.href = editUrl;
+                });
+              }
+            }
+            calculateWorkoutLength();
+          }
+        }
       });
     });
+
   </script>
   <?php include 'html/footer.html'; ?>
 </body>
