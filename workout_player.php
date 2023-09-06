@@ -98,10 +98,17 @@ require_once 'php/db_query.php';
           <a href="workout.php?workout_id=<?= urlencode($workoutId) ?>&workout_name=<?= urlencode($workoutName) ?>" class="close-btn">
             <i class="material-icons">close</i>
           </a>
+          <?php if (!isset($_SESSION["user_id"])) { ?>
+            <div>
+            <button id="saveWorkoutBtn" class="btn" disabled>Edit Workout</button>
+            <button id="viewLogBtn" class="btn" disabled>View Log</button>
+          </div>
+            <p>* Login to save your workouts and view workout logs</p>
+          <?php } else { ?>
           <div>
             <button id="saveWorkoutBtn" class="btn" >Save Workout</button>
             <button id="viewLogBtn" class="btn" >View Log</button>
-          </div>
+          <?php } ?>
         </div>
       </div>
       <?php

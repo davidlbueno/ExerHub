@@ -53,11 +53,16 @@ require_once 'php/db_query.php';
         }
       }
       echo "</ol>";
-
-      echo '
-      <button class="btn" id="startWorkoutBtn">Start Workout</button>
-      <button class="btn" id="editBtn">Edit Workout</button>
-      <button class="btn" id="viewLogBtn">View Log</button>';
+      echo "<button class='btn' id='startWorkoutBtn'>Start Workout</button> ";
+      if (!isset($_SESSION['user_id'])) { 
+        echo "<button class='btn' id='editBtn' disabled='true'>Edit Workout</button> ";
+        echo "<button class='btn' id='viewLogBtn' disabled='true'>View Log</button>";
+        echo "<p>* Log in to edit or view logs.</p>";
+      } else {
+        echo "<button class='btn' id='editBtn'>Edit Workout</button> ";
+        echo "<button class='btn id='viewLogBtn'>View Log</button>";
+      }
+      
     } else {
       echo "<p>No Workout ID provided.</p>";
     }
