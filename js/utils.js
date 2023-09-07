@@ -1,11 +1,11 @@
 async function createWorkoutLogEntry(userId, workoutId, workoutStartTime, workoutEndTime) {
   const params = { workoutLogEntry: true, userId, workoutId, workoutStartTime, workoutEndTime };
-  return $.post('php/create_log_items.php', params);
+  return $.post('/php/create_log_items.php', params);
 }
 
 async function createWorkoutLogItemEntry(userId, workoutLogId, exerciseType, exerciseId, exerciseTime, exerciseReps, warmup) {
   const params = { workoutLogItemEntry: true, userId, workoutLogId, exerciseType, exerciseId, exerciseTime, exerciseReps, warmup };
-  return $.post('php/create_log_items.php', params);
+  return $.post('/php/create_log_items.php', params);
 }
 
 function formatTime(seconds) {
@@ -46,7 +46,7 @@ function beep(duration, frequency, volume, type, callback) {
 async function getAwsCredentials() {
   return new Promise((resolve, reject) => {
     $.ajax({
-      url: '../secrets/get_aws_creds.php',
+      url: '/php/get_aws_creds.php',
       type: 'GET',
       dataType: 'json',
       success: resolve,

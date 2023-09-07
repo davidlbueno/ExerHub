@@ -254,16 +254,25 @@ document.addEventListener('DOMContentLoaded', function () {
     window.location.href = 'workout_logs.php?workout_id=' + workoutId + '&user_id=' + userId;
   });
 
+  // Function to convert UTC time to local time
+  const convertToClientTime = (dateTimeString) => {
+    // Convert to ISO-like string with 'T' and 'Z'
+    const isoString = dateTimeString.replace(' ', 'T') + 'Z';
+    const date = new Date(isoString);
+    const offsetMinutes = date.getTimezoneOffset();
+    const localDate = new Date(date.getTime() - (offsetMinutes * 60 * 1000));
+    const localIsoString = localDate.toISOString().slice(0, 19).replace('T', ' ');
+    return localIsoString;
+  };
+  
   saveWorkoutBtn.addEventListener('click', async function () {
-    // Convert workoutStartTime and workoutEndTime to local time
-    const convertToClientTime = (isoString) => {
-      const date = new Date(isoString);
-      const offsetMinutes = date.getTimezoneOffset();
-      const localDate = new Date(date.getTime() - (offsetMinutes * 60 * 1000));
-      return localDate.toISOString().slice(0, 19).replace('T', ' ');
-    };        
-    const workoutStartTime = convertToClientTime(new Date().toISOString());
-    const workoutEndTime = convertToClientTime(new Date().toISOString());
+    const lastItem = document.querySelector('.workout-list li:last-child');
+    let workoutEndTime = lastItem.dataset.itemStopTime || null;
+    // Convert to local time
+    workoutStartTime = convertToClientTime(workoutStartTime);
+    workoutEndTime = workoutEndTime ? convertToClientTime(workoutEndTime) : null;
+    
+    let workoutLogId;
 
     try {
       const workoutLogResponse = await createWorkoutLogEntry(userId, workoutId, workoutStartTime, workoutEndTime);
