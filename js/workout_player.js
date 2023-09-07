@@ -461,17 +461,21 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Function to request a screen wake lock
   async function requestWakeLock() {
-    try {
-      wakeLock = await navigator.wakeLock.request('screen');
-      wakeLock.addEventListener('release', () => {
+    if ('wakeLock' in navigator) {
+      try {
+        wakeLock = await navigator.wakeLock.request('screen');
+        wakeLock.addEventListener('release', () => {
         console.log('Wake Lock was released');
-      });
-      console.log('Wake Lock is active');
-    } catch (err) {
-      console.error(`${err.name}, ${err.message}`);
+        });
+          console.log('Wake Lock is active');
+      } catch (err) {
+        console.error(`${err.name}, ${err.message}`);
+      }
+    } else {
+      console.log('Wake Lock API not supported');
     }
   }
-
+  
   // Function to release a screen wake lock
   function releaseWakeLock() {
     if (wakeLock !== null && wakeLock.released === false) {
