@@ -37,8 +37,15 @@ typeSelect.addEventListener("change", () => {
   updateExerciseSelect(typeSelect.value);
 });
 
+// Attach the new function to the "Add" button in the modal
+document.getElementById("modal-add-item").addEventListener("click", function() {
+  addItem();
+  var instance = M.Modal.getInstance(document.getElementById("addItemModal"));
+  instance.close();
+});
+
 // Event listener for addItemBtn click
-addItemBtn.addEventListener("click", () => {
+function addItem() {
   const $addItemBtn = $('#add-type-btn');
   const selectedListItem = $(".selected");
 
@@ -87,7 +94,7 @@ addItemBtn.addEventListener("click", () => {
   $addItemBtn.text('Add Item');
   clearFields();
   typeSelect.focus();
-});
+};
 
 // Sortable functionality
 $(".sortable").sortable({

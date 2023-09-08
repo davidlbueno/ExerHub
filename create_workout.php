@@ -31,54 +31,70 @@ require_once 'php/header.php';
       <ol id="workout-list" class="sortable"></ol>
     </div>
   </div>
-  <div class="row">
-    <div class="input-field col s2">
-      <select name="type" id="type-select">
-        <option value="" disabled selected>Item</option>
-        <option value="Push">Push</option>
-        <option value="Pull">Pull</option>
-        <option value="Legs">Legs</option>
-        <option value="Core">Core</option>
-        <option value="Rest">Rest</option>
-      </select>
+<!-- modal -->
+  <div id="addItemModal" class="modal">
+    <div class="modal-content">
+      <h4>Add Item</h4>
+      <div class="row">
+        <div class="input-field col s2">
+          <select name="type" id="type-select">
+            <option value="" disabled selected>Item</option>
+            <option value="Push">Push</option>
+            <option value="Pull">Pull</option>
+            <option value="Legs">Legs</option>
+            <option value="Core">Core</option>
+            <option value="Rest">Rest</option>
+          </select>
+        </div>
+        <div class="input-field col s4">
+          <select name="exercise" id="exercise-select" disabled>
+            <option value="" disabled selected>Exercise</option>
+          </select>
+        </div>
+        <div class="input-field col s2">
+          <input type="number" name="seconds" min="0" max="300" step="5" placeholder="Seconds" style="width:100%;">
+        </div>
+        <div class="input-field col s2">
+          <input type="number" name="sets" id="sets-select" min="0" max="10" step="1" placeholder="Sets" style="width:100%;">
+        </div>
+        <div class="row">
+          <div class="input-field col s2" style="display: flex; align-items: center;">
+            <label>
+              <input type="checkbox" name="warmup" id="warmup" style="width:100%;">
+              <span>Warmup</span>
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="modal-add-item" class="btn">Add</button>
+      </div>
+      <a href="#" id="closeBtn" class="close-btn">
+      <i class="material-icons">close</i>
+    </a>
     </div>
-  <div class="input-field col s4">
-    <select name="exercise" id="exercise-select" disabled>
-      <option value="" disabled selected>Exercise</option>
-    </select>
   </div>
-  <div class="input-field col s2">
-    <input type="number" name="seconds" min="0" max="300" step="5" placeholder="Seconds" style="width:100%;">
-  </div>
-  <div class="input-field col s2">
-  <input type="number" name="sets" id="sets-select" min="0" max="10" step="1" placeholder="Sets" style="width:100%;">
-  </div>
-  <div class="row">
-  <div class="input-field col s2" style="display: flex; align-items: center;">
-    <label>
-      <input type="checkbox" name="warmup" id="warmup" style="width:100%;">
-      <span>Warmup</span>
-    </label>
-  </div>
+<!-- modal -->
+<div class="row">
+  <div class="col s12">
+    <button id="openModalBtn" class="btn modal-trigger" data-target="addItemModal">Add Item</button>
+    <button id="clear-list-btn" class="btn">Clear List</button>
+    <button id="save-workout-btn" class="btn">Save Workout</button>
+    <button id="cancel-workout-btn" class="btn">Cancel</button>
+  </div> 
 </div>
-  <div class="row">
-    <div class="col s12">
-      <button id="add-type-btn" class="btn">Add Item</button>
-      <button id="clear-list-btn" class="btn">Clear List</button>
-      <button id="save-workout-btn" class="btn">Save Workout</button>
-      <button id="cancel-workout-btn" class="btn">Cancel</button>
-    </div> 
-  </div>
-  </main>
-  <script src="js/nav.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      var script = document.createElement('script');
-      script.src = 'js/create_workout.js';
-      document.head.appendChild(script);
-    });
-  </script>
-  <script src="js/save_workout.js"></script>
-  <?php include 'html/footer.html'; ?>
+</main>
+<script src="js/nav.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var script = document.createElement('script');
+    script.src = 'js/create_workout.js';
+    var elems = document.querySelectorAll('.modal');
+    var instances = M.Modal.init(elems);
+    document.head.appendChild(script);
+  });
+</script>
+<script src="js/save_workout.js"></script>
+<?php include 'html/footer.html'; ?>
 </body>
 </html>
