@@ -15,6 +15,15 @@ const cancelWorkoutBtn = document.getElementById("cancel-workout-btn");
 // Disable saveWorkoutBtn initially
 saveWorkoutBtn.disabled = true;
 
+// Initialize the modal
+var elems = document.querySelectorAll('.modal');
+var instances = M.Modal.init(elems);
+// Add event listener for the close button
+document.getElementById("modal-closeBtn").addEventListener("click", function() {
+  var instance = M.Modal.getInstance(document.getElementById("addItemModal"));
+  instance.close();
+});
+
 // Function to update exercise select options
 async function updateExerciseSelect(selectedType, callback) {
   const response = await fetch(`php/get_exercises.php?type=${selectedType}`);
