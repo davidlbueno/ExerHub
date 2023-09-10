@@ -17,7 +17,12 @@ saveWorkoutBtn.disabled = true;
 
 // Initialize the modal
 var elems = document.querySelectorAll('.modal');
-var instances = M.Modal.init(elems);
+var instances = M.Modal.init(elems, {
+  onOpenEnd: function() {
+    typeSelect.focus();
+  }
+});
+
 // Add event listener for the close button
 document.getElementById("modal-closeBtn").addEventListener("click", function() {
   var instance = M.Modal.getInstance(document.getElementById("addItemModal"));
@@ -102,7 +107,6 @@ function addItem() {
 
   $addItemBtn.text('Add Item');
   clearFields();
-  typeSelect.focus();
 };
 
 // Sortable functionality
