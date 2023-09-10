@@ -76,8 +76,8 @@ require_once 'php/header.php';
 <div class="row">
   <div class="col s12">
     <button id="openModalBtn" class="btn modal-trigger" data-target="addItemModal">Add Item</button>
-    <button id="clear-list-btn" class="btn">Clear List</button>
-    <button id="save-workout-btn" class="btn">Save Workout</button>
+    <button id="clear-list-btn" class="btn">Clear</button>
+    <button id="save-workout-btn" class="btn">Save</button>
     <button id="cancel-workout-btn" class="btn">Cancel</button>
   </div> 
 </div>
