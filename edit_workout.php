@@ -117,11 +117,11 @@ $is_admin = $_SESSION['is_admin'];
 <!-- modal -->
   <div class="row">
     <div class="col s12" style="padding-bottom: 50px;">
-    <button id="openModalBtn" class="btn modal-trigger" data-target="addItemModal">Add Item</button>
-      <button id="clear-list-btn" class="btn">Clear List</button>
-      <button id="save-workout-btn" class="btn">Update Workout</button>
-      <button id="delete-workout-btn" class="btn">Delete Workout</button>
-      <button id="cancel-workout-btn" class="btn">Cancel</button>
+    <button id="openModalBtn" class="btn" data-target="addItemModal" style="margin-bottom: 5px !important;">Add Item</button>
+      <button id="clear-list-btn" class="btn" style="margin-bottom: 5px !important;">Clear List</button>
+      <button id="save-workout-btn" class="btn" style="margin-bottom: 5px !important;">Update Workout</button>
+      <button id="delete-workout-btn" class="btn" style="margin-bottom: 5px !important;">Delete Workout</button>
+      <button id="cancel-workout-btn" class="btn" style="margin-bottom: 5px !important;">Cancel</button>
       <?php if ($is_admin == 1): ?>
             <label>
             <input type="checkbox" id="public" name="public" <?php echo $isPublic == 1 ? 'checked' : ''; ?>>
