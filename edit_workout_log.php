@@ -44,7 +44,16 @@ require_once 'php/db_query.php';
         }
       }
 
-      echo "<tr>";
+      // Determine the background color based on warmup status and exercise type
+      if ($warmup) {
+        $bgColor = "style='background-color: darkblue;'";
+      } elseif ($exerciseType === "Rest") {
+        $bgColor = "style='background-color: darkgreen;'";
+      } else {
+        $bgColor = "";
+      }
+
+      echo "<tr $bgColor>";
       echo "<td><input type='text' name='exercise_type[]' value='$exerciseType'></td>";
       echo "<td><input type='text' name='exercise_name[]' value='$exerciseName'></td>";  // Display the exercise name
       echo "<td><input type='text' name='exercise_time[]' value='$exerciseTime'></td>";
@@ -54,7 +63,7 @@ require_once 'php/db_query.php';
     }
 
     echo "</table>";
-    echo "<input type='submit' value='Update Log'>";
+    echo "<input type='submit' value='Update Log' class='btn'>";
     echo "</form>";
     ?>
   </main>
