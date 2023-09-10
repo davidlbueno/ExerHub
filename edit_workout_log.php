@@ -11,6 +11,7 @@ require_once 'php/db_query.php';
 <body class="dark">
   <main class="container">
     <?php
+    $is_admin = $_SESSION['is_admin'];
     $logId = $_GET['log_id'];
 
     // Fetch existing log entries for this logId
