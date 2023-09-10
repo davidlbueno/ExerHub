@@ -74,8 +74,12 @@ $is_admin = $_SESSION['is_admin'];
         </ol>
       </div>
     </div>
-    <div class="row">
-      <div class="input-field col s2">
+    <!-- modal -->
+<div id="addItemModal" class="modal dark-modal">
+  <div class="modal-content">
+    <h5 style="margin-bottom: 5px;">Add Item</h5>
+    <div>
+      <div style="margin-bottom: 5px;">
         <select name="type" id="type-select">
           <option value="" disabled selected>Item</option>
           <option value="Push">Push</option>
@@ -85,28 +89,35 @@ $is_admin = $_SESSION['is_admin'];
           <option value="Rest">Rest</option>
         </select>
       </div>
-    <div class="input-field col s4">
-      <select name="exercise" id="exercise-select" disabled>
-        <option value="" disabled selected>Exercise</option>
-      </select>
+      <div style="margin-bottom: 5px;">
+        <select name="exercise" id="exercise-select" disabled>
+          <option value="" disabled selected>Exercise</option>
+        </select>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+        <input type="number" name="seconds" min="0" max="300" step="5" placeholder="Seconds" style="width:48%;">
+        <input type="number" name="sets" id="sets-select" min="0" max="10" step="1" placeholder="Sets" style="width:48%;">
+      </div>
+      <div style="margin-bottom: 5px;">
+        <label>
+          <input type="checkbox" name="warmup" id="warmup" style="width:100%;">
+          <span>Warmup</span>
+        </label>
+      </div>  
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">      
+        <button id="modal-add-item" class="btn" style="width: 48%;">Add</button>
+        <button id="modal-cancel-item" class="btn modal-close" style="width: 48%;">Cancel</button>
+      </div>
     </div>
-    <div class="input-field col s2">
-      <input type="number" name="seconds" min="0" max="300" step="5" placeholder="Seconds" style="width:100%;">
-    </div>
-    <div class="input-field col s2">
-    <input type="number" name="sets" id="sets-select" min="0" max="10" step="1" placeholder="Sets" style="width:100%;">
-    </div>
-    <div class="row">
-    <div class="input-field col s2" style="display: flex; align-items: center;">
-      <label>
-        <input type="checkbox" name="warmup" id="warmup" style="width:100%;">
-        <span>Warmup</span>
-      </label>
-    </div>
+    <a href="#" id="modal-closeBtn" class="close-btn" style="margin-bottom: 5px;">
+      <i class="material-icons">close</i>
+    </a>
   </div>
+</div>
+<!-- modal -->
   <div class="row">
     <div class="col s12" style="padding-bottom: 50px;">
-      <button id="add-type-btn" class="btn">Add Item</button>
+    <button id="openModalBtn" class="btn modal-trigger" data-target="addItemModal">Add Item</button>
       <button id="clear-list-btn" class="btn">Clear List</button>
       <button id="save-workout-btn" class="btn">Update Workout</button>
       <button id="delete-workout-btn" class="btn">Delete Workout</button>
