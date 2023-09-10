@@ -34,9 +34,9 @@ require_once 'php/header.php';
 <!-- modal -->
 <div id="addItemModal" class="modal dark-modal">
   <div class="modal-content">
-    <h5>Add Item</h5>
-    <div class="row">
-      <div class="input-field col s12">
+    <h5 style="margin-bottom: 5px;">Add Item</h5>
+    <div>
+      <div style="margin-bottom: 5px;">
         <select name="type" id="type-select">
           <option value="" disabled selected>Item</option>
           <option value="Push">Push</option>
@@ -46,26 +46,27 @@ require_once 'php/header.php';
           <option value="Rest">Rest</option>
         </select>
       </div>
-      <div class="input-field col s12">
+      <div style="margin-bottom: 5px;">
         <select name="exercise" id="exercise-select" disabled>
           <option value="" disabled selected>Exercise</option>
         </select>
       </div>
-      <div class="input-field col s12">
-        <input type="number" name="seconds" min="0" max="300" step="5" placeholder="Seconds" style="width:100%;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+        <input type="number" name="seconds" min="0" max="300" step="5" placeholder="Seconds" style="width:48%;">
+        <input type="number" name="sets" id="sets-select" min="0" max="10" step="1" placeholder="Sets" style="width:48%;">
       </div>
-      <div class="input-field col s12">
-        <input type="number" name="sets" id="sets-select" min="0" max="10" step="1" placeholder="Sets" style="width:100%;">
-      </div>
-      <div class="input-field col s12" style="display: flex; align-items: center;">
+      <div style="margin-bottom: 5px;">
         <label>
           <input type="checkbox" name="warmup" id="warmup" style="width:100%;">
           <span>Warmup</span>
         </label>
+      </div>  
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">      
+        <button id="modal-add-item" class="btn" style="width: 48%;">Add</button>
+        <button id="modal-cancel-item" class="btn modal-close" style="width: 48%;">Cancel</button>
       </div>
     </div>
-    <button id="modal-add-item" class="btn">Add</button>
-    <a href="#" id="modal-closeBtn" class="close-btn">
+    <a href="#" id="modal-closeBtn" class="close-btn" style="margin-bottom: 5px;">
       <i class="material-icons">close</i>
     </a>
   </div>
