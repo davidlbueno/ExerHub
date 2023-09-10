@@ -117,7 +117,7 @@ $is_admin = $_SESSION['is_admin'];
 <!-- modal -->
   <div class="row">
     <div class="col s12" style="padding-bottom: 50px;">
-    <button id="openModalBtn" class="btn" data-target="addItemModal" style="margin-bottom: 5px !important;">Add Item</button>
+    <button id="openModalBtn" class="btn modal-trigger" data-target="addItemModal" style="margin-bottom: 5px !important;">Add Item</button>
       <button id="clear-list-btn" class="btn" style="margin-bottom: 5px !important;">Clear List</button>
       <button id="save-workout-btn" class="btn" style="margin-bottom: 5px !important;">Update Workout</button>
       <button id="delete-workout-btn" class="btn" style="margin-bottom: 5px !important;">Delete Workout</button>
