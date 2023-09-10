@@ -21,7 +21,7 @@ require_once 'php/db_query.php';
     echo "<input type='hidden' name='log_id' value='$logId'>";
 
     echo "<table>";
-    echo "<tr><th>Exercise Type</th><th>Exercise ID</th><th>Time</th><th>Reps</th><th>Warmup</th></tr>";
+    echo "<tr><th>Exercise Type</th><th>Exercise Name</th><th>Time</th><th>Reps</th><th>Warmup</th></tr>";
 
     while ($logItemRow = mysqli_fetch_assoc($logItemsResult)) {
       $exerciseType = $logItemRow['exercise_type'];
@@ -30,9 +30,23 @@ require_once 'php/db_query.php';
       $reps = $logItemRow['reps'];
       $warmup = $logItemRow['warmup'];
 
+      // Fetch the exercise name based on the exerciseId
+      if ($exerciseType === "Rest") {
+        $exerciseName = "Rest";
+      } else {
+        if (isset($exerciseId) && !empty($exerciseId)) {
+            $exerciseQuery = "SELECT name FROM exercises WHERE id = $exerciseId";
+            $exerciseResult = query($conn, $exerciseQuery);
+            $exerciseRow = mysqli_fetch_assoc($exerciseResult);
+            $exerciseName = $exerciseRow['name'];
+        } else {
+            $exerciseName = "Unknown";
+        }
+      }
+
       echo "<tr>";
       echo "<td><input type='text' name='exercise_type[]' value='$exerciseType'></td>";
-      echo "<td><input type='text' name='exercise_id[]' value='$exerciseId'></td>";
+      echo "<td><input type='text' name='exercise_name[]' value='$exerciseName'></td>";  // Display the exercise name
       echo "<td><input type='text' name='exercise_time[]' value='$exerciseTime'></td>";
       echo "<td><input type='text' name='reps[]' value='$reps'></td>";
       echo "<td><input type='checkbox' name='warmup[]' value='1' " . ($warmup ? "checked" : "") . "></td>";
