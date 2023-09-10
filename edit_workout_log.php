@@ -21,14 +21,13 @@ require_once 'php/db_query.php';
     echo "<input type='hidden' name='log_id' value='$logId'>";
 
     echo "<table>";
-    echo "<tr><th>Exercise Type</th><th>Exercise Name</th><th>Time</th><th>Reps</th><th>Warmup</th></tr>";
+    echo "<tr><th>Exercise Type</th><th>Exercise Name</th><th>Time</th><th>Reps</th></tr>";
 
     while ($logItemRow = mysqli_fetch_assoc($logItemsResult)) {
       $exerciseType = $logItemRow['exercise_type'];
       $exerciseId = $logItemRow['exercise_id'];
       $exerciseTime = $logItemRow['exercise_time'];
       $reps = $logItemRow['reps'];
-      $warmup = $logItemRow['warmup'];
 
       // Fetch the exercise name based on the exerciseId
       if ($exerciseType === "Rest") {
@@ -44,10 +43,8 @@ require_once 'php/db_query.php';
         }
       }
 
-      // Determine the background color based on warmup status and exercise type
-      if ($warmup) {
-        $bgColor = "style='background-color: darkblue;'";
-      } elseif ($exerciseType === "Rest") {
+      // Determine the background color based on exercise type
+      if ($exerciseType === "Rest") {
         $bgColor = "style='background-color: darkgreen;'";
       } else {
         $bgColor = "";
@@ -58,12 +55,11 @@ require_once 'php/db_query.php';
       echo "<td><input type='text' name='exercise_name[]' value='$exerciseName'></td>";  // Display the exercise name
       echo "<td><input type='text' name='exercise_time[]' value='$exerciseTime'></td>";
       echo "<td><input type='text' name='reps[]' value='$reps'></td>";
-      echo "<td><input type='checkbox' name='warmup[]' value='1' " . ($warmup ? "checked" : "") . "></td>";
       echo "</tr>";
     }
 
     echo "</table>";
-    echo "<input type='submit' value='Update Log' class='btn'>";
+    echo "<input type='submit' value='Update Log'>";
     echo "</form>";
     ?>
   </main>
