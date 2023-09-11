@@ -43,10 +43,11 @@ $length = gmdate("H:i:s", $duration);
       <p>Date: <?php echo date("Y-m-d", strtotime($startTime)); ?></p>
       <p>Time: <?php echo date("H:i:s", strtotime($startTime)); ?></p>
     </div>
-    <div>
-      <label for="start_time">Start Time:</label>
-      <input type="datetime-local" name="start_time" id="start_time" value="<?php echo date('Y-m-d\\TH:i:s', strtotime($startTime)); ?>">
-    </div>
+    <div style="display: flex; align-items: center;">
+  <label for="start_time" style="margin-right: 10px;">Start Time:</label>
+  <input type="datetime-local" name="start_time" id="start_time" value="<?php echo date('Y-m-d\\TH:i:s', strtotime($startTime)); ?>">
+</div>
+
     <!-- modal -->
     <div id="addItemModal" class="modal dark-modal">
       <div class="modal-content">
@@ -126,28 +127,28 @@ $length = gmdate("H:i:s", $duration);
       }
 
       echo "<tr $bgColor>";
-      echo "<td style='padding: 0px;'><input type='text' name='exercise_type[]' value='$exerciseType'></td>";
-      echo "<td style='padding: 0px;'><input type='text' name='exercise_name[]' value='$exerciseName'></td>";
-      echo "<td style='padding: 0px;'><input type='number' name='exercise_time[]' value='$exerciseTime' min='0' step='5'></td>";
-    echo "<td style='padding: 0px;'><input type='number' name='reps[]' value='$reps' min='0' step='1'></td>";
+      echo "<td style='padding: 0 5px;'><input type='text' name='exercise_type[]' value='$exerciseType'></td>";
+      echo "<td style='padding: 0 5px;'><input type='text' name='exercise_name[]' value='$exerciseName'></td>";
+      echo "<td style='padding: 0 5px;'><input type='number' name='exercise_time[]' value='$exerciseTime' min='0' step='5'></td>";
+    echo "<td style='padding: 0 5px;'><input type='number' name='reps[]' value='$reps' min='0' step='1'></td>";
       echo "</tr>";
     }
     ?>
 
     </table><br>
-    <div style='display: flex;'>
-    <div>
-      <label for="end_time">End Time:</label>
-      <p id="end_time"><?php echo date('Y-m-d H:i:s', strtotime($endTime)); ?></p>
-    </div>
-      <div>
+    <div style='display: flex; justify-content: space-between;'>
+      <div style="display: flex; align-items: center; justify-content: space-between;">
+        <label for="end_time" style="width: 5rem;">End Time:</label>
+        <p id="end_time"><?php echo date('Y-m-d H:i:s', strtotime($endTime)); ?></p>
+      </div>
+      <div style="display: flex; align-items: center;">
         <p id="duration" style='line-height: 1;'>Duration: <?php echo $length; ?></p>
       </div>
     </div>
-    <div style='display: flex; justify-content: space-between;'>
-    <button id="openModalBtn" type="button" class="btn modal-trigger" data-target="addItemModal">Add Item</button>
-    <input type='submit' value='Update Log' class='btn' style='margin-right: 5px;'>
-    <a href='logs.php' class='btn' style='margin-left: 5px;'>Cancel</a>
+    <div style='display: flex;'>
+      <button id="openModalBtn" type="button" class="btn modal-trigger" data-target="addItemModal" style='margin-right: 5px !important;'>Add Item</button>
+      <input type='submit' value='Update Log' class='btn' style='margin-right: 5px !important;'>
+      <a href='logs.php' class='btn'>Cancel</a>
     </div>
   
     <a href="logs.php" id="closeBtn" class="close-btn">
