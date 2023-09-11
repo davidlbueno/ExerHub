@@ -182,7 +182,13 @@ $length = gmdate("H:i:s", $duration);
   const endTime = new Date(startTime.getTime() + totalExerciseTime * 1000);
   const formattedEndTime = endTime.toISOString().slice(0, 19).replace("T", " ");
   $('#end_time').text(formattedEndTime);
+
+  // Update Duration only if both startTime and totalExerciseTime are valid
+  if (!isNaN(startTime.getTime()) && !isNaN(totalExerciseTime)) {
+    updateDuration();
+  }
 }
+
 
 function updateDuration() {
   let totalExerciseTime = 0;
