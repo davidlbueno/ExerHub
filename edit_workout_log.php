@@ -135,8 +135,8 @@ $length = gmdate("H:i:s", $duration);
       echo "<tr $bgColor>";
       echo "<td style='padding: 0px;'><input type='text' name='exercise_type[]' value='$exerciseType'></td>";
       echo "<td style='padding: 0px;'><input type='text' name='exercise_name[]' value='$exerciseName'></td>";
-      echo "<td style='padding: 0px;'><input type='text' name='exercise_time[]' value='$exerciseTime'></td>";
-      echo "<td style='padding: 0px;'><input type='text' name='reps[]' value='$reps'></td>";
+      echo "<td style='padding: 0px;'><input type='number' name='exercise_time[]' value='$exerciseTime'></td>"; // Modified line
+      echo "<td style='padding: 0px;'><input type='number' name='reps[]' value='$reps'></td>"; // Modified line
       echo "</tr>";
     }
     ?>
