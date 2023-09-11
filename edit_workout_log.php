@@ -139,7 +139,7 @@ $length = gmdate("H:i:s", $duration);
     <div style='display: flex; justify-content: space-between;'>
       <div style="display: flex; align-items: center; justify-content: space-between;">
         <label for="end_time" style="width: 5rem;">End Time:</label>
-        <p id="end_time"><?php echo date('Y-m-d H:i:s', strtotime($endTime)); ?></p>
+        <p id="end_time"><?php echo date('m/d/Y h:i:s A', strtotime($endTime)); ?></p>
       </div>
       <div style="display: flex; align-items: center;">
         <p id="duration" style='line-height: 1;'>Duration: <?php echo $length; ?></p>
@@ -161,69 +161,68 @@ $length = gmdate("H:i:s", $duration);
   const setsSelect = document.getElementById("sets-select");
 
   $(document).ready(function() {
-  function updateEndTime() {
-    const startTime = new Date($('#start_time').val());
-    let totalExerciseTime = 0;
+    function updateEndTime() {
+      const startTime = new Date($('#start_time').val());
+      let totalExerciseTime = 0;
 
-    $("input[name='exercise_time[]']").each(function() {
-      totalExerciseTime += parseInt($(this).val(), 10) || 0;
-    });
+      $("input[name='exercise_time[]']").each(function() {
+        totalExerciseTime += parseInt($(this).val(), 10) || 0;
+      });
 
-    const endTime = new Date(startTime.getTime() + totalExerciseTime * 1000);
-    const formattedEndTime = endTime.toISOString().slice(0, 19).replace("T", " ");
-    $('#end_time').text(formattedEndTime);
-  }
-
-  function updateDuration() {
-    let totalExerciseTime = 0;
-
-    $("input[name='exercise_time[]']").each(function() {
-      totalExerciseTime += parseInt($(this).val(), 10) || 0;
-    });
-
-    const duration = totalExerciseTime;
-    const hours = String(Math.floor(duration / 3600) % 24).padStart(2, '0');
-    const minutes = String(Math.floor(duration / 60) % 60).padStart(2, '0');
-    const seconds = String(duration % 60).padStart(2, '0');
-    $('#duration').text(`Duration: ${hours}:${minutes}:${seconds}`);
-    updateEndTime();
-  }
-
-  $('#start_time').change(function() {
-    updateEndTime();
-  });
-
-  $(document).on('change', "input[name='exercise_time[]']", function() {
-    updateDuration();
-  });
-
-  // Your existing code for modal and other functionalities
-  // ...
-
-  $('#modal-add-item').click(function() {
-    const type = $('#type-select').val();
-    const exercise = $('#exercise-select').val();
-    const seconds = $('input[name="seconds"]').val();
-    const sets = parseInt($('#sets-select').val(), 10);
-
-    for (let i = 0; i < sets; i++) {
-      let newRow = `<tr>
-        <td><input type='text' name='exercise_type[]' value='${type}'></td>
-        <td><input type='text' name='exercise_name[]' value='${exercise}'></td>
-        <td><input type='number' name='exercise_time[]' value='${seconds}' min='0' step='5'></td>
-        <td><input type='number' name='reps[]' value='' min='0' step='1'></td>
-      </tr>`;
-
-      $('table').append(newRow);
+      const endTime = new Date(startTime.getTime() + totalExerciseTime * 1000);
+      function formatLocalDate(date) {
+        const options = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
+        return new Intl.DateTimeFormat('en-US', options).format(date).replace(", ", " ");
+      }
+      const formattedEndTime = formatLocalDate(endTime);
+      $('#end_time').text(formattedEndTime);
     }
 
-    var instance = M.Modal.getInstance($('#addItemModal'));
-    instance.close();
-    updateDuration();
+    function updateDuration() {
+      let totalExerciseTime = 0;
+
+      $("input[name='exercise_time[]']").each(function() {
+        totalExerciseTime += parseInt($(this).val(), 10) || 0;
+      });
+
+      const duration = totalExerciseTime;
+      const hours = String(Math.floor(duration / 3600) % 24).padStart(2, '0');
+      const minutes = String(Math.floor(duration / 60) % 60).padStart(2, '0');
+      const seconds = String(duration % 60).padStart(2, '0');
+      $('#duration').text(`Duration: ${hours}:${minutes}:${seconds}`);
+      updateEndTime();
+    }
+
+    $('#start_time').change(function() {
+      updateEndTime();
+    });
+
+    $(document).on('change', "input[name='exercise_time[]']", function() {
+      updateDuration();
+    });
+
+    $('#modal-add-item').click(function() {
+      const type = $('#type-select').val();
+      const exercise = $('#exercise-select').val();
+      const seconds = $('input[name="seconds"]').val();
+      const sets = parseInt($('#sets-select').val(), 10);
+
+      for (let i = 0; i < sets; i++) {
+        let newRow = `<tr>
+          <td><input type='text' name='exercise_type[]' value='${type}'></td>
+          <td><input type='text' name='exercise_name[]' value='${exercise}'></td>
+          <td><input type='number' name='exercise_time[]' value='${seconds}' min='0' step='5'></td>
+          <td><input type='number' name='reps[]' value='' min='0' step='1'></td>
+        </tr>`;
+
+        $('table').append(newRow);
+      }
+
+      var instance = M.Modal.getInstance($('#addItemModal'));
+      instance.close();
+      updateDuration();
+    });
   });
-});
-
-
 
   // Event listener for typeSelect change
   typeSelect.addEventListener("change", () => {
@@ -235,10 +234,9 @@ $length = gmdate("H:i:s", $duration);
     const response = await fetch(`php/get_exercises.php?type=${selectedType}`);
     const exercises = await response.json();
 
-    exerciseSelect.innerHTML = `
-      <option value="" disabled selected>Exercise</option>
-      ${exercises.map(exercise => `<option value="${exercise.name}">${exercise.name}</option>`).join('')}
-    `;
+    exerciseSelect.innerHTML = 
+    `<option value="" disabled selected>Exercise</option>
+      ${exercises.map(exercise => `<option value="${exercise.name}">${exercise.name}</option>`).join('')}`;
     exerciseSelect.disabled = selectedType === 'Rest';
     setsSelect.disabled = (selectedType === 'Rest') || $('.selected').length > 0;
 
@@ -294,7 +292,6 @@ $length = gmdate("H:i:s", $duration);
     var instance = M.Modal.getInstance($('#addItemModal'));
     instance.close();
   });
-
 
 </script>
 </body>
