@@ -34,19 +34,7 @@ $length = gmdate("H:i:s", $duration);
 ?>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script>
-  $(document).ready(function() {
-    $('#start_time, #end_time').change(function() {
-      const startTime = new Date($('#start_time').val());
-      const endTime = new Date($('#end_time').val());
-      const duration = Math.abs(endTime - startTime) / 1000;
-      const hours = String(Math.floor(duration / 3600) % 24).padStart(2, '0');
-      const minutes = String(Math.floor(duration / 60) % 60).padStart(2, '0');
-      const seconds = String(duration % 60).padStart(2, '0');
-      $('#duration').text(`Duration: ${hours}:${minutes}:${seconds}`);
-    });
-  });
-</script>
+
 
 <body class="dark">
   <main class="container">
@@ -66,6 +54,46 @@ $length = gmdate("H:i:s", $duration);
     <div>
       <p id="duration" style='line-height: 1;'>Duration: <?php echo $length; ?></p>
     </div>
+    <!-- modal -->
+    <div id="addItemModal" class="modal dark-modal">
+      <div class="modal-content">
+        <h5 style="margin-bottom: 5px;">Add Item</h5>
+        <div>
+          <div style="margin-bottom: 5px;">
+            <select name="type" id="type-select">
+              <option value="" disabled selected>Item</option>
+              <option value="Push">Push</option>
+              <option value="Pull">Pull</option>
+              <option value="Legs">Legs</option>
+              <option value="Core">Core</option>
+              <option value="Rest">Rest</option>
+            </select>
+          </div>
+          <div style="margin-bottom: 5px;">
+            <select name="exercise" id="exercise-select" disabled>
+              <option value="" disabled selected>Exercise</option>
+            </select>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+            <input type="number" name="seconds" min="0" max="300" step="5" placeholder="Seconds" style="width:48%;">
+            <input type="number" name="sets" id="sets-select" min="0" max="10" step="1" placeholder="Sets" style="width:48%;">
+          </div>
+          <div style="margin-bottom: 5px;">
+            <label>
+              <input type="checkbox" name="warmup" id="warmup" style="width:100%;">
+              <span>Warmup</span>
+            </label>
+          </div>  
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">      
+            <button id="modal-add-item" class="btn" style="width: 48%;">Add</button>
+            <button id="modal-cancel-item" class="btn modal-close" style="width: 48%;">Cancel</button>
+          </div>
+        </div>
+          <i id="modal-closeBtn" class="material-icons close-btn" style="margin-bottom: 5px;">close</i>
+
+      </div>
+    </div>
+    <!-- modal -->
     <?php
     $logItemsQuery = "SELECT * FROM workout_log_items WHERE workout_log_id = $logId";
     $logItemsResult = query($conn, $logItemsQuery);
@@ -111,17 +139,78 @@ $length = gmdate("H:i:s", $duration);
       echo "<td style='padding: 0px;'><input type='text' name='reps[]' value='$reps'></td>";
       echo "</tr>";
     }
-
-    echo "</table><br>";   
-    echo "<div style='display: flex; justify-content: space-between;'>";
-    echo "<input type='submit' value='Update Log' class='btn' style='margin-right: 5px;'>";
-    echo "<a href='logs.php' class='btn' style='margin-left: 5px;'>Cancel</a>";
-    echo "</div>";
-    
     ?>
+
+    </table><br>   
+    <div style='display: flex; justify-content: space-between;'>
+    <button id="openModalBtn" type="button" class="btn modal-trigger" data-target="addItemModal">Add Item</button>
+    <input type='submit' value='Update Log' class='btn' style='margin-right: 5px;'>
+    <a href='logs.php' class='btn' style='margin-left: 5px;'>Cancel</a>
+    </div>
+  
     <a href="logs.php" id="closeBtn" class="close-btn">
       <i class="material-icons">close</i>
     </a>
   </main>
+  <script>
+  const typeSelect = document.getElementById("type-select");
+  const exerciseSelect = document.getElementById("exercise-select");
+  const setsSelect = document.getElementById("sets-select");
+
+  $(document).ready(function() {
+    $('#start_time, #end_time').change(function() {
+      const startTime = new Date($('#start_time').val());
+      const endTime = new Date($('#end_time').val());
+      const duration = Math.abs(endTime - startTime) / 1000;
+      const hours = String(Math.floor(duration / 3600) % 24).padStart(2, '0');
+      const minutes = String(Math.floor(duration / 60) % 60).padStart(2, '0');
+      const seconds = String(duration % 60).padStart(2, '0');
+      $('#duration').text(`Duration: ${hours}:${minutes}:${seconds}`);
+    });
+  });
+
+  // Event listener for typeSelect change
+  typeSelect.addEventListener("change", () => {
+    updateExerciseSelect(typeSelect.value);
+  });
+
+  // Function to update exercise select options
+  async function updateExerciseSelect(selectedType, callback) {
+    const response = await fetch(`php/get_exercises.php?type=${selectedType}`);
+    const exercises = await response.json();
+
+    exerciseSelect.innerHTML = `
+      <option value="" disabled selected>Exercise</option>
+      ${exercises.map(exercise => `<option value="${exercise.name}">${exercise.name}</option>`).join('')}
+    `;
+    exerciseSelect.disabled = selectedType === 'Rest';
+    setsSelect.disabled = (selectedType === 'Rest') || $('.selected').length > 0;
+
+    if (callback) {
+      callback();
+    }
+  }
+
+  //Initialize the modal
+  var elems = document.querySelectorAll('.modal');
+  var instances = M.Modal.init(elems, {
+    onOpenEnd: function() {
+      typeSelect.focus();
+    }
+  });
+
+  // Add this to open the modal when the "Add Item" button is clicked
+  $('#openModalBtn').click(function() {
+    var instance = M.Modal.getInstance($('#addItemModal'));
+    instance.open();
+  });
+
+  // Add event listener for the close button
+  document.getElementById("modal-closeBtn").addEventListener("click", function() {
+    var instance = M.Modal.getInstance(document.getElementById("addItemModal"));
+    instance.close();
+  });
+
+</script>
 </body>
 </html>
