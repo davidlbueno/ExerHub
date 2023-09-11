@@ -42,10 +42,20 @@ $length = gmdate("H:i:s", $duration);
     <div style="display: flex; justify-content: space-between;">
       <p>Date: <?php echo date("Y-m-d", strtotime($startTime)); ?></p>
       <p>Time: <?php echo date("H:i:s", strtotime($startTime)); ?></p>
-      <p>Duration: <?php echo $length; ?></p>
+      
+    </div>
+    <div>
+      <label for="start_time">Start Time:</label>
+      <input type="datetime-local" name="start_time" id="start_time" value="<?php echo date('Y-m-d\TH:i:s', strtotime($startTime)); ?>">
+    </div>
+    <div>
+      <label for="end_time">End Time:</label>
+      <input type="datetime-local" name="end_time" id="end_time" value="<?php echo date('Y-m-d\TH:i:s', strtotime($endTime)); ?>">
+    </div>
+    <div>
+      <p style='line-height: 1;'>Duration: <?php echo $length; ?></p>
     </div>
     <?php
-    // Fetch existing log entries for this logId
     $logItemsQuery = "SELECT * FROM workout_log_items WHERE workout_log_id = $logId";
     $logItemsResult = query($conn, $logItemsQuery);
 
