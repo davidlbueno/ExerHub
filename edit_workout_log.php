@@ -172,23 +172,42 @@ $length = gmdate("H:i:s", $duration);
   });
 
   function updateEndTime() {
-    const startTime = new Date($('#start_time').val());
-    let totalExerciseTime = 0;
-    
-    $("input[name='exercise_time[]']").each(function() {
-      totalExerciseTime += parseInt($(this).val(), 10) || 0;
-    });
-    
-    const endTime = new Date(startTime.getTime() + totalExerciseTime * 1000);
-    const formattedEndTime = endTime.toISOString().slice(0, 19).replace("T", " ");
-    $('#end_time').text(formattedEndTime);
-  }
+  const startTime = new Date($('#start_time').val());
+  let totalExerciseTime = 0;
+  
+  $("input[name='exercise_time[]']").each(function() {
+    totalExerciseTime += parseInt($(this).val(), 10) || 0;
+  });
+  
+  const endTime = new Date(startTime.getTime() + totalExerciseTime * 1000);
+  const formattedEndTime = endTime.toISOString().slice(0, 19).replace("T", " ");
+  $('#end_time').text(formattedEndTime);
+}
 
-  $('#start_time, input[name="exercise_time[]"]').change(function() {
-    updateEndTime();
+function updateDuration() {
+  let totalExerciseTime = 0;
+  
+  $("input[name='exercise_time[]']").each(function() {
+    totalExerciseTime += parseInt($(this).val(), 10) || 0;
   });
 
+  // Calculate and update Duration
+  const duration = totalExerciseTime;
+  const hours = String(Math.floor(duration / 3600) % 24).padStart(2, '0');
+  const minutes = String(Math.floor(duration / 60) % 60).padStart(2, '0');
+  const seconds = String(duration % 60).padStart(2, '0');
+  $('#duration').text(`Duration: ${hours}:${minutes}:${seconds}`);
+}
+
+$('#start_time').change(function() {
   updateEndTime();
+});
+
+$('input[name="exercise_time[]"]').change(function() {
+  updateEndTime();
+  updateDuration();
+});
+
 
   // Event listener for typeSelect change
   typeSelect.addEventListener("change", () => {
