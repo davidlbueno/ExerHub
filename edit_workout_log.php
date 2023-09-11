@@ -141,7 +141,7 @@ while ($logItemRow = mysqli_fetch_assoc($logItemsResult)) {
   echo "</select>";
   echo "</td>";
   echo "<td style='padding: 0 5px;'><input type='number' name='exercise_time[]' value='$exerciseTime' min='0' step='5'></td>";
-  echo "<td style='padding: 0 5px;'><input type='number' name='reps[]' value='$reps' min='0' step='1'></td>";
+  echo "<td style='padding: 0 5px;'><input class='reps-input' type='number' name='reps[]' value='$reps' min='0' step='1'></td>";
   echo "<td style='padding: 0 5px;'><a href='#' class='delete-btn' data-log-id='$logId'><i class='material-icons'>delete</i></a></td>";
   echo "</tr>";
 }
@@ -248,6 +248,33 @@ echo "</table><br>";
       const selectedType = $(this).val();
       const exerciseSelect = $(this).closest('tr').find('.exercise-select')[0];
       updateExerciseSelect(selectedType, exerciseSelect);
+    });
+
+    // Function to disable reps input for 'Rest' type
+    function disableRepsForRest() {
+      $('.type-select').each(function() {
+        const type = $(this).val();
+        const repsInput = $(this).closest('tr').find('.reps-input')[0];
+        if (type === 'Rest') {
+          repsInput.disabled = true;
+        } else {
+          repsInput.disabled = false;
+        }
+      });
+    }
+
+    // Call the function initially to set the correct state
+    disableRepsForRest();
+
+    // Attach event listener to type select dropdowns
+    $(document).on('change', '.type-select', function() {
+      const type = $(this).val();
+      const repsInput = $(this).closest('tr').find('.reps-input')[0];
+      if (type === 'Rest') {
+        repsInput.disabled = true;
+      } else {
+        repsInput.disabled = false;
+      }
     });
   });
 
