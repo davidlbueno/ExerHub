@@ -211,6 +211,35 @@ $length = gmdate("H:i:s", $duration);
     instance.close();
   });
 
+  // Add event listener for the "Add" button in the modal
+  $('#modal-add-item').click(function() {
+    // Get values from the modal inputs
+    const type = $('#type-select').val();
+    const exercise = $('#exercise-select').val();
+    const seconds = $('input[name="seconds"]').val();
+    const sets = parseInt($('#sets-select').val(), 10); // Convert to integer
+    const isWarmup = $('#warmup').is(':checked');
+
+    // Loop to add 'sets' number of identical items
+    for (let i = 0; i < sets; i++) {
+      // Create a new table row
+      let newRow = `<tr>
+        <td><input type='text' name='exercise_type[]' value='${type}'></td>
+        <td><input type='text' name='exercise_name[]' value='${exercise}'></td>
+        <td><input type='text' name='exercise_time[]' value='${seconds}'></td>
+        <td><input type='text' name='reps[]' value=''></td>
+      </tr>`;
+
+      // Append the new row to the table
+      $('table').append(newRow);
+    }
+
+    // Close the modal
+    var instance = M.Modal.getInstance($('#addItemModal'));
+    instance.close();
+  });
+
+
 </script>
 </body>
 </html>
