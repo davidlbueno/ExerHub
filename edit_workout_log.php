@@ -212,28 +212,6 @@ echo "</table><br>";
       updateDuration();
     });
 
-    $('#modal-add-item').click(function() {
-      const type = $('#type-select').val();
-      const exercise = $('#exercise-select').val();
-      const seconds = $('input[name="seconds"]').val();
-      const sets = parseInt($('#sets-select').val(), 10);
-
-      for (let i = 0; i < sets; i++) {
-        let newRow = `<tr>
-          <td><input type='text' name='exercise_type[]' value='${type}'></td>
-          <td><input type='text' name='exercise_name[]' value='${exercise}'></td>
-          <td><input type='number' name='exercise_time[]' value='${seconds}' min='0' step='5'></td>
-          <td><input type='number' name='reps[]' value='' min='0' step='1'></td>
-        </tr>`;
-
-        $('table').append(newRow);
-      }
-
-      var instance = M.Modal.getInstance($('#addItemModal'));
-      instance.close();
-      updateDuration();
-    });
-
     // Function to update exercise select options
     async function updateExerciseSelect(selectedType, selectElement) {
       const response = await fetch(`php/get_exercises.php?type=${selectedType}`);
@@ -276,7 +254,6 @@ echo "</table><br>";
         repsInput.disabled = false;
       }
     });
-  });
 
   // Event listener for typeSelect change
   typeSelect.addEventListener("change", () => {
@@ -292,7 +269,6 @@ echo "</table><br>";
     `<option value="" disabled selected>Exercise</option>
       ${exercises.map(exercise => `<option value="${exercise.name}">${exercise.name}</option>`).join('')}`;
     exerciseSelect.disabled = selectedType === 'Rest';
-    setsSelect.disabled = (selectedType === 'Rest') || $('.selected').length > 0;
 
     if (callback) {
       callback();
@@ -307,12 +283,6 @@ echo "</table><br>";
     }
   });
 
-  // Add this to open the modal when the "Add Item" button is clicked
-  $('#openModalBtn').click(function() {
-    var instance = M.Modal.getInstance($('#addItemModal'));
-    instance.open();
-  });
-
   // Add event listener for the close button
   document.getElementById("modal-closeBtn").addEventListener("click", function() {
     var instance = M.Modal.getInstance(document.getElementById("addItemModal"));
@@ -321,32 +291,36 @@ echo "</table><br>";
 
   // Add event listener for the "Add" button in the modal
   $('#modal-add-item').click(function() {
-    // Get values from the modal inputs
     const type = $('#type-select').val();
     const exercise = $('#exercise-select').val();
     const seconds = $('input[name="seconds"]').val();
-    const sets = parseInt($('#sets-select').val(), 10); // Convert to integer
+    const sets = parseInt($('#sets-select').val(), 10);
     const isWarmup = $('#warmup').is(':checked');
+    console.log(type);
 
-    // Loop to add 'sets' number of identical items
+    let bgColor = "";
+    if (isWarmup) {
+      bgColor = "style='background-color: darkblue;'";
+    } else if (type === "Rest") {
+      bgColor = "style='background-color: darkgreen;'";
+    }
+
     for (let i = 0; i < sets; i++) {
-      // Create a new table row
-      let newRow = `<tr>
+      let newRow = `<tr ${bgColor}>
         <td><input type='text' name='exercise_type[]' value='${type}'></td>
         <td><input type='text' name='exercise_name[]' value='${exercise}'></td>
-        <td><input type='text' name='exercise_time[]' value='${seconds}'></td>
-        <td><input type='text' name='reps[]' value=''></td>
+        <td><input type='number' name='exercise_time[]' value='${seconds}' min='0' step='5'></td>
+        <td><input type='number' name='reps[]' value='' min='0' step='1'></td>
       </tr>`;
 
-      // Append the new row to the table
       $('table').append(newRow);
     }
 
-    // Close the modal
     var instance = M.Modal.getInstance($('#addItemModal'));
     instance.close();
+    updateDuration();
   });
-
+});
 </script>
 </body>
 </html>
