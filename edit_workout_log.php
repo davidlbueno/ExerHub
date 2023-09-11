@@ -96,46 +96,57 @@ $length = gmdate("H:i:s", $duration);
     echo "<input type='hidden' name='log_id' value='$logId'>";
 
     echo "<table>";
-    echo "<tr><th style='padding: 5px;'>Type</th><th style='padding: 5px; width: 14rem;'>Exercise</th><th>Time</th><th style='padding: 5px;'>Reps</th></tr>";
+echo "<tr><th style='padding: 5px;'>Type</th><th style='padding: 5px; width: 14rem;'>Exercise</th><th>Time</th><th style='padding: 5px;'>Reps</th></tr>";
 
-    while ($logItemRow = mysqli_fetch_assoc($logItemsResult)) {
-      $exerciseType = $logItemRow['exercise_type'];
-      $exerciseId = $logItemRow['exercise_id'];
-      $exerciseTime = $logItemRow['exercise_time'];
-      $reps = $logItemRow['reps'];
+while ($logItemRow = mysqli_fetch_assoc($logItemsResult)) {
+  $exerciseType = $logItemRow['exercise_type'];
+  $exerciseId = $logItemRow['exercise_id'];
+  $exerciseTime = $logItemRow['exercise_time'];
+  $reps = $logItemRow['reps'];
 
-      // Fetch the exercise name based on the exerciseId
-      if ($exerciseType === "Rest") {
-        $exerciseName = "Rest";
-      } else {
-        if (isset($exerciseId) && !empty($exerciseId)) {
-            $exerciseQuery = "SELECT name FROM exercises WHERE id = $exerciseId";
-            $exerciseResult = query($conn, $exerciseQuery);
-            $exerciseRow = mysqli_fetch_assoc($exerciseResult);
-            $exerciseName = $exerciseRow['name'];
-        } else {
-            $exerciseName = "Unknown";
-        }
-      }
-
-      // Determine the background color based on exercise type
-      $bgColor = "";
-      if ($exerciseType === "Rest") {
-        $bgColor = "style='background-color: darkgreen;'";
-      } elseif ($exerciseType === "Warmup") {
-        $bgColor = "style='background-color: darkblue;'";
-      }
-
-      echo "<tr $bgColor>";
-      echo "<td style='padding: 0 5px;'><input type='text' name='exercise_type[]' value='$exerciseType'></td>";
-      echo "<td style='padding: 0 5px;'><input type='text' name='exercise_name[]' value='$exerciseName'></td>";
-      echo "<td style='padding: 0 5px;'><input type='number' name='exercise_time[]' value='$exerciseTime' min='0' step='5'></td>";
-    echo "<td style='padding: 0 5px;'><input type='number' name='reps[]' value='$reps' min='0' step='1'></td>";
-      echo "</tr>";
+  // Fetch the exercise name based on the exerciseId
+  if ($exerciseType === "Rest") {
+    $exerciseName = "Rest";
+  } else {
+    if (isset($exerciseId) && !empty($exerciseId)) {
+        $exerciseQuery = "SELECT name FROM exercises WHERE id = $exerciseId";
+        $exerciseResult = query($conn, $exerciseQuery);
+        $exerciseRow = mysqli_fetch_assoc($exerciseResult);
+        $exerciseName = $exerciseRow['name'];
+    } else {
+        $exerciseName = "Unknown";
     }
-    ?>
+  }
 
-    </table><br>
+  // Determine the background color based on exercise type
+  $bgColor = "";
+  if ($exerciseType === "Rest") {
+    $bgColor = "style='background-color: darkgreen;'";
+  } elseif ($exerciseType === "Warmup") {
+    $bgColor = "style='background-color: darkblue;'";
+  }
+
+  echo "<tr $bgColor>";
+  echo "<td style='padding: 0 5px;'>";
+  echo "<select name='exercise_type[]' class='type-select'>";
+  echo "<option value='Push' " . ($exerciseType === 'Push' ? 'selected' : '') . ">Push</option>";
+  echo "<option value='Pull' " . ($exerciseType === 'Pull' ? 'selected' : '') . ">Pull</option>";
+  echo "<option value='Legs' " . ($exerciseType === 'Legs' ? 'selected' : '') . ">Legs</option>";
+  echo "<option value='Core' " . ($exerciseType === 'Core' ? 'selected' : '') . ">Core</option>";
+  echo "<option value='Rest' " . ($exerciseType === 'Rest' ? 'selected' : '') . ">Rest</option>";
+  echo "</select>";
+  echo "</td>";
+  echo "<td style='padding: 0 5px;'>";
+  echo "<select name='exercise_name[]' class='exercise-select'>";
+  echo "<option value='$exerciseName' selected>$exerciseName</option>";
+  echo "</select>";
+  echo "</td>";
+  echo "<td style='padding: 0 5px;'><input type='number' name='exercise_time[]' value='$exerciseTime' min='0' step='5'></td>";
+  echo "<td style='padding: 0 5px;'><input type='number' name='reps[]' value='$reps' min='0' step='1'></td>";
+  echo "</tr>";
+}
+echo "</table><br>";
+?>
     <div style='display: flex; justify-content: space-between;'>
       <div style="display: flex; align-items: center; justify-content: space-between;">
         <label for="end_time" style="width: 5rem;">End Time:</label>
@@ -221,6 +232,22 @@ $length = gmdate("H:i:s", $duration);
       var instance = M.Modal.getInstance($('#addItemModal'));
       instance.close();
       updateDuration();
+    });
+
+    // Function to update exercise select options
+    async function updateExerciseSelect(selectedType, selectElement) {
+      const response = await fetch(`php/get_exercises.php?type=${selectedType}`);
+      const exercises = await response.json();
+
+      selectElement.innerHTML = `<option value="" disabled selected>Exercise</option>
+        ${exercises.map(exercise => `<option value="${exercise.name}">${exercise.name}</option>`).join('')}`;
+    }
+
+    // Event listener for typeSelect change
+    $(document).on('change', '.type-select', function() {
+      const selectedType = $(this).val();
+      const exerciseSelect = $(this).closest('tr').find('.exercise-select')[0];
+      updateExerciseSelect(selectedType, exerciseSelect);
     });
   });
 
