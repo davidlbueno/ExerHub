@@ -160,59 +160,68 @@ $length = gmdate("H:i:s", $duration);
   const setsSelect = document.getElementById("sets-select");
 
   $(document).ready(function() {
-    $('#start_time, #end_time').change(function() {
-      const startTime = new Date($('#start_time').val());
-      const endTime = new Date($('#end_time').val());
-      const duration = Math.abs(endTime - startTime) / 1000;
-      const hours = String(Math.floor(duration / 3600) % 24).padStart(2, '0');
-      const minutes = String(Math.floor(duration / 60) % 60).padStart(2, '0');
-      const seconds = String(duration % 60).padStart(2, '0');
-      $('#duration').text(`Duration: ${hours}:${minutes}:${seconds}`);
-    });
-  });
-
   function updateEndTime() {
-  const startTime = new Date($('#start_time').val());
-  let totalExerciseTime = 0;
-  
-  $("input[name='exercise_time[]']").each(function() {
-    totalExerciseTime += parseInt($(this).val(), 10) || 0;
-  });
-  
-  const endTime = new Date(startTime.getTime() + totalExerciseTime * 1000);
-  const formattedEndTime = endTime.toISOString().slice(0, 19).replace("T", " ");
-  $('#end_time').text(formattedEndTime);
+    const startTime = new Date($('#start_time').val());
+    let totalExerciseTime = 0;
 
-  // Update Duration only if both startTime and totalExerciseTime are valid
-  if (!isNaN(startTime.getTime()) && !isNaN(totalExerciseTime)) {
-    updateDuration();
+    $("input[name='exercise_time[]']").each(function() {
+      totalExerciseTime += parseInt($(this).val(), 10) || 0;
+    });
+
+    const endTime = new Date(startTime.getTime() + totalExerciseTime * 1000);
+    const formattedEndTime = endTime.toISOString().slice(0, 19).replace("T", " ");
+    $('#end_time').text(formattedEndTime);
   }
-}
 
+  function updateDuration() {
+    let totalExerciseTime = 0;
 
-function updateDuration() {
-  let totalExerciseTime = 0;
-  
-  $("input[name='exercise_time[]']").each(function() {
-    totalExerciseTime += parseInt($(this).val(), 10) || 0;
+    $("input[name='exercise_time[]']").each(function() {
+      totalExerciseTime += parseInt($(this).val(), 10) || 0;
+    });
+
+    const duration = totalExerciseTime;
+    const hours = String(Math.floor(duration / 3600) % 24).padStart(2, '0');
+    const minutes = String(Math.floor(duration / 60) % 60).padStart(2, '0');
+    const seconds = String(duration % 60).padStart(2, '0');
+    $('#duration').text(`Duration: ${hours}:${minutes}:${seconds}`);
+    updateEndTime();
+  }
+
+  $('#start_time').change(function() {
+    updateEndTime();
   });
 
-  // Calculate and update Duration
-  const duration = totalExerciseTime;
-  const hours = String(Math.floor(duration / 3600) % 24).padStart(2, '0');
-  const minutes = String(Math.floor(duration / 60) % 60).padStart(2, '0');
-  const seconds = String(duration % 60).padStart(2, '0');
-  $('#duration').text(`Duration: ${hours}:${minutes}:${seconds}`);
-}
+  $(document).on('change', "input[name='exercise_time[]']", function() {
+    updateDuration();
+  });
 
-$('#start_time').change(function() {
-  updateEndTime();
+  // Your existing code for modal and other functionalities
+  // ...
+
+  $('#modal-add-item').click(function() {
+    const type = $('#type-select').val();
+    const exercise = $('#exercise-select').val();
+    const seconds = $('input[name="seconds"]').val();
+    const sets = parseInt($('#sets-select').val(), 10);
+
+    for (let i = 0; i < sets; i++) {
+      let newRow = `<tr>
+        <td><input type='text' name='exercise_type[]' value='${type}'></td>
+        <td><input type='text' name='exercise_name[]' value='${exercise}'></td>
+        <td><input type='number' name='exercise_time[]' value='${seconds}' min='0' step='5'></td>
+        <td><input type='number' name='reps[]' value='' min='0' step='1'></td>
+      </tr>`;
+
+      $('table').append(newRow);
+    }
+
+    var instance = M.Modal.getInstance($('#addItemModal'));
+    instance.close();
+    updateDuration();
+  });
 });
 
-$('input[name="exercise_time[]"]').change(function() {
-  updateEndTime();
-  updateDuration();
-});
 
 
   // Event listener for typeSelect change
