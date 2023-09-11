@@ -92,7 +92,7 @@ $length = gmdate("H:i:s", $duration);
     $logItemsQuery = "SELECT * FROM workout_log_items WHERE workout_log_id = $logId";
     $logItemsResult = query($conn, $logItemsQuery);
 
-    echo "<form action='update_log.php' method='post'>";
+    echo "<form id='updateLogForm' action='/php/update_log.php' method='post'>";
     echo "<input type='hidden' name='log_id' value='$logId'>";
     echo "<table>";
     echo "<tr><th style='padding: 5px; width: 70px;'>Type</th><th style='padding: 5px;'>Exercise</th><th style='width: 25px;'>Time</th><th style='width: 25px; padding: 5px;'>Reps</th><th style='width:20px;'></th></tr>";
@@ -292,23 +292,24 @@ echo "</table><br>";
   // Add event listener for the "Add" button in the modal
   $('#modal-add-item').click(function() {
     const type = $('#type-select').val();
-    const exercise = $('#exercise-select').val();
+    const exercise = type === "Rest" ? "" : $('#exercise-select').val();
     const seconds = $('input[name="seconds"]').val();
     const sets = parseInt($('#sets-select').val(), 10);
     const isWarmup = $('#warmup').is(':checked');
-    console.log(type);
 
     let bgColor = "";
+    let disabled = "";
     if (isWarmup) {
       bgColor = "style='background-color: darkblue;'";
     } else if (type === "Rest") {
       bgColor = "style='background-color: darkgreen;'";
+      disabled = "disabled";
     }
 
     for (let i = 0; i < sets; i++) {
       let newRow = `<tr ${bgColor}>
         <td><input type='text' name='exercise_type[]' value='${type}'></td>
-        <td><input type='text' name='exercise_name[]' value='${exercise}'></td>
+        <td><input type='text' name='exercise_name[]' value='${exercise}' ${disabled}></td>
         <td><input type='number' name='exercise_time[]' value='${seconds}' min='0' step='5'></td>
         <td><input type='number' name='reps[]' value='' min='0' step='1'></td>
       </tr>`;
@@ -319,6 +320,16 @@ echo "</table><br>";
     var instance = M.Modal.getInstance($('#addItemModal'));
     instance.close();
     updateDuration();
+  });
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const updateLogButton = document.querySelector("input[type='submit']");
+    const updateLogForm = document.getElementById('updateLogForm');
+
+    updateLogButton.addEventListener('click', function(event) {
+      event.preventDefault();
+      updateLogForm.submit();
+    });
   });
 });
 </script>
