@@ -24,7 +24,7 @@ require_once 'php/header.php';
 
     // Display the table of workout logs
     echo "<table>";
-    echo "<thead><tr><th>Workout Name</th><th>Date</th><th>Length</th><th></th></tr></thead>";
+    echo "<thead><tr><th>Workout</th><th>Date</th><th>Length</th><th></th></tr></thead>";
     echo "<tbody>";
     while ($logRow = mysqli_fetch_assoc($logsResult)) {
       $logId = $logRow['id'];

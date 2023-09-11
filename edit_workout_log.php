@@ -92,8 +92,11 @@ $length = gmdate("H:i:s", $duration);
     }
 
     echo "</table><br>";   
-    echo "<input type='submit' value='Update Log' class='btn'>";
-    echo "</form>";
+    echo "<div style='display: flex; justify-content: space-between;'>";
+    echo "<input type='submit' value='Update Log' class='btn' style='margin-right: 5px;'>";
+    echo "<a href='logs.php' class='btn' style='margin-left: 5px;'>Cancel</a>";
+    echo "</div>";
+    
     ?>
   </main>
 </body>
