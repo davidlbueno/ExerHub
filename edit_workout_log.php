@@ -31,10 +31,22 @@ $startTime = $authRow['start_time'];
 $endTime = $authRow['end_time'];
 $duration = strtotime($endTime) - strtotime($startTime);
 $length = gmdate("H:i:s", $duration);
-
 ?>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+  $(document).ready(function() {
+    $('#start_time, #end_time').change(function() {
+      const startTime = new Date($('#start_time').val());
+      const endTime = new Date($('#end_time').val());
+      const duration = Math.abs(endTime - startTime) / 1000;
+      const hours = Math.floor(duration / 3600) % 24;
+      const minutes = Math.floor(duration / 60) % 60;
+      const seconds = duration % 60;
+      $('#duration').text(`${hours}:${minutes}:${seconds}`);
+    });
+  });
+</script>
 
 <body class="dark">
   <main class="container">
@@ -42,18 +54,17 @@ $length = gmdate("H:i:s", $duration);
     <div style="display: flex; justify-content: space-between;">
       <p>Date: <?php echo date("Y-m-d", strtotime($startTime)); ?></p>
       <p>Time: <?php echo date("H:i:s", strtotime($startTime)); ?></p>
-      
     </div>
     <div>
       <label for="start_time">Start Time:</label>
-      <input type="datetime-local" name="start_time" id="start_time" value="<?php echo date('Y-m-d\TH:i:s', strtotime($startTime)); ?>">
+      <input type="datetime-local" name="start_time" id="start_time" value="<?php echo date('Y-m-d\\TH:i:s', strtotime($startTime)); ?>">
     </div>
     <div>
       <label for="end_time">End Time:</label>
-      <input type="datetime-local" name="end_time" id="end_time" value="<?php echo date('Y-m-d\TH:i:s', strtotime($endTime)); ?>">
+      <input type="datetime-local" name="end_time" id="end_time" value="<?php echo date('Y-m-d\\TH:i:s', strtotime($endTime)); ?>">
     </div>
     <div>
-      <p style='line-height: 1;'>Duration: <?php echo $length; ?></p>
+      <p id="duration" style='line-height: 1;'>Duration: <?php echo $length; ?></p>
     </div>
     <?php
     $logItemsQuery = "SELECT * FROM workout_log_items WHERE workout_log_id = $logId";
