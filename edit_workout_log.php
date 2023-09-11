@@ -95,7 +95,7 @@ $length = gmdate("H:i:s", $duration);
     echo "<form action='update_log.php' method='post'>";
     echo "<input type='hidden' name='log_id' value='$logId'>";
     echo "<table>";
-    echo "<tr><th style='padding: 5px;'>Type</th><th style='padding: 5px; width: 14rem;'>Exercise</th><th>Time</th><th style='padding: 5px;'>Reps</th></tr>";
+    echo "<tr><th style='padding: 5px; width: 70px;'>Type</th><th style='padding: 5px;'>Exercise</th><th style='width: 25px;'>Time</th><th style='width: 25px; padding: 5px;'>Reps</th><th style='width:20px;'></th></tr>";
 
 while ($logItemRow = mysqli_fetch_assoc($logItemsResult)) {
   $exerciseType = $logItemRow['exercise_type'];
@@ -142,6 +142,7 @@ while ($logItemRow = mysqli_fetch_assoc($logItemsResult)) {
   echo "</td>";
   echo "<td style='padding: 0 5px;'><input type='number' name='exercise_time[]' value='$exerciseTime' min='0' step='5'></td>";
   echo "<td style='padding: 0 5px;'><input type='number' name='reps[]' value='$reps' min='0' step='1'></td>";
+  echo "<td style='padding: 0 5px;'><a href='#' class='delete-btn' data-log-id='$logId'><i class='material-icons'>delete</i></a></td>";
   echo "</tr>";
 }
 echo "</table><br>";
