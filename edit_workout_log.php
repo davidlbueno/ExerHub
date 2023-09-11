@@ -119,6 +119,9 @@ $length = gmdate("H:i:s", $duration);
     echo "</div>";
     
     ?>
+    <a href="logs.php" id="closeBtn" class="close-btn">
+      <i class="material-icons">close</i>
+    </a>
   </main>
 </body>
 </html>
