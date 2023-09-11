@@ -40,10 +40,10 @@ $length = gmdate("H:i:s", $duration);
       const startTime = new Date($('#start_time').val());
       const endTime = new Date($('#end_time').val());
       const duration = Math.abs(endTime - startTime) / 1000;
-      const hours = Math.floor(duration / 3600) % 24;
-      const minutes = Math.floor(duration / 60) % 60;
-      const seconds = duration % 60;
-      $('#duration').text(`${hours}:${minutes}:${seconds}`);
+      const hours = String(Math.floor(duration / 3600) % 24).padStart(2, '0');
+      const minutes = String(Math.floor(duration / 60) % 60).padStart(2, '0');
+      const seconds = String(duration % 60).padStart(2, '0');
+      $('#duration').text(`Duration: ${hours}:${minutes}:${seconds}`);
     });
   });
 </script>
