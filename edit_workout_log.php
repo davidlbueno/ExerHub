@@ -47,13 +47,6 @@ $length = gmdate("H:i:s", $duration);
       <label for="start_time">Start Time:</label>
       <input type="datetime-local" name="start_time" id="start_time" value="<?php echo date('Y-m-d\\TH:i:s', strtotime($startTime)); ?>">
     </div>
-    <div>
-      <label for="end_time">End Time:</label>
-      <input type="datetime-local" name="end_time" id="end_time" value="<?php echo date('Y-m-d\\TH:i:s', strtotime($endTime)); ?>">
-    </div>
-    <div>
-      <p id="duration" style='line-height: 1;'>Duration: <?php echo $length; ?></p>
-    </div>
     <!-- modal -->
     <div id="addItemModal" class="modal dark-modal">
       <div class="modal-content">
@@ -135,13 +128,22 @@ $length = gmdate("H:i:s", $duration);
       echo "<tr $bgColor>";
       echo "<td style='padding: 0px;'><input type='text' name='exercise_type[]' value='$exerciseType'></td>";
       echo "<td style='padding: 0px;'><input type='text' name='exercise_name[]' value='$exerciseName'></td>";
-      echo "<td style='padding: 0px;'><input type='number' name='exercise_time[]' value='$exerciseTime'></td>"; // Modified line
-      echo "<td style='padding: 0px;'><input type='number' name='reps[]' value='$reps'></td>"; // Modified line
+      echo "<td style='padding: 0px;'><input type='number' name='exercise_time[]' value='$exerciseTime' min='0' step='5'></td>";
+    echo "<td style='padding: 0px;'><input type='number' name='reps[]' value='$reps' min='0' step='1'></td>";
       echo "</tr>";
     }
     ?>
 
-    </table><br>   
+    </table><br>
+    <div style='display: flex;'>
+    <div>
+      <label for="end_time">End Time:</label>
+      <p id="end_time"><?php echo date('Y-m-d H:i:s', strtotime($endTime)); ?></p>
+    </div>
+      <div>
+        <p id="duration" style='line-height: 1;'>Duration: <?php echo $length; ?></p>
+      </div>
+    </div>
     <div style='display: flex; justify-content: space-between;'>
     <button id="openModalBtn" type="button" class="btn modal-trigger" data-target="addItemModal">Add Item</button>
     <input type='submit' value='Update Log' class='btn' style='margin-right: 5px;'>
@@ -168,6 +170,25 @@ $length = gmdate("H:i:s", $duration);
       $('#duration').text(`Duration: ${hours}:${minutes}:${seconds}`);
     });
   });
+
+  function updateEndTime() {
+    const startTime = new Date($('#start_time').val());
+    let totalExerciseTime = 0;
+    
+    $("input[name='exercise_time[]']").each(function() {
+      totalExerciseTime += parseInt($(this).val(), 10) || 0;
+    });
+    
+    const endTime = new Date(startTime.getTime() + totalExerciseTime * 1000);
+    const formattedEndTime = endTime.toISOString().slice(0, 19).replace("T", " ");
+    $('#end_time').text(formattedEndTime);
+  }
+
+  $('#start_time, input[name="exercise_time[]"]').change(function() {
+    updateEndTime();
+  });
+
+  updateEndTime();
 
   // Event listener for typeSelect change
   typeSelect.addEventListener("change", () => {
