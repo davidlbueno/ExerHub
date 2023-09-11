@@ -94,9 +94,8 @@ $length = gmdate("H:i:s", $duration);
 
     echo "<form action='update_log.php' method='post'>";
     echo "<input type='hidden' name='log_id' value='$logId'>";
-
     echo "<table>";
-echo "<tr><th style='padding: 5px;'>Type</th><th style='padding: 5px; width: 14rem;'>Exercise</th><th>Time</th><th style='padding: 5px;'>Reps</th></tr>";
+    echo "<tr><th style='padding: 5px;'>Type</th><th style='padding: 5px; width: 14rem;'>Exercise</th><th>Time</th><th style='padding: 5px;'>Reps</th></tr>";
 
 while ($logItemRow = mysqli_fetch_assoc($logItemsResult)) {
   $exerciseType = $logItemRow['exercise_type'];
