@@ -291,36 +291,38 @@ echo "</table><br>";
 
   // Add event listener for the "Add" button in the modal
   $('#modal-add-item').click(function() {
-    const type = $('#type-select').val();
-    const exercise = type === "Rest" ? "" : $('#exercise-select').val();
-    const seconds = $('input[name="seconds"]').val();
-    const sets = parseInt($('#sets-select').val(), 10);
-    const isWarmup = $('#warmup').is(':checked');
+  const type = $('#type-select').val();
+  const exercise = $('#exercise-select option:selected').text();
+  const exerciseId = $('#exercise-select').val();  // Fetch the exercise ID
+  const seconds = $('input[name="seconds"]').val();
+  const sets = parseInt($('#sets-select').val(), 10);
+  const isWarmup = $('#warmup').is(':checked');
 
-    let bgColor = "";
-    let disabled = "";
-    if (isWarmup) {
-      bgColor = "style='background-color: darkblue;'";
-    } else if (type === "Rest") {
-      bgColor = "style='background-color: darkgreen;'";
-      disabled = "disabled";
-    }
+  let bgColor = "";
+  let disabled = "";
+  if (isWarmup) {
+    bgColor = "style='background-color: darkblue;'";
+  } else if (type === "Rest") {
+    bgColor = "style='background-color: darkgreen;'";
+    disabled = "disabled";
+  }
 
-    for (let i = 0; i < sets; i++) {
-      let newRow = `<tr ${bgColor}>
-        <td><input type='text' name='exercise_type[]' value='${type}'></td>
-        <td><input type='text' name='exercise_name[]' value='${exercise}' ${disabled}></td>
-        <td><input type='number' name='exercise_time[]' value='${seconds}' min='0' step='5'></td>
-        <td><input type='number' name='reps[]' value='' min='0' step='1'></td>
-      </tr>`;
+  for (let i = 0; i < sets; i++) {
+    let newRow = `<tr ${bgColor}>
+      <td><input type='text' name='exercise_type[]' value='${type}'></td>
+      <td><input type='text' name='exercise_name[]' value='${exercise}' ${disabled}></td>
+      <td><input type='hidden' name='exercise_id[]' value='${exerciseId}'></td>  <!-- Hidden input for exercise ID -->
+      <td><input type='number' name='exercise_time[]' value='${seconds}' min='0' step='5'></td>
+      <td><input type='number' name='reps[]' value='' min='0' step='1'></td>
+    </tr>`;
 
-      $('table').append(newRow);
-    }
+    $('table').append(newRow);
+  }
 
-    var instance = M.Modal.getInstance($('#addItemModal'));
-    instance.close();
-    updateDuration();
-  });
+  var instance = M.Modal.getInstance($('#addItemModal'));
+  instance.close();
+  updateDuration();
+});
 
   document.addEventListener('DOMContentLoaded', function() {
     const updateLogButton = document.querySelector("input[type='submit']");
