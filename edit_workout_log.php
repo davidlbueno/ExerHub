@@ -119,13 +119,16 @@ while ($logItemRow = mysqli_fetch_assoc($logItemsResult)) {
 
   // Determine the background color based on exercise type
   $bgColor = "";
+  $dataExerciseId = "";
   if ($exerciseType === "Rest") {
     $bgColor = "style='background-color: darkgreen;'";
   } elseif ($exerciseType === "Warmup") {
     $bgColor = "style='background-color: darkblue;'";
+  } else {
+    $dataExerciseId = "data-exercise-id='$exerciseId'";
   }
 
-  echo "<tr $bgColor>";
+  echo "<tr $bgColor $dataExerciseId>";
   echo "<td style='padding: 0 5px;'>";
   echo "<select name='exercise_type[]' class='type-select'>";
   echo "<option value='Push' " . ($exerciseType === 'Push' ? 'selected' : '') . ">Push</option>";
