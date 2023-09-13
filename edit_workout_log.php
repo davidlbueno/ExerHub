@@ -35,7 +35,6 @@ $length = gmdate("H:i:s", $duration);
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
-
 <body class="dark">
   <main class="container">
     <h4><?php echo $workoutName; ?></h4>
@@ -84,7 +83,6 @@ $length = gmdate("H:i:s", $duration);
           </div>
         </div>
           <i id="modal-closeBtn" class="material-icons close-btn" style="margin-bottom: 5px;">close</i>
-
       </div>
     </div>
     <!-- modal -->
@@ -215,22 +213,6 @@ echo "</table><br>";
       updateDuration();
     });
 
-    // Function to update exercise select options
-    async function updateExerciseSelect(selectedType, selectElement) {
-      const response = await fetch(`php/get_exercises.php?type=${selectedType}`);
-      const exercises = await response.json();
-
-      selectElement.innerHTML = `<option value="" disabled selected>Exercise</option>
-        ${exercises.map(exercise => `<option value="${exercise.name}">${exercise.name}</option>`).join('')}`;
-    }
-
-    // Event listener for typeSelect change
-    $(document).on('change', '.type-select', function() {
-      const selectedType = $(this).val();
-      const exerciseSelect = $(this).closest('tr').find('.exercise-select')[0];
-      updateExerciseSelect(selectedType, exerciseSelect);
-    });
-
     // Function to disable reps input for 'Rest' type
     function disableRepsForRest() {
       $('.type-select').each(function() {
@@ -247,21 +229,10 @@ echo "</table><br>";
     // Call the function initially to set the correct state
     disableRepsForRest();
 
-    // Attach event listener to type select dropdowns
-    $(document).on('change', '.type-select', function() {
-      const type = $(this).val();
-      const repsInput = $(this).closest('tr').find('.reps-input')[0];
-      if (type === 'Rest') {
-        repsInput.disabled = true;
-      } else {
-        repsInput.disabled = false;
-      }
+    // Event listener for typeSelect change
+    typeSelect.addEventListener("change", () => {
+      updateExerciseSelect(typeSelect.value);
     });
-
-  // Event listener for typeSelect change
-  typeSelect.addEventListener("change", () => {
-    updateExerciseSelect(typeSelect.value);
-  });
 
   // Function to update exercise select options
   async function updateExerciseSelect(selectedType, callback) {
@@ -271,6 +242,11 @@ echo "</table><br>";
     exerciseSelect.innerHTML = 
     `<option value="" disabled selected>Exercise</option>
       ${exercises.map(exercise => `<option value="${exercise.name}">${exercise.name}</option>`).join('')}`;
+      // add exercise id as data attribute
+      exercises.forEach(exercise => {
+        const option = $(`#exercise-select option[value='${exercise.name}']`);
+        option.data('id', exercise.id);
+      });
     exerciseSelect.disabled = selectedType === 'Rest';
 
     if (callback) {
@@ -295,7 +271,9 @@ echo "</table><br>";
   // Add event listener for the "Add" button in the modal
   $('#modal-add-item').click(function() {
     const type = $('#type-select').val();
-    const exercise = type === "Rest" ? "" : $('#exercise-select').val();
+    const exerciseOption = type === "Rest" ? null : $('#exercise-select option:selected');
+    const exercise = exerciseOption ? exerciseOption.text() : "";
+    const exerciseId = exerciseOption ? exerciseOption.data('id') : null;
     const seconds = $('input[name="seconds"]').val();
     const sets = parseInt($('#sets-select').val(), 10);
     const isWarmup = $('#warmup').is(':checked');
@@ -309,8 +287,13 @@ echo "</table><br>";
       disabled = "disabled";
     }
 
+    let dataExerciseId = "";
+    if (exerciseId) {
+      dataExerciseId = `data-exercise-id='${exerciseId}'`;
+    }
+
     for (let i = 0; i < sets; i++) {
-      let newRow = `<tr ${bgColor}>
+      let newRow = `<tr ${bgColor} ${dataExerciseId}>
         <td><input type='text' name='exercise_type[]' value='${type}'></td>
         <td><input type='text' name='exercise_name[]' value='${exercise}' ${disabled}></td>
         <td><input type='number' name='exercise_time[]' value='${seconds}' min='0' step='5'></td>

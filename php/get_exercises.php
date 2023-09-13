@@ -5,10 +5,11 @@ require_once 'db_query.php';
 $type = $_GET['type'];
 $includeDifficulty = isset($_GET['includeDifficulty']) ? $_GET['includeDifficulty'] : false;
 
+
 if ($includeDifficulty) {
-  $stmt = $conn->prepare("SELECT name, difficulty FROM exercises WHERE type=?");
+  $stmt = $conn->prepare("SELECT name, id, difficulty FROM exercises WHERE type=?");
 } else {
-  $stmt = $conn->prepare("SELECT name FROM exercises WHERE type=?");
+  $stmt = $conn->prepare("SELECT name, id FROM exercises WHERE type=?");
 }
 
 $stmt->bind_param("s", $type);
