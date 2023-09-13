@@ -309,15 +309,40 @@ echo "</table><br>";
     updateDuration();
   });
 
-  document.addEventListener('DOMContentLoaded', function() {
-    const updateLogButton = document.querySelector("input[type='submit']");
-    const updateLogForm = document.getElementById('updateLogForm');
+  // Add this new function to handle form submission
+  const updateLogButton = document.querySelector("input[type='submit']");
+  const updateLogForm = document.getElementById('updateLogForm');
 
-    updateLogButton.addEventListener('click', function(event) {
-      event.preventDefault();
-      updateLogForm.submit();
+  updateLogButton.addEventListener('click', function(event) {
+    event.preventDefault();
+
+    // Collect exercise IDs
+    const exerciseIds = Array.from(document.querySelectorAll('tr[data-exercise-id]'))
+      .map(tr => tr.getAttribute('data-exercise-id'));
+
+    // Collect other form data (exercise_type, exercise_time, reps, etc.)
+    const formData = new FormData(updateLogForm);
+
+    // Add exercise IDs to form data
+    exerciseIds.forEach(id => formData.append('exercise_id[]', id));
+
+    // Send data to server
+    fetch('/php/update_log.php', {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+      // Handle server response
+      console.log(data);
+    })
+    .catch(error => {
+      // Handle errors
+      console.log('Error:', error);
     });
   });
+
+  
 });
 </script>
 </body>
