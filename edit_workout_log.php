@@ -43,77 +43,51 @@ $length = gmdate("H:i:s", $duration);
       <p>Time: <?php echo date("H:i:s", strtotime($startTime)); ?></p>
     </div>
     <div style="display: flex; align-items: center;">
-  <label for="start_time" style="margin-right: 10px;">Start Time:</label>
-  <input type="datetime-local" name="start_time" id="start_time" value="<?php echo date('Y-m-d\\TH:i:s', strtotime($startTime)); ?>">
-</div>
-<?php
-include 'php/select_exercise_modal.php';
-
-$logItemsQuery = "SELECT * FROM workout_log_items WHERE workout_log_id = $logId";
-$logItemsResult = query($conn, $logItemsQuery);
-
-echo "<form id='updateLogForm' action='/php/update_log.php' method='post'>";
-echo "<input type='hidden' name='log_id' value='$logId'>";
-echo "<table>";
-echo "<tr><th style='padding: 5px; width: 70px;'>Type</th><th style='padding: 5px;'>Exercise</th><th style='width: 25px;'>Time</th><th style='width: 25px; padding: 5px;'>Reps</th><th style='width:20px;'></th></tr>";
-
-while ($logItemRow = mysqli_fetch_assoc($logItemsResult)) {
-  $exerciseType = $logItemRow['exercise_type'];
-  $exerciseId = $logItemRow['exercise_id'];
-  $exerciseTime = $logItemRow['exercise_time'];
-  $reps = $logItemRow['reps'];
-
-  // Fetch the exercise name based on the exerciseId
-  if ($exerciseType === "Rest") {
-    $exerciseName = "Rest";
-  } else {
-    if (isset($exerciseId) && !empty($exerciseId)) {
-        $exerciseQuery = "SELECT name FROM exercises WHERE id = $exerciseId";
-        $exerciseResult = query($conn, $exerciseQuery);
-        $exerciseRow = mysqli_fetch_assoc($exerciseResult);
-        $exerciseName = $exerciseRow['name'];
-    } else {
-        $exerciseName = "Unknown";
+      <label for="start_time" style="margin-right: 10px;">Start Time:</label>
+      <input type="datetime-local" name="start_time" id="start_time" value="<?php echo date('Y-m-d\\TH:i:s', strtotime($startTime)); ?>">
+    </div>
+    <?php
+    include 'php/select_exercise_modal.php';
+    
+    $logItemsQuery = "SELECT * FROM workout_log_items WHERE workout_log_id = $logId";
+    $logItemsResult = query($conn, $logItemsQuery);
+    
+    echo "<form id='updateLogForm' action='/php/update_log.php' method='post'>";
+    echo "<input type='hidden' name='log_id' value='$logId'>";
+    echo "<ol style='padding-left: 28px;'>";  // Start of ordered list
+    
+    while ($logItemRow = mysqli_fetch_assoc($logItemsResult)) {
+      $exerciseType = $logItemRow['exercise_type'];
+      $exerciseId = $logItemRow['exercise_id'];
+      $exerciseTime = $logItemRow['exercise_time'];
+      $reps = $logItemRow['reps'];
+      
+      // Fetch the exercise name based on the exerciseId
+      if ($exerciseType === "Rest") {
+        $exerciseName = "Rest";
+      } else {
+        if (isset($exerciseId) && !empty($exerciseId)) {
+            $exerciseQuery = "SELECT name FROM exercises WHERE id = $exerciseId";
+            $exerciseResult = query($conn, $exerciseQuery);
+            $exerciseRow = mysqli_fetch_assoc($exerciseResult);
+            $exerciseName = $exerciseRow['name'];
+        } else {
+            $exerciseName = "Unknown";
+        }
+      }
+      
+      // Create list items similar to workout.php
+      if ($exerciseType === "Rest") {
+        echo "<li><strong>Rest</strong> - ({$exerciseTime}s)</li>";
+      } else {
+        echo "<li><strong>{$exerciseType}</strong> - {$exerciseName} ({$exerciseTime}s, {$reps} reps)</li>";
+      }
     }
-  }
-
-  // Determine the background color based on exercise type
-  $bgColor = "";
-  $dataExerciseId = "";
-  if ($exerciseType === "Rest") {
-    $bgColor = "style='background-color: darkgreen;'";
-  } elseif ($exerciseType === "Warmup") {
-    $bgColor = "style='background-color: darkblue;'";
-  } else {
-    $dataExerciseId = "data-exercise-id='$exerciseId'";
-  }
-  echo "<tr $bgColor $dataExerciseId>";
-  echo "<td style='padding: 0 5px;'>";
-  echo "<select name='exercise_type[]' class='type-select'>";
-  echo "<option value='Push' " . ($exerciseType === 'Push' ? 'selected' : '') . ">Push</option>";
-  echo "<option value='Pull' " . ($exerciseType === 'Pull' ? 'selected' : '') . ">Pull</option>";
-  echo "<option value='Legs' " . ($exerciseType === 'Legs' ? 'selected' : '') . ">Legs</option>";
-  echo "<option value='Core' " . ($exerciseType === 'Core' ? 'selected' : '') . ">Core</option>";
-  echo "<option value='Rest' " . ($exerciseType === 'Rest' ? 'selected' : '') . ">Rest</option>";
-  echo "</select>";
-  echo "</td>";
-  echo "<td style='padding: 0 5px;'>";
-  echo "<select name='exercise_name[]' class='exercise-select'>";
-  echo "<option value='$exerciseName' selected>$exerciseName</option>";
-  echo "</select>";
-  echo "</td>";
-  echo "<td style='padding: 0 5px;'><input type='number' name='exercise_time[]' value='$exerciseTime' min='0' step='5'></td>";
-  echo "<td style='padding: 0 5px;'><input class='reps-input' type='number' name='reps[]' value='$reps' min='0' step='1'></td>";
-  echo "<td style='padding: 0 5px;'><a href='#' class='delete-btn' data-log-id='$logId'><i class='material-icons'>delete</i></a></td>";
-  echo "</tr>";
-}
-echo "</table><br>";
-?>
+    
+    echo "</ol>";  // End of ordered list
+    ?>
+    
     <div style='display: flex; justify-content: space-between;'>
-      <div style="display: flex; align-items: center; justify-content: space-between;">
-        <label for="end_time" style="width: 5rem;">End Time:</label>
-        <p id="end_time"><?php echo date('m/d/Y h:i:s A', strtotime($endTime)); ?></p>
-      </div>
       <div style="display: flex; align-items: center;">
         <p id="duration" style='line-height: 1;'>Duration: <?php echo $length; ?></p>
       </div>
@@ -123,10 +97,6 @@ echo "</table><br>";
       <input type='submit' value='Update Log' class='btn' style='margin-right: 5px !important;'>
       <a href='logs.php' class='btn'>Cancel</a>
     </div>
-  
-    <a href="logs.php" id="closeBtn" class="close-btn">
-      <i class="material-icons">close</i>
-    </a>
   </main>
   <script>
   
