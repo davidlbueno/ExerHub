@@ -94,11 +94,10 @@ $('#modal-add-item').click(function() {
   for (let i = 0; i < sets; i++) {
     let newItem;
     if (type === "Rest") {
-      newItem = `<li><strong>Rest</strong> - (${seconds}s)</li>`;
+      newItem = `<li style='display: flex; align-items: center;'><strong>Rest</strong><span style='margin: 0 5px;'>-</span><span style='margin: 0 5px;'>(</span><input type='number' class='exercise-time' value='${seconds}' min='0' step='5' style='width: 50px; margin: 0 5px;'><span style='margin: 0 5px;'>s)</span></li>`;
     } else {
-      newItem = `<li><strong>${type}</strong> - ${exercise} (${seconds}s)</li>`;
+      newItem = `<li style='display: flex; align-items: center;'><strong>${type}</strong><span style='margin: 0 5px;'>-</span>${exercise}<span style='margin: 0 5px;'>(</span><input type='number' class='exercise-time' value='${seconds}' min='0' step='5' style='width: 50px; margin: 0 5px;'><span style='margin: 0 5px;'>s, <input type='number' class='exercise-reps' value='${sets}' min='0' style='width: 50px; margin: 0 5px;'> reps)</span></li>`;
     }
-
     $('ol').append(newItem);
   }
 
