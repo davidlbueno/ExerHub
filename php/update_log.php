@@ -24,5 +24,5 @@ for ($i = 0; $i < count($exerciseTypes); $i++) {
     post($conn, $insertQuery, [$logId, $exerciseType, $exerciseId, $exerciseTime, $rep]);
 }
 
-header('Location: logs.php');
+header('Location: /logs.php');
 ?>
