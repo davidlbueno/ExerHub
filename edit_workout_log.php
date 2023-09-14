@@ -104,44 +104,39 @@ $length = gmdate("H:i:s", $duration);
 <script>
 $(document).ready(function() {
   function updateEndTime() {
-    const startTime = new Date($('#start_time').val());
-    let totalExerciseTime = 0;
+  const startTime = new Date($('#start_time').val());
+  const durationText = $('#duration').text().split(": ")[1];
+  const [hours, minutes, seconds] = durationText.split(":").map(Number);
 
-    $("input[name='exercise_time[]']").each(function() {
-      totalExerciseTime += parseInt($(this).val(), 10) || 0;
-    });
+  const durationInSeconds = hours * 3600 + minutes * 60 + seconds;
+  const endTime = new Date(startTime.getTime() + durationInSeconds * 1000);
 
-    const endTime = new Date(startTime.getTime() + totalExerciseTime * 1000);
-    function formatLocalDate(date) {
-      const options = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
-      return new Intl.DateTimeFormat('en-US', options).format(date).replace(", ", " ");
-    }
-    const formattedEndTime = formatLocalDate(endTime);
-    $('#end_time').text(formattedEndTime);
-  }
+  const endTimeString = endTime.toISOString().slice(0, 19);
+  $('#end_time').val(endTimeString);
+}
 
   function updateDuration() {
-    let totalExerciseTime = 0;
+  let totalExerciseTime = 0;
 
-    $("input[name='exercise_time[]']").each(function() {
-      totalExerciseTime += parseInt($(this).val(), 10) || 0;
-    });
+  // Sum up exercise_time from list items
+  $("ol li").each(function() {
+    const text = $(this).text();
+    const timeMatch = text.match(/\((\d+)s\)/);
+    if (timeMatch) {
+      totalExerciseTime += parseInt(timeMatch[1], 10);
+    }
+  });
 
-    $("ol li").each(function() {
-      const text = $(this).text();
-      const timeMatch = text.match(/\((\d+)s\)/);
-      if (timeMatch) {
-        totalExerciseTime += parseInt(timeMatch[1], 10);
-      }
-    });
+  const hours = Math.floor(totalExerciseTime / 3600);
+  const minutes = Math.floor((totalExerciseTime % 3600) / 60);
+  const seconds = totalExerciseTime % 60;
 
-    const duration = totalExerciseTime;
-    const hours = String(Math.floor(duration / 3600) % 24).padStart(2, '0');
-    const minutes = String(Math.floor(duration / 60) % 60).padStart(2, '0');
-    const seconds = String(duration % 60).padStart(2, '0');
-    $('#duration').text(`Duration: ${hours}:${minutes}:${seconds}`);
-    updateEndTime();
-  }
+  const duration = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  $('#duration').text(`Duration: ${duration}`);
+
+  // Update the end time based on the new duration
+  updateEndTime();
+}
 
   $('#start_time').change(function() {
     updateEndTime();
