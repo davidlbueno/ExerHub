@@ -1,85 +1,66 @@
 $(document).ready(function() {
+  const $startTime = $('#start_time');
+  const $duration = $('#duration');
+  const $endTime = $('#end_time');
+
+  function formatTime(number) {
+    return number.toString().padStart(2, '0');
+  }
+
   function updateEndTime() {
-  const startTime = new Date($('#start_time').val());
-  const durationText = $('#duration').text().split(": ")[1];
-  const [hours, minutes, seconds] = durationText.split(":").map(Number);
+    const startTime = new Date($startTime.val());
+    const [hours, minutes, seconds] = $duration.text().split(": ")[1].split(":").map(Number);
+    const durationInSeconds = hours * 3600 + minutes * 60 + seconds;
+    const endTime = new Date(startTime.getTime() + durationInSeconds * 1000);
 
-  const durationInSeconds = hours * 3600 + minutes * 60 + seconds;
-  const endTime = new Date(startTime.getTime() + durationInSeconds * 1000);
+    const month = formatTime(endTime.getMonth() + 1);
+    const day = formatTime(endTime.getDate());
+    const year = endTime.getFullYear();
+    let hour = endTime.getHours();
+    const minute = formatTime(endTime.getMinutes());
+    const second = formatTime(endTime.getSeconds());
 
-  const endTimeString = endTime.toISOString().slice(0, 19);
-  $('#end_time').text(endTimeString);
-}
+    let ampm = hour >= 12 ? 'PM' : 'AM';
+    hour = hour % 12 || 12;
+
+    $endTime.text(`${month}/${day}/${year} ${hour}:${minute}:${second} ${ampm}`);
+  }
 
   function updateDuration() {
-  let totalExerciseTime = 0;
+    let totalExerciseTime = 0;
+    $("ol li").each(function() {
+      const timeMatch = $(this).text().match(/\((\d+)s\)/);
+      if (timeMatch) totalExerciseTime += parseInt(timeMatch[1], 10);
+    });
 
-  // Sum up exercise_time from list items
-  $("ol li").each(function() {
-    const text = $(this).text();
-    const timeMatch = text.match(/\((\d+)s\)/);
-    if (timeMatch) {
-      totalExerciseTime += parseInt(timeMatch[1], 10);
-    }
-  });
+    const hours = Math.floor(totalExerciseTime / 3600);
+    const minutes = Math.floor((totalExerciseTime % 3600) / 60);
+    const seconds = totalExerciseTime % 60;
 
-  const hours = Math.floor(totalExerciseTime / 3600);
-  const minutes = Math.floor((totalExerciseTime % 3600) / 60);
-  const seconds = totalExerciseTime % 60;
+    $duration.text(`Duration: ${formatTime(hours)}:${formatTime(minutes)}:${formatTime(seconds)}`);
+    updateEndTime();
+  }
 
-  const duration = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-  $('#duration').text(`Duration: ${duration}`);
+  $startTime.change(updateEndTime);
+  $(document).on('change', "input[name='exercise_time[]']", updateDuration);
 
-  // Update the end time based on the new duration
-  updateEndTime();
-}
-
-$('#start_time').change(function() {
-  updateEndTime();
-});
-
-  $(document).on('change', "input[name='exercise_time[]']", function() {
-    updateDuration();
-  });
-
-  // Add this new function to handle form submission
   const updateLogButton = document.querySelector("input[type='submit']");
   const updateLogForm = document.getElementById('updateLogForm');
 
   updateLogButton.addEventListener('click', function(event) {
     event.preventDefault();
-
-    // Collect exercise IDs
-    const exerciseIds = Array.from(document.querySelectorAll('tr[data-exercise-id]'))
-      .map(tr => tr.getAttribute('data-exercise-id'));
-
-    // Collect other form data (exercise_type, exercise_time, reps, etc.)
+    const exerciseIds = Array.from(document.querySelectorAll('tr[data-exercise-id]')).map(tr => tr.getAttribute('data-exercise-id'));
     const formData = new FormData(updateLogForm);
-
-    // Add exercise IDs to form data
     exerciseIds.forEach(id => formData.append('exercise_id[]', id));
 
-    // Send data to server
     fetch('/php/update_log.php', {
       method: 'POST',
       body: formData
     })
     .then(response => response.json())
-    .then(data => {
-      // Handle server response
-      console.log(data);
-    })
-    .catch(error => {
-      // Handle errors
-      console.log('Error:', error);
-    });
+    .then(console.log)
+    .catch(console.log);
   });
-  // Initialize the modal with onCloseEnd callback
-  var elems = document.querySelectorAll('.modal');
-  var instances = M.Modal.init(elems, {
-    onCloseEnd: function() {
-      // Call the updateDuration function when the modal is closed
-      updateDuration();
-    }
-  });
+
+  M.Modal.init(document.querySelectorAll('.modal'), { onCloseEnd: updateDuration });
 });
