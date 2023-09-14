@@ -86,7 +86,6 @@ $length = gmdate("H:i:s", $duration);
     
     echo "</ol>";  // End of ordered list
     ?>
-    
     <div style='display: flex; justify-content: space-between;'>
       <div style="display: flex; align-items: center;">
         <p id="duration" style='line-height: 1;'>Duration: <?php echo $length; ?></p>
@@ -98,9 +97,7 @@ $length = gmdate("H:i:s", $duration);
       <a href='logs.php' class='btn'>Cancel</a>
     </div>
   </main>
-  <script>
-  
-
+  <script> 
   $(document).ready(function() {
     function updateEndTime() {
       const startTime = new Date($('#start_time').val());
