@@ -28,10 +28,9 @@ $(document).ready(function() {
 
   function updateDuration() {
     let totalExerciseTime = 0;
-    $("ol li").each(function() {
-      const timeMatch = $(this).text().match(/\((\d+)s\)/);
-      if (timeMatch) totalExerciseTime += parseInt(timeMatch[1], 10);
-    });
+    $(".exercise-time").each(function() {
+      totalExerciseTime += parseInt($(this).val(), 10);
+    });    
 
     const hours = Math.floor(totalExerciseTime / 3600);
     const minutes = Math.floor((totalExerciseTime % 3600) / 60);
@@ -40,6 +39,8 @@ $(document).ready(function() {
     $duration.text(`Duration: ${formatTime(hours)}:${formatTime(minutes)}:${formatTime(seconds)}`);
     updateEndTime();
   }
+
+  $(document).on('change', ".exercise-time", updateDuration);
 
   $startTime.change(updateEndTime);
   $(document).on('change', "input[name='exercise_time[]']", updateDuration);

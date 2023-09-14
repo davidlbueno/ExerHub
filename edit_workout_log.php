@@ -77,10 +77,10 @@ $length = gmdate("H:i:s", $duration);
       }
 
       if ($exerciseType === "Rest") {
-        echo "<li><strong>Rest</strong> - ({$exerciseTime}s)</li>";
+        echo "<li style='display: flex; align-items: center;'><strong>Rest</strong><span style='margin: 0 5px;'>-</span><span style='margin: 0 5px;'>(</span><input type='number' class='exercise-time' value='{$exerciseTime}' min='0' step='5' style='width: 50px; margin: 0 5px;'><span style='margin: 0 5px;'>s)</span></li>";
       } else {
-        echo "<li><strong>{$exerciseType}</strong> - {$exerciseName} ({$exerciseTime}s, {$reps} reps)</li>";
-      }
+        echo "<li style='display: flex; align-items: center;'><strong>{$exerciseType}</strong><span style='margin: 0 5px;'>-</span>{$exerciseName}<span style='margin: 0 5px;'>(</span><input type='number' class='exercise-time' value='30' min='0' step='5' style='width: 50px; margin: 0 5px;'><span style='margin: 0 5px;'>s, <input type='number' class='exercise-reps' value='{$reps}' min='0' style='width: 50px; margin: 0 5px;'> reps)</span></li>";
+      }            
     }
     echo "</ol>";
     ?>
