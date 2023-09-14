@@ -176,16 +176,13 @@ $(document).ready(function() {
     });
   });
   // Initialize the modal with onCloseEnd callback
-  document.addEventListener('DOMContentLoaded', function() {
-    var elems = document.querySelectorAll('.modal');
-    var instances = M.Modal.init(elems, {
-      onCloseEnd: function() {
-        // Call the updateDuration function when the modal is closed
-        updateDuration();
-      }
-    });
+  var elems = document.querySelectorAll('.modal');
+  var instances = M.Modal.init(elems, {
+    onCloseEnd: function() {
+      // Call the updateDuration function when the modal is closed
+      updateDuration();
+    }
   });
-
 });
 </script>
 </body>
