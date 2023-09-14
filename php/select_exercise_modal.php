@@ -104,6 +104,7 @@ $('#modal-add-item').click(function() {
 
   var instance = M.Modal.getInstance($('#addItemModal'));
   instance.close();
+  updateDuration(); 
   
   // Function to disable reps input for 'Rest' type
   function disableRepsForRest() {
@@ -117,8 +118,5 @@ $('#modal-add-item').click(function() {
       }
     });
   }
-
-  var instance = M.Modal.getInstance($('#addItemModal'));
-  instance.close();
 });
 </script>
