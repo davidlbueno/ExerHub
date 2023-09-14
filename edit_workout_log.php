@@ -112,7 +112,7 @@ $(document).ready(function() {
   const endTime = new Date(startTime.getTime() + durationInSeconds * 1000);
 
   const endTimeString = endTime.toISOString().slice(0, 19);
-  $('#end_time').val(endTimeString);
+  $('#end_time').text(endTimeString);
 }
 
   function updateDuration() {
@@ -138,9 +138,9 @@ $(document).ready(function() {
   updateEndTime();
 }
 
-  $('#start_time').change(function() {
-    updateEndTime();
-  });
+$('#start_time').change(function() {
+  updateEndTime();
+});
 
   $(document).on('change', "input[name='exercise_time[]']", function() {
     updateDuration();
