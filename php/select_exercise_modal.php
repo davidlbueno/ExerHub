@@ -117,5 +117,12 @@ $('#modal-add-item').click(function() {
       }
     });
   }
+// Close the modal
+  var instance = M.Modal.getInstance($('#addItemModal'));
+  instance.close();
+
+  // Update the duration and end time
+  updateDuration();
+  updateEndTime();
 });
 </script>

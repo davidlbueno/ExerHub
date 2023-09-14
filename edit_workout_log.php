@@ -101,7 +101,7 @@ $length = gmdate("H:i:s", $duration);
       <a href='logs.php' class='btn'>Cancel</a>
     </div>
   </main>
-<script> 
+<script>
 $(document).ready(function() {
   function updateEndTime() {
     const startTime = new Date($('#start_time').val());
@@ -125,6 +125,14 @@ $(document).ready(function() {
 
     $("input[name='exercise_time[]']").each(function() {
       totalExerciseTime += parseInt($(this).val(), 10) || 0;
+    });
+
+    $("ol li").each(function() {
+      const text = $(this).text();
+      const timeMatch = text.match(/\((\d+)s\)/);
+      if (timeMatch) {
+        totalExerciseTime += parseInt(timeMatch[1], 10);
+      }
     });
 
     const duration = totalExerciseTime;
