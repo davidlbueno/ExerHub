@@ -83,55 +83,42 @@ instance.close();
 
 // Add event listener for the "Add" button in the modal
 $('#modal-add-item').click(function() {
-const type = $('#type-select').val();
-const exerciseOption = type === "Rest" ? null : $('#exercise-select option:selected');
-const exercise = exerciseOption ? exerciseOption.text() : "";
-const exerciseId = exerciseOption ? exerciseOption.data('id') : null;
-const seconds = $('input[name="seconds"]').val();
-const sets = parseInt($('#sets-select').val(), 10);
-const isWarmup = $('#warmup').is(':checked');
+  const type = $('#type-select').val();
+  const exerciseOption = type === "Rest" ? null : $('#exercise-select option:selected');
+  const exercise = exerciseOption ? exerciseOption.text() : "";
+  const exerciseId = exerciseOption ? exerciseOption.data('id') : null;
+  const seconds = $('input[name="seconds"]').val();
+  const sets = parseInt($('#sets-select').val(), 10);
+  const isWarmup = $('#warmup').is(':checked');
 
-let bgColor = "";
-let disabled = "";
-if (isWarmup) {
-  bgColor = "style='background-color: darkblue;'";
-} else if (type === "Rest") {
-  bgColor = "style='background-color: darkgreen;'";
-  disabled = "disabled";
-}
-
-let dataExerciseId = "";
-if (exerciseId) {
-  dataExerciseId = `data-exercise-id='${exerciseId}'`;
-}
-
-for (let i = 0; i < sets; i++) {
-  let newRow = `<tr ${bgColor} ${dataExerciseId}>
-    <td><input type='text' name='exercise_type[]' value='${type}'></td>
-    <td><input type='text' name='exercise_name[]' value='${exercise}' ${disabled}></td>
-    <td><input type='number' name='exercise_time[]' value='${seconds}' min='0' step='5'></td>
-    <td><input type='number' name='reps[]' value='' min='0' step='1'></td>
-    <td style='padding: 0 5px;'><a href='#' class='delete-btn' data-log-id='$logId'><i class='material-icons'>delete</i></a></td>
-  </tr>`;
-
-  $('table').append(newRow);
-}
-
-// Function to disable reps input for 'Rest' type
-function disableRepsForRest() {
-  $('.type-select').each(function() {
-    const type = $(this).val();
-    const repsInput = $(this).closest('tr').find('.reps-input')[0];
-    if (type === 'Rest') {
-      repsInput.disabled = true;
+  for (let i = 0; i < sets; i++) {
+    let newItem;
+    if (type === "Rest") {
+      newItem = `<li><strong>Rest</strong> - (${seconds}s)</li>`;
     } else {
-      repsInput.disabled = false;
+      newItem = `<li><strong>${type}</strong> - ${exercise} (${seconds}s)</li>`;
     }
-  });
-}
 
-var instance = M.Modal.getInstance($('#addItemModal'));
-instance.close();
-updateDuration();
+    $('ol').append(newItem);
+  }
+
+  var instance = M.Modal.getInstance($('#addItemModal'));
+  instance.close();
+  
+  // Function to disable reps input for 'Rest' type
+  function disableRepsForRest() {
+    $('.type-select').each(function() {
+      const type = $(this).val();
+      const repsInput = $(this).closest('tr').find('.reps-input')[0];
+      if (type === 'Rest') {
+        repsInput.disabled = true;
+      } else {
+        repsInput.disabled = false;
+      }
+    });
+  }
+
+  var instance = M.Modal.getInstance($('#addItemModal'));
+  instance.close();
 });
 </script>

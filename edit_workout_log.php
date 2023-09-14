@@ -87,6 +87,10 @@ $length = gmdate("H:i:s", $duration);
     echo "</ol>";  // End of ordered list
     ?>
     <div style='display: flex; justify-content: space-between;'>
+      <div style="display: flex; align-items: center; justify-content: space-between;">
+        <label for="end_time" style="width: 5rem;">End Time:</label>
+        <p id="end_time"><?php echo date('m/d/Y h:i:s A', strtotime($endTime)); ?></p>
+      </div>
       <div style="display: flex; align-items: center;">
         <p id="duration" style='line-height: 1;'>Duration: <?php echo $length; ?></p>
       </div>
@@ -97,47 +101,47 @@ $length = gmdate("H:i:s", $duration);
       <a href='logs.php' class='btn'>Cancel</a>
     </div>
   </main>
-  <script> 
-  $(document).ready(function() {
-    function updateEndTime() {
-      const startTime = new Date($('#start_time').val());
-      let totalExerciseTime = 0;
+<script> 
+$(document).ready(function() {
+  function updateEndTime() {
+    const startTime = new Date($('#start_time').val());
+    let totalExerciseTime = 0;
 
-      $("input[name='exercise_time[]']").each(function() {
-        totalExerciseTime += parseInt($(this).val(), 10) || 0;
-      });
-
-      const endTime = new Date(startTime.getTime() + totalExerciseTime * 1000);
-      function formatLocalDate(date) {
-        const options = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
-        return new Intl.DateTimeFormat('en-US', options).format(date).replace(", ", " ");
-      }
-      const formattedEndTime = formatLocalDate(endTime);
-      $('#end_time').text(formattedEndTime);
-    }
-
-    function updateDuration() {
-      let totalExerciseTime = 0;
-
-      $("input[name='exercise_time[]']").each(function() {
-        totalExerciseTime += parseInt($(this).val(), 10) || 0;
-      });
-
-      const duration = totalExerciseTime;
-      const hours = String(Math.floor(duration / 3600) % 24).padStart(2, '0');
-      const minutes = String(Math.floor(duration / 60) % 60).padStart(2, '0');
-      const seconds = String(duration % 60).padStart(2, '0');
-      $('#duration').text(`Duration: ${hours}:${minutes}:${seconds}`);
-      updateEndTime();
-    }
-
-    $('#start_time').change(function() {
-      updateEndTime();
+    $("input[name='exercise_time[]']").each(function() {
+      totalExerciseTime += parseInt($(this).val(), 10) || 0;
     });
 
-    $(document).on('change', "input[name='exercise_time[]']", function() {
-      updateDuration();
+    const endTime = new Date(startTime.getTime() + totalExerciseTime * 1000);
+    function formatLocalDate(date) {
+      const options = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
+      return new Intl.DateTimeFormat('en-US', options).format(date).replace(", ", " ");
+    }
+    const formattedEndTime = formatLocalDate(endTime);
+    $('#end_time').text(formattedEndTime);
+  }
+
+  function updateDuration() {
+    let totalExerciseTime = 0;
+
+    $("input[name='exercise_time[]']").each(function() {
+      totalExerciseTime += parseInt($(this).val(), 10) || 0;
     });
+
+    const duration = totalExerciseTime;
+    const hours = String(Math.floor(duration / 3600) % 24).padStart(2, '0');
+    const minutes = String(Math.floor(duration / 60) % 60).padStart(2, '0');
+    const seconds = String(duration % 60).padStart(2, '0');
+    $('#duration').text(`Duration: ${hours}:${minutes}:${seconds}`);
+    updateEndTime();
+  }
+
+  $('#start_time').change(function() {
+    updateEndTime();
+  });
+
+  $(document).on('change', "input[name='exercise_time[]']", function() {
+    updateDuration();
+  });
 
   // Add this new function to handle form submission
   const updateLogButton = document.querySelector("input[type='submit']");
@@ -171,6 +175,17 @@ $length = gmdate("H:i:s", $duration);
       console.log('Error:', error);
     });
   });
+  // Initialize the modal with onCloseEnd callback
+  document.addEventListener('DOMContentLoaded', function() {
+    var elems = document.querySelectorAll('.modal');
+    var instances = M.Modal.init(elems, {
+      onCloseEnd: function() {
+        // Call the updateDuration function when the modal is closed
+        updateDuration();
+      }
+    });
+  });
+
 });
 </script>
 </body>
