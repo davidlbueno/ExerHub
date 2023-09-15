@@ -90,13 +90,14 @@ $('#modal-add-item').click(function() {
   const seconds = $('input[name="seconds"]').val();
   const sets = parseInt($('#sets-select').val(), 10);
   const isWarmup = $('#warmup').is(':checked');
+  const reps = $('input[name="reps"]').val();
 
   for (let i = 0; i < sets; i++) {
     let newItem;
     if (type === "Rest") {
-      newItem = `<li style='display: flex; align-items: center;'><strong>Rest</strong><span style='margin: 0 5px;'>-</span><span style='margin: 0 5px;'>(</span><input type='number' class='exercise-time' value='${seconds}' min='0' step='5' style='width: 50px; margin: 0 5px;'><span style='margin: 0 5px;'>s)</span></li>`;
+      newItem = `<li><strong>Rest</strong> - (</span><input type='number' name='exercise_time[]' class='exercise-time' value='${seconds}' min='0' step='5' style='width: 50px;'>s)</li>`;
     } else {
-      newItem = `<li style='display: flex; align-items: center;'><strong>${type}</strong><span style='margin: 0 5px;'>-</span>${exercise}<span style='margin: 0 5px;'>(</span><input type='number' class='exercise-time' value='${seconds}' min='0' step='5' style='width: 50px; margin: 0 5px;'><span style='margin: 0 5px;'>s, <input type='number' class='exercise-reps' value='${sets}' min='0' style='width: 50px; margin: 0 5px;'> reps)</span></li>`;
+      newItem = `<li><strong>${type}</strong> - ${exercise} (</span><input type='number' name='exercise_time[]' class='exercise-time' value='${seconds}' min='0' step='5' style='width: 50px;'>s, <input type='number' name='exercise_reps[]' class='exercise-reps' value='${reps}' min='0' style='width: 30px;'> reps)</li>`;
     }
     $('ol').append(newItem);
   }

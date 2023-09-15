@@ -77,9 +77,9 @@ $length = gmdate("H:i:s", $duration);
       }
 
       if ($exerciseType === "Rest") {
-        echo "<li style='display: flex; align-items: center;'><strong>Rest</strong><span style='margin: 0 5px;'>-</span><span style='margin: 0 5px;'>(</span><input type='number' class='exercise-time' value='{$exerciseTime}' min='0' step='5' style='width: 50px; margin: 0 5px;'><span style='margin: 0 5px;'>s)</span></li>";
+        echo "<li><strong>Rest</strong> - (</span><input type='number' name='exercise_time[]' class='exercise-time' value='{$exerciseTime}' min='0' step='5' style='width: 50px;'>s)</li>";
       } else {
-        echo "<li style='display: flex; align-items: center;'><strong>{$exerciseType}</strong><span style='margin: 0 5px;'>-</span>{$exerciseName}<span style='margin: 0 5px;'>(</span><input type='number' class='exercise-time' value='30' min='0' step='5' style='width: 50px; margin: 0 5px;'><span style='margin: 0 5px;'>s, <input type='number' class='exercise-reps' value='{$reps}' min='0' style='width: 50px; margin: 0 5px;'> reps)</span></li>";
+        echo "<li><strong>{$exerciseType}</strong> - {$exerciseName} (</span><input type='number' name='exercise_time[]' class='exercise-time' value='{$exerciseTime}' min='0' step='5' style='width: 50px;'>s, <input type='number' name='exercise_reps[]' class='exercise-reps' value='{$reps}' min='0' style='width: 30px;'> reps)</li>";
       }            
     }
     echo "</ol>";
