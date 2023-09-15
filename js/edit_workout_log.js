@@ -57,7 +57,8 @@ $(document).ready(function() {
     const exerciseTimes = Array.from(document.querySelectorAll("input[name='exercise_time[]']")).map(input => input.value);
     const exerciseReps = Array.from(document.querySelectorAll("input[name='exercise_reps[]']")).map(input => input.value);
     exerciseTimes.forEach(time => formData.append('exercise_time[]', time));
-    exerciseReps.forEach(rep => formData.append('exercise_reps[]', rep));  
+    exerciseReps.forEach(reps => formData.append('exercise_reps[]', reps));
+  
 
     fetch('/php/update_log.php', {
       method: 'POST',

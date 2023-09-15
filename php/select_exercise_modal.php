@@ -19,8 +19,9 @@
             </select>
           </div>
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
-            <input type="number" name="seconds" min="0" max="300" step="5" placeholder="Seconds" style="width:48%;">
-            <input type="number" name="sets" id="sets-select" min="0" max="10" step="1" placeholder="Sets" style="width:48%;">
+            <input type="number" name="seconds" min="0" max="300" step="5" placeholder="Seconds" style="width:32%;">
+            <input type="number" name="sets" id="sets-select" min="0" max="10" step="1" placeholder="Sets" style="width:32%;">
+            <input type="number" name="reps" id="reps-select" min="0" max="50" step="1" placeholder="Reps" style="width:32%;">
           </div>
           <div style="margin-bottom: 5px;">
             <label>
@@ -90,7 +91,7 @@ $('#modal-add-item').click(function() {
   const seconds = $('input[name="seconds"]').val();
   const sets = parseInt($('#sets-select').val(), 10);
   const isWarmup = $('#warmup').is(':checked');
-  const reps = $('input[name="reps"]').val();
+  const reps = $('#reps-select').val();
 
   for (let i = 0; i < sets; i++) {
     let newItem;
