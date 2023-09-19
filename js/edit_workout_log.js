@@ -71,7 +71,10 @@ $(document).ready(function() {
       const $this = $(this);
       const exerciseType = $this.find("strong").text();
       logData.exercise_type.push(exerciseType);
-      logData.warmup.push($this.data("warmup")); 
+      // Check for the presence of the 'warmup' class
+      const isWarmup = $this.hasClass('warmup') ? 1 : 0;
+      logData.warmup.push(isWarmup);
+
       
       if (exerciseType !== "Rest") {
         logData.exercise_id.push($this.data("exercise-id"));
