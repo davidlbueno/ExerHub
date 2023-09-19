@@ -53,12 +53,24 @@ $(document).ready(function() {
   const updateLogForm = document.getElementById('updateLogForm');
 
   updateLogButton.addEventListener('click', function(event) {
+    // Data for workout_logs table
     console.log(logId);
     console.log(userId);
     console.log(workoutId);
     console.log(formatDate(new Date($startTime.val())));
     console.log($endTime.text());
     
+    // Data for workout_log_items table
+    $("ol li").each(function() {
+      const $this = $(this);
+      const exerciseType = $this.find("strong").text();
+      const exerciseId = "Rest" ? "N/A" : $this.data("exercise-id");
+      const exerciseTime = $this.find(".exercise-time").val();
+      const exerciseReps = exerciseType === "Rest" ? "N/A" : $this.find(".exercise-reps").val();
+      const isWarmup = $this.hasClass("warmup");
+  
+      console.log(`Type: ${exerciseType}, ID: ${exerciseId}, Time: ${exerciseTime}, Reps: ${exerciseReps}, warmup: ${isWarmup}`);
+    });
   });
 
   M.Modal.init(document.querySelectorAll('.modal'), { onCloseEnd: updateDuration });
