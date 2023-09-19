@@ -2,9 +2,23 @@ $(document).ready(function() {
   const $startTime = $('#start_time');
   const $duration = $('#duration');
   const $endTime = $('#end_time');
-
+  
   function formatTime(number) {
     return number.toString().padStart(2, '0');
+  }
+
+  function formatDate(date) {
+    const month = formatTime(date.getMonth() + 1);
+    const day = formatTime(date.getDate());
+    const year = date.getFullYear();
+    let hour = date.getHours();
+    const minute = formatTime(date.getMinutes());
+    const second = formatTime(date.getSeconds());
+
+    let ampm = hour >= 12 ? 'PM' : 'AM';
+    hour = hour % 12 || 12;
+
+    return `${year}-${month}-${day} ${hour}:${minute}:${second} ${ampm}`;
   }
 
   function updateEndTime() {
@@ -13,17 +27,7 @@ $(document).ready(function() {
     const durationInSeconds = hours * 3600 + minutes * 60 + seconds;
     const endTime = new Date(startTime.getTime() + durationInSeconds * 1000);
 
-    const month = formatTime(endTime.getMonth() + 1);
-    const day = formatTime(endTime.getDate());
-    const year = endTime.getFullYear();
-    let hour = endTime.getHours();
-    const minute = formatTime(endTime.getMinutes());
-    const second = formatTime(endTime.getSeconds());
-
-    let ampm = hour >= 12 ? 'PM' : 'AM';
-    hour = hour % 12 || 12;
-
-    $endTime.text(`${month}/${day}/${year} ${hour}:${minute}:${second} ${ampm}`);
+    $endTime.text(formatDate(endTime));
   }
 
   function updateDuration() {
@@ -49,24 +53,12 @@ $(document).ready(function() {
   const updateLogForm = document.getElementById('updateLogForm');
 
   updateLogButton.addEventListener('click', function(event) {
-    event.preventDefault();
-    const exerciseIds = Array.from(document.querySelectorAll('tr[data-exercise-id]')).map(tr => tr.getAttribute('data-exercise-id'));
-    const formData = new FormData(updateLogForm);
-    exerciseIds.forEach(id => formData.append('exercise_id[]', id));
-
-    const exerciseTimes = Array.from(document.querySelectorAll("input[name='exercise_time[]']")).map(input => input.value);
-    const exerciseReps = Array.from(document.querySelectorAll("input[name='exercise_reps[]']")).map(input => input.value);
-    exerciseTimes.forEach(time => formData.append('exercise_time[]', time));
-    exerciseReps.forEach(reps => formData.append('exercise_reps[]', reps));
-  
-
-    fetch('/php/update_log.php', {
-      method: 'POST',
-      body: formData
-    })
-    .then(response => response.json())
-    .then(console.log)
-    .catch(console.log);
+    console.log(logId);
+    console.log(userId);
+    console.log(workoutId);
+    console.log(formatDate(new Date($startTime.val())));
+    console.log($endTime.text());
+    
   });
 
   M.Modal.init(document.querySelectorAll('.modal'), { onCloseEnd: updateDuration });

@@ -52,7 +52,6 @@ $length = gmdate("H:i:s", $duration);
     $logItemsQuery = "SELECT * FROM workout_log_items WHERE workout_log_id = $logId";
     $logItemsResult = query($conn, $logItemsQuery);
     
-    echo "<form id='updateLogForm' action='/php/update_log.php' method='post'>";
     echo "<input type='hidden' name='log_id' value='$logId'>";
     echo "<ol style='padding-left: 28px;'>";  // Start of ordered list
     
@@ -99,6 +98,11 @@ $length = gmdate("H:i:s", $duration);
       <a href='logs.php' class='btn'>Cancel</a>
     </div>
   </main>
+  <script>
+    const logId = <?php echo json_encode($logId); ?>;
+    const userId = <?php echo json_encode($userId); ?>;
+    const workoutId = <?php echo json_encode($workoutId); ?>;
+  </script>
 <script src="/js/edit_workout_log.js"></script>
 </body>
 </html>
