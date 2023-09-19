@@ -53,25 +53,44 @@ $(document).ready(function() {
   const updateLogForm = document.getElementById('updateLogForm');
 
   updateLogButton.addEventListener('click', function(event) {
-    // Data for workout_logs table
-    console.log(logId);
-    console.log(userId);
-    console.log(workoutId);
-    console.log(formatDate(new Date($startTime.val())));
-    console.log($endTime.text());
-    
-    // Data for workout_log_items table
+    event.preventDefault(); // Prevent form submission
+    const logData = {
+      log_id: logId,
+      user_id: userId,
+      workout_id: workoutId,
+      start_time: formatDate(new Date($startTime.val())),
+      end_time: $endTime.text(),
+      exercise_type: [],
+      exercise_id: [],
+      exercise_time: [],
+      reps: []
+    };
+  
     $("ol li").each(function() {
       const $this = $(this);
       const exerciseType = $this.find("strong").text();
-      const exerciseId = "Rest" ? "N/A" : $this.data("exercise-id");
-      const exerciseTime = $this.find(".exercise-time").val();
-      const exerciseReps = exerciseType === "Rest" ? "N/A" : $this.find(".exercise-reps").val();
-      const isWarmup = $this.hasClass("warmup");
-  
-      console.log(`Type: ${exerciseType}, ID: ${exerciseId}, Time: ${exerciseTime}, Reps: ${exerciseReps}, warmup: ${isWarmup}`);
+      logData.exercise_type.push(exerciseType);
+      
+      if (exerciseType !== "Rest") {
+        logData.exercise_id.push($this.data("exercise-id"));
+        logData.reps.push($this.find(".exercise-reps").val());
+      } else {
+        logData.exercise_id.push(null);
+        logData.reps.push(null);
+      }
+      
+      logData.exercise_time.push($this.find(".exercise-time").val());
     });
+  
+    $.post('/php/update_log.php', logData, function(response) {
+      if (response.success) {
+        //window.location.href = '/logs.php';
+      } else {
+        alert('Error updating log');
+      }
+    }, 'json');
   });
+  
 
   M.Modal.init(document.querySelectorAll('.modal'), { onCloseEnd: updateDuration });
 });

@@ -60,6 +60,7 @@ $length = gmdate("H:i:s", $duration);
       $exerciseId = $logItemRow['exercise_id'];
       $exerciseTime = $logItemRow['exercise_time'];
       $reps = $logItemRow['reps'];
+      $warmup = $logItemRow['warmup'];
       
       // Fetch the exercise name based on the exerciseId
       if ($exerciseType === "Rest") {
@@ -78,10 +79,10 @@ $length = gmdate("H:i:s", $duration);
       if ($exerciseType === "Rest") {
         echo "<li class='rest'><strong>Rest</strong> - (</span><input type='number' name='exercise_time[]' class='exercise-time' value='{$exerciseTime}' min='0' step='5' style='width: 50px;'>s)</li>";
       } else {
-        if (isWarmup) {
-          echo `<li data-exercise-id='${exerciseId}' class='warmup'><strong>${type}</strong> - ${exercise} (</span><input type='number' name='exercise_time[]' class='exercise-time' value='${seconds}' min='0' step='5' style='width: 50px;'>s, <input type='number' name='exercise_reps[]' class='exercise-reps' value='${reps}' min='0' style='width: 30px;'> reps) </li>`;
+        if ($warmup) {
+          echo `<li data-exercise-id='${exerciseId}' class='warmup'><strong>${exerciseType}</strong> - ${exercise} (</span><input type='number' name='exercise_time[]' class='exercise-time' value='${exerciseTime}' min='0' step='5' style='width: 50px;'>s, <input type='number' name='exercise_reps[]' class='exercise-reps' value='${reps}' min='0' style='width: 30px;'> reps) </li>`;
         } else {
-          echo `<li data-exercise-id='${exerciseId}'><strong>${type}</strong> - ${exercise} (</span><input type='number' name='exercise_time[]' class='exercise-time' value='${seconds}' min='0' step='5' style='width: 50px;'>s, <input type='number' name='exercise_reps[]' class='exercise-reps' value='${reps}' min='0' style='width: 30px;'> reps)</li>`;
+          echo `<li data-exercise-id='${exerciseId}'><strong>${exerciseType}</strong> - ${exerciseName} (</span><input type='number' name='exercise_time[]' class='exercise-time' value='${exerciseTime}' min='0' step='5' style='width: 50px;'>s, <input type='number' name='exercise_reps[]' class='exercise-reps' value='${reps}' min='0' style='width: 30px;'> reps)</li>`;
         }
       }                  
     }
