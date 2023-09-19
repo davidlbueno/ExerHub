@@ -63,7 +63,8 @@ $(document).ready(function() {
       exercise_type: [],
       exercise_id: [],
       exercise_time: [],
-      reps: []
+      reps: [],
+      warmup: []
     };
   
     $("ol li").each(function() {
@@ -77,6 +78,7 @@ $(document).ready(function() {
       } else {
         logData.exercise_id.push(null);
         logData.reps.push(null);
+        logData.warmup.push($this.data("warmup")); 
       }
       
       logData.exercise_time.push($this.find(".exercise-time").val());

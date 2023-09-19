@@ -80,11 +80,11 @@ $length = gmdate("H:i:s", $duration);
         echo "<li class='rest'><strong>Rest</strong> - (</span><input type='number' name='exercise_time[]' class='exercise-time' value='{$exerciseTime}' min='0' step='5' style='width: 50px;'>s)</li>";
       } else {
         if ($warmup) {
-          echo `<li data-exercise-id='${exerciseId}' class='warmup'><strong>${exerciseType}</strong> - ${exercise} (</span><input type='number' name='exercise_time[]' class='exercise-time' value='${exerciseTime}' min='0' step='5' style='width: 50px;'>s, <input type='number' name='exercise_reps[]' class='exercise-reps' value='${reps}' min='0' style='width: 30px;'> reps) </li>`;
+          echo "<li data-exercise-id='{$exerciseId}' class='warmup'><strong>{$exerciseType}</strong> - {$exercise} (<input type='number' name='exercise_time[]' class='exercise-time' value='{$exerciseTime}' min='0' step='5' style='width: 50px;'>s, <input type='number' name='exercise_reps[]' class='exercise-reps' value='{$reps}' min='0' style='width: 30px;'> reps)</li>";
         } else {
-          echo `<li data-exercise-id='${exerciseId}'><strong>${exerciseType}</strong> - ${exerciseName} (</span><input type='number' name='exercise_time[]' class='exercise-time' value='${exerciseTime}' min='0' step='5' style='width: 50px;'>s, <input type='number' name='exercise_reps[]' class='exercise-reps' value='${reps}' min='0' style='width: 30px;'> reps)</li>`;
+          echo "<li data-exercise-id='{$exerciseId}'><strong>{$exerciseType}</strong> - {$exerciseName} (<input type='number' name='exercise_time[]' class='exercise-time' value='{$exerciseTime}' min='0' step='5' style='width: 50px;'>s, <input type='number' name='exercise_reps[]' class='exercise-reps' value='{$reps}' min='0' style='width: 30px;'> reps)</li>";
         }
-      }                  
+      }                        
     }
     echo "</ol>";
     ?>
