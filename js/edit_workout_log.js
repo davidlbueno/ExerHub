@@ -71,6 +71,7 @@ $(document).ready(function() {
       const $this = $(this);
       const exerciseType = $this.find("strong").text();
       logData.exercise_type.push(exerciseType);
+      logData.warmup.push($this.data("warmup")); 
       
       if (exerciseType !== "Rest") {
         logData.exercise_id.push($this.data("exercise-id"));
@@ -78,7 +79,6 @@ $(document).ready(function() {
       } else {
         logData.exercise_id.push(null);
         logData.reps.push(null);
-        logData.warmup.push($this.data("warmup")); 
       }
       
       logData.exercise_time.push($this.find(".exercise-time").val());
