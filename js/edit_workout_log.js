@@ -58,8 +58,8 @@ $(document).ready(function() {
       log_id: logId,
       user_id: userId,
       workout_id: workoutId,
-      start_time: formatDate(new Date($startTime.val())),
-      end_time: $endTime.text(),
+      start_time: convertToDbFormat(new Date($startTime.val()).toISOString()),
+      end_time: convertToDbFormat(new Date($endTime.text()).toISOString()),
       exercise_type: [],
       exercise_id: [],
       exercise_time: [],
@@ -96,6 +96,10 @@ $(document).ready(function() {
     }, 'json');
   });
   
+  // Convert ISO string to the database-expected format
+  function convertToDbFormat(isoString) {
+    return isoString.replace('T', ' ').split('.')[0];
+  }
 
   M.Modal.init(document.querySelectorAll('.modal'), { onCloseEnd: updateDuration });
 });
