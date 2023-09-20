@@ -28,9 +28,13 @@ foreach ($exerciseTypes as $i => $exerciseType) {
   $exerciseTime = $exerciseTimes[$i];
   $rep = $reps[$i];
 
+  if ($exerciseType === "Rest") {
+    $exerciseId = NULL;
+    $rep = NULL;
+  }
+  
   $insertQuery = "INSERT INTO workout_log_items (workout_log_id, exercise_type, exercise_id, exercise_time, reps, warmup) VALUES (?, ?, ?, ?, ?, ?)";
-  post($conn, $insertQuery, [$logId, $exerciseType, $exerciseId, $exerciseTime, $rep, $warmup[$i]]);
-
+  post($conn, $insertQuery, [$logId, $exerciseType, $exerciseId, $exerciseTime, $rep, $warmup[$i]]);  
 }
 
 echo json_encode(['success' => true]);
