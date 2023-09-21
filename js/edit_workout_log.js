@@ -2,6 +2,8 @@ $(document).ready(function() {
   const $startTime = $('#start_time');
   const $duration = $('#duration');
   const $endTime = $('#end_time');
+
+  let editingItem;
   
   function formatTime(number) {
     return number.toString().padStart(2, '0');
@@ -97,7 +99,7 @@ $(document).ready(function() {
   });
 
   $(document).on('click', '.edit-icon', function(e) {
-    editingItem = $(this);
+    editingItem = $(this).closest('li');
     
     // Reset the modal fields
     $('#type-select').val('');
