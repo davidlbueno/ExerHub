@@ -111,7 +111,7 @@ $(document).ready(function() {
     
     // Populate the modal fields based on the clicked item
     const exerciseType = editingItem.find('strong').text();
-    $('#type-select').val(exerciseType).change(); // Trigger change to update exercise options
+    $('#type-select').val(exerciseType).trigger('change');
     
     const isWarmup = editingItem.hasClass('warmup');
     $('#warmup').prop('checked', isWarmup);
@@ -124,7 +124,19 @@ $(document).ready(function() {
     
     if (exerciseType !== 'Rest') {
       const exerciseId = editingItem.data('exercise-id');
-      $('#exercise-select').val(exerciseId); // Set the exercise select field to the exerciseId
+      // Populate the exercise-select field based on exerciseType
+      const exerciseSelect = document.getElementById('exercise-select');
+      exerciseSelect.innerHTML = '';
+      exerciseData[exerciseType].forEach(exercise => {
+        const option = document.createElement('option');
+        option.value = exercise.id;
+        option.textContent = exercise.name;
+        exerciseSelect.appendChild(option);
+      });
+
+      // Set the exercise-select field to the correct exercise
+      exerciseSelect.value = exerciseId;
+      $('#exercise-select').prop('disabled', false);
     }
     
     // Open the modal

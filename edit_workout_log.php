@@ -51,6 +51,21 @@ $length = gmdate("H:i:s", $duration);
     
     $logItemsQuery = "SELECT * FROM workout_log_items WHERE workout_log_id = $logId";
     $logItemsResult = query($conn, $logItemsQuery);
+
+    $exerciseData = [];
+    $exerciseTypeQuery = "SELECT DISTINCT type FROM exercises";
+    $exerciseTypeResult = query($conn, $exerciseTypeQuery);
+
+    while ($typeRow = mysqli_fetch_assoc($exerciseTypeResult)) {
+        $type = $typeRow['type'];
+        $exerciseData[$type] = [];
+
+        $exerciseQuery = "SELECT id, name FROM exercises WHERE type = '$type'";
+        $exerciseResult = query($conn, $exerciseQuery);
+        while ($exerciseRow = mysqli_fetch_assoc($exerciseResult)) {
+            $exerciseData[$type][] = $exerciseRow;
+        }
+    }
     
     echo "<input type='hidden' name='log_id' value='$logId'>";
     echo "<ol style='padding-left: 28px;'>";  // Start of ordered list
@@ -101,6 +116,7 @@ $length = gmdate("H:i:s", $duration);
     </div>
   </main>
   <script>
+    const exerciseData = <?php echo json_encode($exerciseData); ?>;
     const logId = <?php echo json_encode($logId); ?>;
     const userId = <?php echo json_encode($userId); ?>;
     const workoutId = <?php echo json_encode($workoutId); ?>;
