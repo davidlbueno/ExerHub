@@ -96,7 +96,7 @@ $(document).ready(function() {
     }, 'json');
   });
 
-  $(document).on('click', 'ol li', function() {
+  $(document).on('click', '.edit-icon', function(e) {
     editingItem = $(this);
     
     // Reset the modal fields
@@ -128,6 +128,20 @@ $(document).ready(function() {
     // Open the modal
     var instance = M.Modal.getInstance($('#addItemModal'));
     instance.open();
+  });
+
+  $(document).on('click', '.delete-icon', function(e) {
+    e.stopPropagation(); // Prevent triggering the parent li click event
+    $(this).closest('li').remove(); // Remove the parent list item
+  });
+
+  $(document).on('click', '.copy-icon', function(e) {
+    e.stopPropagation(); // Prevent triggering the parent li click event
+    const currentItem = $(this).closest('li');
+    const cloneItem = currentItem.clone();
+    cloneItem.insertAfter(currentItem);
+    // updatetime
+    updateDuration();
   });  
   
   // Convert ISO string to the database-expected format

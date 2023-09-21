@@ -98,13 +98,10 @@ $('#modal-save-item').click(function() {
   for (let i = 0; i < sets; i++) {
     let newItem;
     if (type === "Rest") {
-      newItem = `<li class='rest'><strong>Rest</strong> - (</span><input type='number' name='exercise_time[]' class='exercise-time' value='${seconds}' min='0' step='5' style='width: 50px;'>s)</li>`;
+      newItem = `<li class='rest' style='display: flex; justify-content: space-between; align-items: center;'><strong>Rest</strong> - (<input type='number' name='exercise_time[]' class='exercise-time' value='${seconds}' min='0' step='5' style='width: 50px;'>s)<div><i class='material-icons edit-icon'>edit</i> <i class='material-icons copy-icon'>file_copy</i> <i class='material-icons delete-icon'>delete</i></div></li>`;
     } else {
-      if (isWarmup) {
-        newItem = `<li data-exercise-id='${exerciseId}' class='warmup'><strong>${type}</strong> - ${exercise} (</span><input type='number' name='exercise_time[]' class='exercise-time' value='${seconds}' min='0' step='5' style='width: 50px;'>s, <input type='number' name='exercise_reps[]' class='exercise-reps' value='${reps}' min='0' style='width: 30px;'> reps) </li>`;
-      } else {
-        newItem = `<li data-exercise-id='${exerciseId}'><strong>${type}</strong> - ${exercise} (</span><input type='number' name='exercise_time[]' class='exercise-time' value='${seconds}' min='0' step='5' style='width: 50px;'>s, <input type='number' name='exercise_reps[]' class='exercise-reps' value='${reps}' min='0' style='width: 30px;'> reps)</li>`;
-      }
+      const warmupClass = isWarmup ? 'warmup' : '';
+      newItem = `<li data-exercise-id='${exerciseId}' class='${warmupClass}' style='display: flex; justify-content: space-between; align-items: center;'><strong>${type}</strong> - ${exercise} (<input type='number' name='exercise_time[]' class='exercise-time' value='${seconds}' min='0' step='5' style='width: 50px;'>s, <input type='number' name='exercise_reps[]' class='exercise-reps' value='${reps}' min='0' style='width: 30px;'> reps)<div><i class='material-icons edit-icon'>edit</i> <i class='material-icons copy-icon'>file_copy</i> <i class='material-icons delete-icon'>delete</i></div></li>`;
     }
     if (editingItem) {
       editingItem.replaceWith(newItem);
@@ -112,7 +109,6 @@ $('#modal-save-item').click(function() {
     } else {
       $('ol').append(newItem);
     }
-    $('ol').append(newItem);
   }
 
   var instance = M.Modal.getInstance($('#addItemModal'));
