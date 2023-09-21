@@ -30,7 +30,7 @@
             </label>
           </div>  
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">      
-            <button id="modal-add-item" class="btn" style="width: 48%;">Add</button>
+            <button id="modal-save-item" class="btn" style="width: 48%;">Save</button>
             <button id="modal-cancel-item" class="btn modal-close" style="width: 48%;">Cancel</button>
           </div>
         </div>
@@ -42,6 +42,8 @@
   const typeSelect = document.getElementById("type-select");
   const exerciseSelect = document.getElementById("exercise-select");
   const setsSelect = document.getElementById("sets-select");
+
+  let editingItem = null;
 
 // Event listener for typeSelect change
 typeSelect.addEventListener("change", () => {
@@ -83,7 +85,7 @@ instance.close();
 });
 
 // Add event listener for the "Add" button in the modal
-$('#modal-add-item').click(function() {
+$('#modal-save-item').click(function() {
   const type = $('#type-select').val();
   const exerciseOption = type === "Rest" ? null : $('#exercise-select option:selected');
   const exercise = exerciseOption ? exerciseOption.text() : "";
@@ -103,6 +105,12 @@ $('#modal-add-item').click(function() {
       } else {
         newItem = `<li data-exercise-id='${exerciseId}'><strong>${type}</strong> - ${exercise} (</span><input type='number' name='exercise_time[]' class='exercise-time' value='${seconds}' min='0' step='5' style='width: 50px;'>s, <input type='number' name='exercise_reps[]' class='exercise-reps' value='${reps}' min='0' style='width: 30px;'> reps)</li>`;
       }
+    }
+    if (editingItem) {
+      editingItem.replaceWith(newItem);
+      editingItem = null;
+    } else {
+      $('ol').append(newItem);
     }
     $('ol').append(newItem);
   }

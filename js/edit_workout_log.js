@@ -95,6 +95,40 @@ $(document).ready(function() {
       }
     }, 'json');
   });
+
+  $(document).on('click', 'ol li', function() {
+    editingItem = $(this);
+    
+    // Reset the modal fields
+    $('#type-select').val('');
+    $('#exercise-select').val('');
+    $('input[name="seconds"]').val('');
+    $('#sets-select').val('');
+    $('#reps-select').val('');
+    $('#warmup').prop('checked', false);
+    
+    // Populate the modal fields based on the clicked item
+    const exerciseType = editingItem.find('strong').text();
+    $('#type-select').val(exerciseType).change(); // Trigger change to update exercise options
+    
+    const isWarmup = editingItem.hasClass('warmup');
+    $('#warmup').prop('checked', isWarmup);
+    
+    const exerciseTime = editingItem.find('.exercise-time').val();
+    $('input[name="seconds"]').val(exerciseTime);
+    
+    const reps = editingItem.find('.exercise-reps').val();
+    $('#reps-select').val(reps);
+    
+    if (exerciseType !== 'Rest') {
+      const exerciseId = editingItem.data('exercise-id');
+      $('#exercise-select').val(exerciseId); // Set the exercise select field to the exerciseId
+    }
+    
+    // Open the modal
+    var instance = M.Modal.getInstance($('#addItemModal'));
+    instance.open();
+  });  
   
   // Convert ISO string to the database-expected format
   function convertToDbFormat(isoString) {
