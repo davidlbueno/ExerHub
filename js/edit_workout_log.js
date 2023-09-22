@@ -96,6 +96,14 @@ $(document).ready(function() {
     }, 'json');
   });
 
+  // Initialize Sortable on the ordered list
+  $("ol").sortable({
+    placeholder: "ui-state-highlight", // Optional: class for the placeholder
+    update: function(event, ui) {
+      // Optional: Do something when the order is updated
+    }
+  });
+
   $(document).on('click', '.edit-icon', function(e) {
     editingItem = $(this).closest('li');
     

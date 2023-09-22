@@ -415,3 +415,9 @@ tr td {
 textarea {
   color: #bebdbd !important;
 }
+
+.ui-state-highlight {
+  background: #f0f0f0;
+  height: 1.5em;
+  line-height: 1.2em;
+}
