@@ -93,32 +93,31 @@ $('#modal-save-item').click(function() {
   const reps = $('#reps-select').val();
   const sets = $('#sets-select').prop('disabled') ? 1 : parseInt($('#sets-select').val(), 10);
 
-  if (editingItem) {
-    // Update the existing list item
-    editingItem.find('strong').text(type);
-    editingItem.attr('data-exercise-id', exerciseId); // Use attr instead of data
-    editingItem.find('.exercise-time').val(seconds);
-    editingItem.find('.exercise-reps').val(reps);
+if (editingItem) {
+  // Update the text and data attributes of the editingItem
+  const type = $('#type-select').val();
+  const exercise = $('#exercise-select option:selected').text();
+  const seconds = $('input[name="seconds"]').val();
+  const reps = $('#reps-select').val();
+  const isWarmup = $('#warmup').prop('checked') ? 'warmup' : '';
 
-    if (isWarmup) {
-      editingItem.addClass('warmup');
-    } else {
-      editingItem.removeClass('warmup');
-    }
+  // Update the text
+  const newText = `<strong>${type}</strong> - ${exercise} (${seconds}s, ${reps} reps)`;
+  editingItem.find('div:first').html(newText);
 
-    editingItem = null;  // Reset the editingItem
-  } else {
-    for (let i = 0; i < sets; i++) {
-      let newItem;
-      if (type === "Rest") {
-        newItem = `<li data-exercise-time='${seconds}' class='rest' style='white-space: nowrap;'><div style='display: inline-block; width: calc(100% - 80px); overflow: hidden; white-space: nowrap;'><strong>Rest</strong> - (${seconds}s)</div><div style='display: inline-block; width: 80px; z-index: 1;'><i class='material-icons edit-icon'>edit</i> <i class='material-icons copy-icon'>file_copy</i> <i class='material-icons delete-icon'>delete</i></div></li>`;
-      } else {
-        const warmupClass = isWarmup ? 'warmup' : '';
-        newItem = `<li data-exercise-id='${exerciseId}' data-exercise-time='${seconds}' data-exercise-reps='${reps}' class='${warmupClass}' style='white-space: nowrap;'><div style='display: inline-block; width: calc(100% - 80px); overflow: hidden; white-space: nowrap;'><strong>${type}</strong> - ${exercise} (${seconds}s, ${reps} reps)</div><div style='display: inline-block; width: 80px; z-index: 1;'><i class='material-icons edit-icon'>edit</i> <i class='material-icons copy-icon'>file_copy</i> <i class='material-icons delete-icon'>delete</i></div></li>`;
-      }
-      $('ol').append(newItem);
-    }
+  // Update the data attributes
+  editingItem.data('exercise-time', seconds);
+  editingItem.data('exercise-reps', reps);
+
+  // Update the warmup class if needed
+  editingItem.removeClass('warmup');
+  if (isWarmup) {
+    editingItem.addClass('warmup');
   }
+
+  // Reset editingItem to null
+  editingItem = null;
+}
 
   var instance = M.Modal.getInstance($('#addItemModal'));
   instance.close(); 
