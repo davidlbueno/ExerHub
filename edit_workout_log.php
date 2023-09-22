@@ -95,10 +95,10 @@ $length = gmdate("H:i:s", $duration);
       }
 
       if ($exerciseType === "Rest") {
-        echo "<li class='rest' style='display: flex; justify-content: space-between; align-items: center;'><div style='overflow: hidden; white-space: nowrap;'><strong>Rest</strong> - ({$exerciseTime}s)</div><div style='z-index: 1; width: 80px;'><i class='material-icons edit-icon'>edit</i> <i class='material-icons copy-icon'>file_copy</i> <i class='material-icons delete-icon'>delete</i></div></li>";
+        echo "<li data-exercise-time='${exerciseTime}' class='rest' style='white-space: nowrap;'><div style='display: inline-block; width: calc(100% - 80px); overflow: hidden; white-space: nowrap;'><strong>Rest</strong> - ({$exerciseTime}s)</div><div style='display: inline-block; width: 80px; z-index: 1;'><i class='material-icons edit-icon'>edit</i> <i class='material-icons copy-icon'>file_copy</i> <i class='material-icons delete-icon'>delete</i></div></li>";
       } else {
         $warmupClass = $warmup ? 'warmup' : '';
-        echo "<li data-exercise-id='{$exerciseId}' class='{$warmupClass}' style='display: flex; justify-content: space-between; align-items: center;'><div style='overflow: hidden; white-space: nowrap;'><strong>{$exerciseType}</strong> - {$exerciseName} ({$exerciseTime}s, {$reps} reps)</div><div style='z-index: 1; width: 80px;'><i class='material-icons edit-icon'>edit</i> <i class='material-icons copy-icon'>file_copy</i> <i class='material-icons delete-icon'>delete</i></div></li>";
+        echo "<li data-exercise-id='${exerciseId}' data-exercise-time='${exerciseTime}' data-exercise-time='${reps}' class='{$warmupClass}' style='white-space: nowrap;'><div style='display: inline-block; width: calc(100% - 80px); overflow: hidden; white-space: nowrap;'><strong>{$exerciseType}</strong> - {$exerciseName} ({$exerciseTime}s, {$reps} reps)</div><div style='display: inline-block; width: 80px; z-index: 1;'><i class='material-icons edit-icon'>edit</i> <i class='material-icons copy-icon'>file_copy</i> <i class='material-icons delete-icon'>delete</i></div></li>";
       }
                                          
     }
