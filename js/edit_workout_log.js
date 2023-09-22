@@ -158,6 +158,8 @@ $(document).ready(function() {
   $(document).on('click', '.delete-icon', function(e) {
     e.stopPropagation(); // Prevent triggering the parent li click event
     $(this).closest('li').remove(); // Remove the parent list item
+    // updatetime
+    updateDuration();
   });
 
   $(document).on('click', '.copy-icon', function(e) {
