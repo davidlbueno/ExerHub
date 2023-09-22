@@ -104,9 +104,20 @@ $('#modal-save-item').click(function() {
       newItem = `<li data-exercise-id='${exerciseId}' class='${warmupClass}' style='display: flex; justify-content: space-between; align-items: center;'><strong>${type}</strong> - ${exercise} (<input type='number' name='exercise_time[]' class='exercise-time' value='${seconds}' min='0' step='5' style='width: 50px;'>s, <input type='number' name='exercise_reps[]' class='exercise-reps' value='${reps}' min='0' style='width: 30px;'> reps)<div><i class='material-icons edit-icon'>edit</i> <i class='material-icons copy-icon'>file_copy</i> <i class='material-icons delete-icon'>delete</i></div></li>`;
     }
     if (editingItem) {
-      editingItem.replaceWith(newItem);
-      editingItem = null;
+    // Update the existing list item
+    editingItem.find('strong').text(type);
+    editingItem.data('exercise-id', exerciseId);
+    editingItem.find('.exercise-time').val(seconds);
+    editingItem.find('.exercise-reps').val(reps);
+
+    if (isWarmup) {
+      editingItem.addClass('warmup');
     } else {
+      editingItem.removeClass('warmup');
+    }
+
+    editingItem = null;  // Reset the editingItem
+  } else {
       $('ol').append(newItem);
     }
   }
