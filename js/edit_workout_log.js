@@ -2,6 +2,8 @@ $(document).ready(function() {
   const $startTime = $('#start_time');
   const $duration = $('#duration');
   const $endTime = $('#end_time');
+
+  let touchStartY = 0;
   
   function formatTime(number) {
     return number.toString().padStart(2, '0');
@@ -96,13 +98,12 @@ $(document).ready(function() {
     }, 'json');
   });
 
-  // Initialize Sortable on the ordered list
-  $("ol").sortable({
-    placeholder: "ui-state-highlight", // Optional: class for the placeholder
-    update: function(event, ui) {
-      // Optional: Do something when the order is updated
-    }
+  var sortable = new Sortable(document.querySelector('ol'), {
+    delay: 200,  // ms delay for touch devices
+    delayOnTouchOnly: true,  // Only delay for touch devices
+    // ... other options
   });
+  
 
   $(document).on('click', '.edit-icon', function(e) {
     editingItem = $(this).closest('li');
