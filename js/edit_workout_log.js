@@ -123,10 +123,12 @@ $(document).ready(function() {
     const isWarmup = editingItem.hasClass('warmup');
     $('#warmup').prop('checked', isWarmup);
     
-    const exerciseTime = editingItem.find('.exercise-time').val();
-    $('input[name="seconds"]').val(exerciseTime);
+    // Fetch data attributes from the clicked li element
+    const exerciseTime = editingItem.data('exercise-time');
+    const reps = editingItem.data('exercise-reps');
     
-    const reps = editingItem.find('.exercise-reps').val();
+    // Populate the modal fields with these values
+    $('input[name="seconds"]').val(exerciseTime);
     $('#reps-select').val(reps);
     
     if (exerciseType !== 'Rest') {
