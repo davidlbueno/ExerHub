@@ -65,33 +65,29 @@ $(document).ready(function() {
       workout_id: workoutId,
       start_time: convertToDbFormat(new Date($startTime.val()).toISOString()),
       end_time: convertToDbFormat(new Date($endTime.text()).toISOString()),
-      exercise_type: [],
-      exercise_id: [],
       exercise_time: [],
       reps: [],
       warmup: []
     };
-  
+
     $("ol li").each(function() {
       const $this = $(this);
       const exerciseType = $this.find("strong").text();
       logData.exercise_type.push(exerciseType);
-      // Check for the presence of the 'warmup' class
       const isWarmup = $this.hasClass('warmup') ? 1 : 0;
       logData.warmup.push(isWarmup);
 
-      
       if (exerciseType !== "Rest") {
         logData.exercise_id.push($this.data("exercise-id"));
-        logData.reps.push($this.find(".exercise-reps").val());
+        logData.reps.push($this.attr('data-exercise-reps'));  // Use attr() instead of find()
       } else {
         logData.exercise_id.push(null);
         logData.reps.push(null);
       }
-      
-      logData.exercise_time.push($this.find(".exercise-time").val());
+
+      logData.exercise_time.push($this.attr('data-exercise-time'));  // Use attr() instead of find()
     });
-  
+
     $.post('/php/update_log.php', logData, function(response) {
       if (response.success) {
         //window.location.href = '/logs.php';
