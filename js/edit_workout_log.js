@@ -67,7 +67,9 @@ $(document).ready(function() {
       end_time: convertToDbFormat(new Date($endTime.text()).toISOString()),
       exercise_time: [],
       reps: [],
-      warmup: []
+      warmup: [],
+      exercise_type: [],  // Initialize this
+      exercise_id: []     // Initialize this
     };
 
     $("ol li").each(function() {
