@@ -113,7 +113,7 @@ $(document).ready(function() {
     $('#type-select').val('');
     $('#exercise-select').val('');
     $('input[name="seconds"]').val('');
-    $('#sets-select').val('');
+    $('#sets-select').hide();
     $('#reps-select').val('');
     $('#warmup').prop('checked', false);
     
