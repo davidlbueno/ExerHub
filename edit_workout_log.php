@@ -94,11 +94,12 @@ $length = gmdate("H:i:s", $duration);
       }
 
       if ($exerciseType === "Rest") {
-        echo "<li class='rest' style='display: flex; justify-content: space-between; align-items: center;'><strong>Rest</strong> - (<input type='number' name='exercise_time[]' class='exercise-time' value='{$exerciseTime}' min='0' step='5' style='width: 50px;'>s)<div><i class='material-icons edit-icon'>edit</i> <i class='material-icons copy-icon'>file_copy</i> <i class='material-icons delete-icon'>delete</i></div></li>";
+        echo "<li class='rest'><div style='display: inline-block;'><strong>Rest</strong> - (<input type='number' name='exercise_time[]' class='exercise-time' value='{$exerciseTime}' min='0' step='5' style='width: 50px;'>s)</div><div style='display: inline-block; float: right;'><i class='material-icons edit-icon'>edit</i> <i class='material-icons copy-icon'>file_copy</i> <i class='material-icons delete-icon'>delete</i></div></li>";
       } else {
         $warmupClass = $warmup ? 'warmup' : '';
-        echo "<li data-exercise-id='{$exerciseId}' class='{$warmupClass}' style='display: flex; justify-content: space-between; align-items: center;'><strong>{$exerciseType}</strong> - {$exerciseName} (<input type='number' name='exercise_time[]' class='exercise-time' value='{$exerciseTime}' min='0' step='5' style='width: 50px;'>s, <input type='number' name='exercise_reps[]' class='exercise-reps' value='{$reps}' min='0' style='width: 30px;'> reps)<div><i class='material-icons edit-icon'>edit</i> <i class='material-icons copy-icon'>file_copy</i> <i class='material-icons delete-icon'>delete</i></div></li>";
-      }                              
+        echo "<li data-exercise-id='{$exerciseId}' class='{$warmupClass}'><div style='display: inline-block;'><strong>{$exerciseType}</strong> - {$exerciseName} (<input type='number' name='exercise_time[]' class='exercise-time' value='{$exerciseTime}' min='0' step='5' style='width: 50px;'>s, <input type='number' name='exercise_reps[]' class='exercise-reps' value='{$reps}' min='0' style='width: 30px;'> reps)</div><div style='display: inline-block; float: right;'><i class='material-icons edit-icon'>edit</i> <i class='material-icons copy-icon'>file_copy</i> <i class='material-icons delete-icon'>delete</i></div></li>";
+      }
+                                   
     }
     echo "</ol>";
     ?>
