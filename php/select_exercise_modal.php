@@ -106,8 +106,8 @@ if (editingItem) {
   editingItem.find('div:first').html(newText);
 
   // Update the data attributes
-  editingItem.data('exercise-time', seconds);
-  editingItem.data('exercise-reps', reps);
+  editingItem.attr('data-exercise-time', seconds);
+  editingItem.attr('data-exercise-reps', reps);
 
   // Update the warmup class if needed
   editingItem.removeClass('warmup');

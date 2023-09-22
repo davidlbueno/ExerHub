@@ -37,7 +37,7 @@ $(document).ready(function() {
     
     // Loop through each li element to get the exercise time from data attributes
     $("ol li").each(function() {
-      const exerciseTime = $(this).data('exercise-time');
+      const exerciseTime = $(this).attr('data-exercise-time');
       totalExerciseTime += parseInt(exerciseTime, 10);
     });
     
@@ -47,7 +47,7 @@ $(document).ready(function() {
   
     $duration.text(`Duration: ${formatTime(hours)}:${formatTime(minutes)}:${formatTime(seconds)}`);
     updateEndTime();
-  }
+  }  
   
   $(document).on('change', ".exercise-time", updateDuration);
 
