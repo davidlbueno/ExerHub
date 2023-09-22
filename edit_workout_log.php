@@ -116,6 +116,7 @@ $length = gmdate("H:i:s", $duration);
     </div>
   </main>
   <script>
+      let editingItem = null;
     const exerciseData = <?php echo json_encode($exerciseData); ?>;
     const logId = <?php echo json_encode($logId); ?>;
     const userId = <?php echo json_encode($userId); ?>;

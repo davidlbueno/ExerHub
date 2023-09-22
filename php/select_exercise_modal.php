@@ -43,8 +43,6 @@
   const exerciseSelect = document.getElementById("exercise-select");
   const setsSelect = document.getElementById("sets-select");
 
-  let editingItem = null;
-
 // Event listener for typeSelect change
 typeSelect.addEventListener("change", () => {
   updateExerciseSelect(typeSelect.value);
@@ -91,22 +89,14 @@ $('#modal-save-item').click(function() {
   const exercise = exerciseOption ? exerciseOption.text() : "";
   const exerciseId = exerciseOption ? exerciseOption.data('id') : null;
   const seconds = $('input[name="seconds"]').val();
-  const sets = parseInt($('#sets-select').val(), 10);
   const isWarmup = $('#warmup').is(':checked');
   const reps = $('#reps-select').val();
+  const sets = $('#sets-select').prop('disabled') ? 1 : parseInt($('#sets-select').val(), 10);
 
-  for (let i = 0; i < sets; i++) {
-    let newItem;
-    if (type === "Rest") {
-      newItem = `<li class='rest' style='display: flex; justify-content: space-between; align-items: center;'><strong>Rest</strong> - (<input type='number' name='exercise_time[]' class='exercise-time' value='${seconds}' min='0' step='5' style='width: 50px;'>s)<div><i class='material-icons edit-icon'>edit</i> <i class='material-icons copy-icon'>file_copy</i> <i class='material-icons delete-icon'>delete</i></div></li>`;
-    } else {
-      const warmupClass = isWarmup ? 'warmup' : '';
-      newItem = `<li data-exercise-id='${exerciseId}' class='${warmupClass}' style='display: flex; justify-content: space-between; align-items: center;'><strong>${type}</strong> - ${exercise} (<input type='number' name='exercise_time[]' class='exercise-time' value='${seconds}' min='0' step='5' style='width: 50px;'>s, <input type='number' name='exercise_reps[]' class='exercise-reps' value='${reps}' min='0' style='width: 30px;'> reps)<div><i class='material-icons edit-icon'>edit</i> <i class='material-icons copy-icon'>file_copy</i> <i class='material-icons delete-icon'>delete</i></div></li>`;
-    }
-    if (editingItem) {
+  if (editingItem) {
     // Update the existing list item
     editingItem.find('strong').text(type);
-    editingItem.data('exercise-id', exerciseId);
+    editingItem.attr('data-exercise-id', exerciseId); // Use attr instead of data
     editingItem.find('.exercise-time').val(seconds);
     editingItem.find('.exercise-reps').val(reps);
 
@@ -118,6 +108,14 @@ $('#modal-save-item').click(function() {
 
     editingItem = null;  // Reset the editingItem
   } else {
+    for (let i = 0; i < sets; i++) {
+      let newItem;
+      if (type === "Rest") {
+        newItem = `<li class='rest' style='display: flex; justify-content: space-between; align-items: center;'><strong>Rest</strong> - (<input type='number' name='exercise_time[]' class='exercise-time' value='${seconds}' min='0' step='5' style='width: 50px;'>s)<div><i class='material-icons edit-icon'>edit</i> <i class='material-icons copy-icon'>file_copy</i> <i class='material-icons delete-icon'>delete</i></div></li>`;
+      } else {
+        const warmupClass = isWarmup ? 'warmup' : '';
+        newItem = `<li data-exercise-id='${exerciseId}' class='${warmupClass}' style='display: flex; justify-content: space-between; align-items: center;'><strong>${type}</strong> - ${exercise} (<input type='number' name='exercise_time[]' class='exercise-time' value='${seconds}' min='0' step='5' style='width: 50px;'>s, <input type='number' name='exercise_reps[]' class='exercise-reps' value='${reps}' min='0' style='width: 30px;'> reps)<div><i class='material-icons edit-icon'>edit</i> <i class='material-icons copy-icon'>file_copy</i> <i class='material-icons delete-icon'>delete</i></div></li>`;
+      }
       $('ol').append(newItem);
     }
   }

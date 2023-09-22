@@ -2,8 +2,6 @@ $(document).ready(function() {
   const $startTime = $('#start_time');
   const $duration = $('#duration');
   const $endTime = $('#end_time');
-
-  let editingItem;
   
   function formatTime(number) {
     return number.toString().padStart(2, '0');
@@ -137,6 +135,7 @@ $(document).ready(function() {
       // Set the exercise-select field to the correct exercise
       exerciseSelect.value = exerciseId;
       $('#exercise-select').prop('disabled', false);
+      $('#sets-select').prop('disabled', true);
     }
     
     // Open the modal
