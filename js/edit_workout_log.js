@@ -34,18 +34,21 @@ $(document).ready(function() {
 
   function updateDuration() {
     let totalExerciseTime = 0;
-    $(".exercise-time").each(function() {
-      totalExerciseTime += parseInt($(this).val(), 10);
-    });    
-
+    
+    // Loop through each li element to get the exercise time from data attributes
+    $("ol li").each(function() {
+      const exerciseTime = $(this).data('exercise-time');
+      totalExerciseTime += parseInt(exerciseTime, 10);
+    });
+    
     const hours = Math.floor(totalExerciseTime / 3600);
     const minutes = Math.floor((totalExerciseTime % 3600) / 60);
     const seconds = totalExerciseTime % 60;
-
+  
     $duration.text(`Duration: ${formatTime(hours)}:${formatTime(minutes)}:${formatTime(seconds)}`);
     updateEndTime();
   }
-
+  
   $(document).on('change', ".exercise-time", updateDuration);
 
   $startTime.change(updateEndTime);
