@@ -111,11 +111,13 @@ $('#modal-save-item').click(function() {
     for (let i = 0; i < sets; i++) {
       let newItem;
       if (type === "Rest") {
-        newItem = `<li class='rest' style='display: flex; justify-content: space-between; align-items: center;'><strong>Rest</strong> - (<input type='number' name='exercise_time[]' class='exercise-time' value='${seconds}' min='0' step='5' style='width: 50px;'>s)<div><i class='material-icons edit-icon'>edit</i> <i class='material-icons copy-icon'>file_copy</i> <i class='material-icons delete-icon'>delete</i></div></li>`;
-      } else {
-        const warmupClass = isWarmup ? 'warmup' : '';
-        newItem = `<li data-exercise-id='${exerciseId}' class='${warmupClass}' style='display: flex; justify-content: space-between; align-items: center;'><strong>${type}</strong> - ${exercise} (<input type='number' name='exercise_time[]' class='exercise-time' value='${seconds}' min='0' step='5' style='width: 50px;'>s, <input type='number' name='exercise_reps[]' class='exercise-reps' value='${reps}' min='0' style='width: 30px;'> reps)<div><i class='material-icons edit-icon'>edit</i> <i class='material-icons copy-icon'>file_copy</i> <i class='material-icons delete-icon'>delete</i></div></li>`;
-      }
+  newItem = `<li class='rest' style='display: flex; justify-content: space-between; align-items: center;'><div style='overflow: hidden; white-space: nowrap;'><strong>Rest</strong> - (${seconds}s)</div><div style='z-index: 1; width: 80px;'><i class='material-icons edit-icon'>edit</i> <i class='material-icons copy-icon'>file_copy</i> <i class='material-icons delete-icon'>delete</i></div></li>`;
+} else {
+  const warmupClass = isWarmup ? 'warmup' : '';
+  newItem = `<li data-exercise-id='${exerciseId}' class='${warmupClass}' style='display: flex; justify-content: space-between; align-items: center;'><div style='overflow: hidden; white-space: nowrap;'><strong>${type}</strong> - ${exercise} (${seconds}s, ${reps} reps)</div><div style='z-index: 1; width: 80px;'><i class='material-icons edit-icon'>edit</i> <i class='material-icons copy-icon'>file_copy</i> <i class='material-icons delete-icon'>delete</i></div></li>`;
+}
+
+
       $('ol').append(newItem);
     }
   }
