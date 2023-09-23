@@ -82,7 +82,6 @@ var instance = M.Modal.getInstance(document.getElementById("addItemModal"));
 instance.close();
 });
 
-// Add event listener for the "Add" button in the modal
 $('#modal-save-item').click(function() {
   const type = $('#type-select').val();
   const exerciseOption = type === "Rest" ? null : $('#exercise-select option:selected');
@@ -93,53 +92,30 @@ $('#modal-save-item').click(function() {
   const reps = $('#reps-select').val();
   const sets = $('#sets-select').prop('disabled') ? 1 : parseInt($('#sets-select').val(), 10);
 
-if (editingItem) {
-  // Update the text and data attributes of the editingItem
-  const type = $('#type-select').val();
-  const exercise = $('#exercise-select option:selected').text();
-  const seconds = $('input[name="seconds"]').val();
-  const reps = $('#reps-select').val();
-  const isWarmup = $('#warmup').prop('checked') ? 'warmup' : '';
+  if (editingItem) {
+    // Update the text and data attributes of the editingItem
+    const newText = `<strong>${type}</strong> - ${exercise} (${seconds}s, ${reps} reps)`;
+    editingItem.find('div:first').html(newText);
 
-  // Update the text
-  const newText = `<strong>${type}</strong> - ${exercise} (${seconds}s, ${reps} reps)`;
-  editingItem.find('div:first').html(newText);
+    // Update the data attributes
+    editingItem.attr('data-exercise-time', seconds);
+    editingItem.attr('data-exercise-reps', reps);
 
-  // Update the data attributes
-  editingItem.attr('data-exercise-time', seconds);
-  editingItem.attr('data-exercise-reps', reps);
+    // Update the warmup class if needed
+    editingItem.removeClass('warmup');
+    if (isWarmup) {
+      editingItem.addClass('warmup');
+    }
 
-  // Update the warmup class if needed
-  editingItem.removeClass('warmup');
-  if (isWarmup) {
-    editingItem.addClass('warmup');
+    // Reset editingItem to null
+    editingItem = null;
+  } else {
+    // Add the new item to the list
+    const newItem = `<li data-exercise-id='${exerciseId}' data-exercise-time='${seconds}' data-exercise-reps='${reps}' class='${isWarmup ? 'warmup' : ''}' style='white-space: nowrap;'><div style='display: inline-block; width: calc(100% - 80px); overflow: hidden; white-space: nowrap;'><strong>${type}</strong> - ${exercise} (${seconds}s, ${reps} reps)</div><div style='display: inline-block; width: 80px; z-index: 1;'><i class='material-icons edit-icon'>edit</i> <i class='material-icons copy-icon'>file_copy</i> <i class='material-icons delete-icon'>delete</i></div></li>`;
+    $('ol').append(newItem);
   }
-
-  // Reset editingItem to null
-  editingItem = null;
-} else {
-  // Add the new item to the list
-  const newItem = `<li data-exercise-id='${exerciseId}' data-exercise-time='${seconds}' data-exercise-reps='${reps}' class='${isWarmup ? 'warmup' : ''}' style='white-space: nowrap;'><div style='display: inline-block; width: calc(100% - 80px); overflow: hidden; white-space: nowrap;'><strong>${type}</strong> - ${exercise} (${seconds}s, ${reps} reps)</div><div style='display: inline-block; width: 80px; z-index: 1;'><i class='material-icons edit-icon'>edit</i> <i class='material-icons copy-icon'>file_copy</i> <i class='material-icons delete-icon'>delete</i></div></li>`;
-  $('ol').append(newItem);
-}
-
-  var instance = M.Modal.getInstance($('#addItemModal'));
-  instance.close(); 
-  
-  // Function to disable reps input for 'Rest' type
-  function disableRepsForRest() {
-    $('.type-select').each(function() {
-      const type = $(this).val();
-      const repsInput = $(this).closest('tr').find('.reps-input')[0];
-      if (type === 'Rest') {
-        repsInput.disabled = true;
-      } else {
-        repsInput.disabled = false;
-      }
-    });
-  }
-  // Close the modal
-  var instance = M.Modal.getInstance($('#addItemModal'));
-    instance.close();
+  var instance = M.Modal.getInstance(document.getElementById("addItemModal"));
+  instance.close();
 });
+
 </script>
