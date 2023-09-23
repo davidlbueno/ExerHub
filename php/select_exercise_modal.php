@@ -46,26 +46,21 @@
 // Event listener for typeSelect change
 typeSelect.addEventListener("change", () => {
   updateExerciseSelect(typeSelect.value);
-});
-
-// Function to update exercise select options
-async function updateExerciseSelect(selectedType, callback) {
-const response = await fetch(`php/get_exercises.php?type=${selectedType}`);
-const exercises = await response.json();
-
-exerciseSelect.innerHTML = 
-`<option value="" disabled selected>Exercise</option>
-  ${exercises.map(exercise => `<option value="${exercise.id}">${exercise.name}</option>`).join('')}`;
-  // add exercise id as data attribute
-  exercises.forEach(exercise => {
-    const option = $(`#exercise-select option[value='${exercise.name}']`);
-    option.data('id', exercise.id);
   });
-exerciseSelect.disabled = selectedType === 'Rest';
 
-if (callback) {
-  callback();
-}
+  // Function to update exercise select options
+  async function updateExerciseSelect(selectedType, callback) {
+  const response = await fetch(`php/get_exercises.php?type=${selectedType}`);
+  const exercises = await response.json();
+
+  exerciseSelect.innerHTML = 
+    `<option value="" disabled selected>Exercise</option>
+      ${exercises.map(exercise => `<option value="${exercise.id}">${exercise.name}</option>`).join('')}`;
+    exerciseSelect.disabled = selectedType === 'Rest';
+
+  if (callback) {
+    callback();
+  }
 }
 
 //Initialize the modal
@@ -86,7 +81,7 @@ $('#modal-save-item').click(function() {
   const type = $('#type-select').val();
   const exerciseOption = type === "Rest" ? null : $('#exercise-select option:selected');
   const exercise = exerciseOption ? exerciseOption.text() : "";
-  const exerciseId = exerciseOption ? exerciseOption.data('id') : null;
+  const exerciseId = exerciseOption ? exerciseOption.val() : null;
   const seconds = $('input[name="seconds"]').val();
   const isWarmup = $('#warmup').is(':checked');
   const reps = $('#reps-select').val();

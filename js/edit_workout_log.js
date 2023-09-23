@@ -80,7 +80,7 @@ $(document).ready(function() {
       logData.warmup.push(isWarmup);
   
       if (exerciseType !== "Rest") {
-        logData.exercise_id.push($this.data("exercise-id"));
+        logData.exercise_id.push($this.attr("data-exercise-id"));
         logData.reps.push($this.attr('data-exercise-reps'));  // Use attr() instead of find()
       } else {
         logData.exercise_id.push(null);
