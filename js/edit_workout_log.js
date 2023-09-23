@@ -71,14 +71,14 @@ $(document).ready(function() {
       exercise_type: [],  // Initialize this
       exercise_id: []     // Initialize this
     };
-
+  
     $("ol li").each(function() {
       const $this = $(this);
       const exerciseType = $this.find("strong").text();
       logData.exercise_type.push(exerciseType);
       const isWarmup = $this.hasClass('warmup') ? 1 : 0;
       logData.warmup.push(isWarmup);
-
+  
       if (exerciseType !== "Rest") {
         logData.exercise_id.push($this.data("exercise-id"));
         logData.reps.push($this.attr('data-exercise-reps'));  // Use attr() instead of find()
@@ -86,10 +86,10 @@ $(document).ready(function() {
         logData.exercise_id.push(null);
         logData.reps.push(null);
       }
-
+  
       logData.exercise_time.push($this.attr('data-exercise-time'));  // Use attr() instead of find()
     });
-
+  
     $.post('/php/update_log.php', logData, function(response) {
       if (response.success) {
         //window.location.href = '/logs.php';
@@ -98,6 +98,7 @@ $(document).ready(function() {
       }
     }, 'json');
   });
+  
 
   var sortable = new Sortable(document.querySelector('ol'), {
     delay: 200,  // ms delay for touch devices

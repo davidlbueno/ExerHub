@@ -100,6 +100,7 @@ $('#modal-save-item').click(function() {
     // Update the data attributes
     editingItem.attr('data-exercise-time', seconds);
     editingItem.attr('data-exercise-reps', reps);
+    editingItem.attr('data-exercise-id', exerciseId);
 
     // Update the warmup class if needed
     editingItem.removeClass('warmup');
