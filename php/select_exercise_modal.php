@@ -55,7 +55,7 @@ const exercises = await response.json();
 
 exerciseSelect.innerHTML = 
 `<option value="" disabled selected>Exercise</option>
-  ${exercises.map(exercise => `<option value="${exercise.name}">${exercise.name}</option>`).join('')}`;
+  ${exercises.map(exercise => `<option value="${exercise.id}">${exercise.name}</option>`).join('')}`;
   // add exercise id as data attribute
   exercises.forEach(exercise => {
     const option = $(`#exercise-select option[value='${exercise.name}']`);
