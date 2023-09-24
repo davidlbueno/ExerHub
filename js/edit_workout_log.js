@@ -177,5 +177,10 @@ $(document).ready(function() {
     return isoString.replace('T', ' ').split('.')[0];
   }
 
+  // Close Button Event Listener
+  $('#close-button').click(function() {
+    window.history.back(); // Go back to the previous page
+  });
+
   M.Modal.init(document.querySelectorAll('.modal'), { onCloseEnd: updateDuration });
 });

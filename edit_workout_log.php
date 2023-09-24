@@ -118,6 +118,7 @@ $length = gmdate("H:i:s", $duration);
       <input type='submit' value='Update Log' class='btn' style='margin-right: 5px !important;'>
       <a href='logs.php' class='btn'>Cancel</a>
     </div>
+    <i type="button" id="close-button" class="material-icons close-btn" style="margin-bottom: 5px;">close</i>
   </main>
   <script>
       let editingItem = null;
