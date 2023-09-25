@@ -24,12 +24,14 @@ require_once 'php/db_query.php';
     $startTimeRow = mysqli_fetch_assoc($startTimeResult);
     $startTime = $startTimeRow['start_time'];
 
-    echo "<div class='row'>";
-    echo "<div class='col s6'>";    
-    echo "<h4>$workoutName</h4>
-          </div>
-          </div>
-          <div style='text-align: right;'> Workout Date: $startTime</div>";
+       
+    echo "<div>
+    <div style='display: inline-block;'>
+      <h5 style='display: inline-block;'>$workoutName</h5><a href='edit_workout_log.php?log_id=$logId' class='edit-btn' style='display: inline-block; margin-left: 10px;'><i class='material-icons'>edit</i></a>
+    </div>
+    <div style='display: inline-block; margin-left: 20px;'>Workout Date: $startTime</div>
+  </div>
+  ";
 
     // Retrieve the workout log items from the database
     $logItemsQuery = "SELECT exercise_type, exercise_id, exercise_time, reps, warmup FROM workout_log_items WHERE workout_log_id = $logId";
@@ -125,11 +127,9 @@ require_once 'php/db_query.php';
       $prevStartTimeResult = query($conn, $prevStartTimeQuery);
       $prevStartTimeRow = mysqli_fetch_assoc($prevStartTimeResult);
       $prevStartTime = $prevStartTimeRow['start_time'];
-      
-      echo "<div class='row'>";
-      echo "<div class='col s6'>";    
-      echo "<h4>Previous</h4></div></div>";
-      echo "<div style='text-align: right;'> Workout Date: $prevStartTime</div>";
+        
+      echo "<h5>Previous</h5>";
+      echo "<div> Workout Date: $prevStartTime</div>";
 
       $prevLogItemsQuery = "SELECT exercise_type, exercise_id, exercise_time, reps, warmup FROM workout_log_items WHERE workout_log_id = $prevLogId";
       $prevLogItemsResult = query($conn, $prevLogItemsQuery);
