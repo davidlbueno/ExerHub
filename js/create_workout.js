@@ -109,16 +109,10 @@ function addItem() {
   clearFields();
 };
 
-// Sortable functionality
-$(".sortable").sortable({
-  revert: true,
-  update: function() {
-    const types = $(this).children();
-    types.each((index, element) => {
-      element.setAttribute('value', index + 1);
-    });
-    saveWorkoutBtn.disabled = false;
-  }
+var sortable = new Sortable(document.querySelector('ol'), {
+  delay: 200,  // ms delay for touch devices
+  delayOnTouchOnly: true,  // Only delay for touch devices
+  // ... other options
 });
 
 // Event delegation for selecting items in workout-list

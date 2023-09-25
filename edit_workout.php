@@ -13,7 +13,7 @@ $is_admin = $_SESSION['is_admin'];
 ?>
 
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-<script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
 
 <body class="dark">
 <?php include 'html/nav.html'; ?>
@@ -30,7 +30,7 @@ $is_admin = $_SESSION['is_admin'];
         </div>
       </div>
       <div class="col s12">
-        <ol id="workout-list" class="sortable">
+        <ol id="workout-list">
           <?php 
           // Get the workout ID from the URL parameter
           $workoutId = $_GET['workout_id'];
