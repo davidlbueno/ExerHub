@@ -92,14 +92,13 @@ $(document).ready(function() {
   
     $.post('/php/update_log.php', logData, function(response) {
       if (response.success) {
-        //window.location.href = '/logs.php';
+        window.location.href = '/logs.php';
       } else {
         alert('Error updating log');
       }
     }, 'json');
   });
   
-
   var sortable = new Sortable(document.querySelector('ol'), {
     delay: 200,  // ms delay for touch devices
     delayOnTouchOnly: true,  // Only delay for touch devices
