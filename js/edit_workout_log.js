@@ -173,8 +173,10 @@ $(document).ready(function() {
   
   // Convert ISO string to the database-expected format
   function convertToDbFormat(isoString) {
-    return isoString.replace('T', ' ').split('.')[0];
-  }
+    const date = new Date(isoString);
+    const utcDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+    return utcDate.toISOString().replace('T', ' ').split('.')[0];
+  }  
 
   // Close Button Event Listener
   $('#close-button').click(function() {
