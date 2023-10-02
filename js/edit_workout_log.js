@@ -183,5 +183,16 @@ $(document).ready(function() {
     window.history.back(); // Go back to the previous page
   });
 
+  $(document).on('input', '#secondsInput', function() {
+    // Update the list item's displayed seconds and data attribute
+    const newItemSeconds = $(this).val();
+    $(this).closest('li').attr('data-exercise-time', newItemSeconds).find('.displayed-seconds').text(newItemSeconds);
+    
+    // Update the workout log's duration and end time
+    updateDuration();
+    updateEndTime();
+});
+
+
   M.Modal.init(document.querySelectorAll('.modal'), { onCloseEnd: updateDuration });
 });

@@ -95,11 +95,31 @@ $length = gmdate("H:i:s", $duration);
       }
 
       if ($exerciseType === "Rest") {
-        echo "<li data-exercise-time='${exerciseTime}' class='rest' style='white-space: nowrap;'><div style='display: inline-block; width: calc(100% - 80px); overflow: hidden; white-space: nowrap;'><strong>Rest</strong> - ({$exerciseTime}s)</div><div style='display: inline-block; width: 80px; z-index: 1;'><i class='material-icons edit-icon'>edit</i> <i class='material-icons copy-icon'>file_copy</i> <i class='material-icons delete-icon'>delete</i></div></li>";
+        echo "<li data-exercise-time='${exerciseTime}' class='rest' style='white-space: nowrap;'>";
+        echo "<div style='display: inline-block; width: calc(100% - 80px); overflow: hidden; white-space: nowrap;'>";
+        echo "<strong>Rest</strong> - ({$exerciseTime}s)";
+        echo "</div>";
+        echo "<div style='display: inline-block; width: 80px; z-index: 1;'>";
+        echo "<i class='material-icons edit-icon'>edit</i> <i class='material-icons copy-icon'>file_copy</i> <i class='material-icons delete-icon'>delete</i>";
+        echo "</div>";
+        echo "</li>";
       } else {
         $warmupClass = $warmup ? 'warmup' : '';
-        echo "<li data-exercise-id='${exerciseId}' data-exercise-time='${exerciseTime}' data-exercise-reps='${reps}' class='{$warmupClass}' style='white-space: nowrap;'><div style='display: inline-block; width: calc(100% - 80px); overflow: hidden; white-space: nowrap;'><strong>{$exerciseType}</strong> - {$exerciseName} ({$exerciseTime}s, {$reps} reps)</div><div style='display: inline-block; width: 80px; z-index: 1;'><i class='material-icons edit-icon'>edit</i> <i class='material-icons copy-icon'>file_copy</i> <i class='material-icons delete-icon'>delete</i></div></li>";
+        echo "<li class='exercise-list-item {$warmupClass}' data-exercise-id='${exerciseId}' data-exercise-time='${exerciseTime}'  data-exercise-reps='${reps}'>";
+        echo "<div style='display: inline-block; width: 100%; overflow: hidden; white-space: nowrap;'>";
+        echo "<strong>{$exerciseType}</strong> - {$exerciseName} (<span class='displayed-seconds'>{$exerciseTime}</span>s)";
+        echo "<div style='display: inline-block; float: right; width: 80px; z-index: 1;'>";
+        echo "<i class='material-icons edit-icon'>edit</i> <i class='material-icons copy-icon'>file_copy</i> <i class='material-icons delete-icon'>delete</i>";
+        echo "</div>";
+        echo "</div>";
+        echo "<div class='exercise-details' style='top: 0px; display: block; position: relative;'>";
+        echo "Actual Reps: <input type='number' class='repsInput' max='999' placeholder='Reps' style='width: 40px; height: 30px' value='${reps}'>";
+        echo "Actual Seconds: <input type='number' id='secondsInput' max='999' step='5' placeholder='Seconds' style='width: 40px; height: 30px' value='${exerciseTime}'>";
+        echo "</div>";
+        
+        echo "</li>";
       }
+      
                                          
     }
     echo "</ol>";
