@@ -71,7 +71,6 @@ var instances = M.Modal.init(elems, {
   }
 });
 
-
 // Add event listener for the close button
 document.getElementById("modal-closeBtn").addEventListener("click", function() {
 var instance = M.Modal.getInstance(document.getElementById("addItemModal"));
