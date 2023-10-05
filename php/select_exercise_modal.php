@@ -1,5 +1,5 @@
 <!-- modal -->
-<div id="addItemModal" class="modal dark-modal">
+<div id="addItemModal" class="modal dark-modal modal-overflow">
       <div class="modal-content">
         <h5 style="margin-bottom: 5px;">Add Item</h5>
         <div>
@@ -66,10 +66,11 @@ typeSelect.addEventListener("change", () => {
 //Initialize the modal
 var elems = document.querySelectorAll('.modal');
 var instances = M.Modal.init(elems, {
-onOpenEnd: function() {
-  typeSelect.focus();
-}
+  onOpenEnd: function() {
+    typeSelect.focus();
+  }
 });
+
 
 // Add event listener for the close button
 document.getElementById("modal-closeBtn").addEventListener("click", function() {
