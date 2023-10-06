@@ -27,7 +27,7 @@ require_once 'php/db_query.php';
        
     echo "<div>
     <div style='display: flex; align-items: center;'>
-    <h5 style='white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: calc(100% - 20px);'>$workoutName</h5>
+    <h5 style='white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: calc(100% - 70px);'>$workoutName</h5>
     <a href='edit_workout_log.php?log_id=$logId' class='edit-btn' style='margin-left: 10px;'><i class='material-icons'>edit</i></a>
 </div>
 
