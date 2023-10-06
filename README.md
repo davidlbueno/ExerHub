@@ -57,3 +57,8 @@
 - `save_workout.js`: Manages saving workouts.
 - `update_workout.js`: Manages updating workouts.
 - `edit_workout_log.js`: Manages editing workout logs.
+
+### Admin Section
+- `index.html`: Admin dashboard entry point.
+- `exercises_editor.php`: Manages exercise editing in the admin dashboard.
+- `progressions_editor.php`: Manages progression editing in the admin dashboard.
