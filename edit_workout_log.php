@@ -113,7 +113,7 @@ $length = gmdate("H:i:s", $duration);
         echo "</div>";
         echo "</div>";
         echo "<div class='exercise-details' style='top: 0px; display: block; position: relative;'>";
-        echo "Actual Reps: <input type='number' class='repsInput' max='999' placeholder='Reps' style='width: 40px; height: 30px' value='${reps}'>";
+        echo "Actual Reps: <input type='number' id='repsInput' max='999' placeholder='Reps' style='width: 40px; height: 30px' value='${reps}'>";
         echo "Actual Seconds: <input type='number' id='secondsInput' max='999' step='5' placeholder='Seconds' style='width: 40px; height: 30px' value='${exerciseTime}'>";
         echo "</div>";
         

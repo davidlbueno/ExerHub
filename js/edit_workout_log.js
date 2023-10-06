@@ -191,8 +191,13 @@ $(document).ready(function() {
     // Update the workout log's duration and end time
     updateDuration();
     updateEndTime();
-});
+  });
 
+$(document).on('change', '#repsInput', function() {
+  // Update the list item's displayed reps and data attribute
+  const newItemReps = $(this).val();
+  $(this).closest('li').attr('data-exercise-reps', newItemReps).find('.displayed-reps').text(newItemReps);
+});
 
   M.Modal.init(document.querySelectorAll('.modal'), { onCloseEnd: updateDuration });
 });
