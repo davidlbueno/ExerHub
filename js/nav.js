@@ -6,6 +6,26 @@ const sideNavItems = [
   { title: 'Workouts', href: '/workouts.php' },
   { title: 'Logs', href: '/logs.php' },
 ];
+
+const siteHierarchy = {
+  "index.php": null,
+  "login.php": "index.php",
+  "create_account.php": "login.php",
+  "account.php": "index.php",
+  "workouts.php": "index.php",
+  "workout.php": "workouts.php",
+  "create_workout.php": "workouts.php",
+  "edit_workout.php": "workouts.php",
+  "select_workouts.php": "workouts.php",
+  "workout_player.php": "workout.php",
+  "logs.php": "index.php",
+  "workout_logs.php": "logs.php",
+  "workout_log.php": "workout_logs.php",
+  "edit_workout_log.php": "workout_logs.php",
+  "exercises.php": "index.php",
+  "progressions.php": "exercises.php",
+};
+
 let topNavItems = [
   { title: 'arrow_back', href: 'javascript:;', class: 'back-button' },
 ];
@@ -130,9 +150,13 @@ topNavItems.forEach((item) => {
   a.onclick = function(event) {
     event.preventDefault(); // Prevent default navigation
     if (item.title === 'arrow_back') {
-      history.back();
+      const currentURL = window.location.pathname.split('/').pop();
+      const parentURL = siteHierarchy[currentURL] || null;
+      if (parentURL) {
+        window.location.href = parentURL;
+      }
     }
-  };
+  };  
   
   topNav.appendChild(a);
 });
