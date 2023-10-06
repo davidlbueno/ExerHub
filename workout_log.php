@@ -26,9 +26,11 @@ require_once 'php/db_query.php';
 
        
     echo "<div>
-    <div style='display: inline-block;'>
-      <h5 style='display: inline-block;'>$workoutName</h5><a href='edit_workout_log.php?log_id=$logId' class='edit-btn' style='display: inline-block; margin-left: 10px;'><i class='material-icons'>edit</i></a>
-    </div>
+    <div style='display: flex; align-items: center;'>
+    <h5 style='white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: calc(100% - 20px);'>$workoutName</h5>
+    <a href='edit_workout_log.php?log_id=$logId' class='edit-btn' style='margin-left: 10px;'><i class='material-icons'>edit</i></a>
+</div>
+
     <div style='display: inline-block; margin-left: 20px;'>Workout Date: $startTime</div>
   </div>
   ";
