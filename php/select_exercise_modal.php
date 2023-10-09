@@ -4,7 +4,7 @@
         <h5 style="margin-bottom: 5px;">Add Item</h5>
         <div>
           <div style="margin-bottom: 5px;">
-            <select name="type" id="type-select">
+            <select title="type-select" name="type" id="type-select">
               <option value="" disabled selected>Item</option>
               <option value="Push">Push</option>
               <option value="Pull">Pull</option>
@@ -14,7 +14,7 @@
             </select>
           </div>
           <div style="margin-bottom: 5px;">
-            <select name="exercise" id="exercise-select" disabled>
+            <select title="exercise-select" name="exercise" id="exercise-select" disabled>
               <option value="" disabled selected>Exercise</option>
             </select>
           </div>

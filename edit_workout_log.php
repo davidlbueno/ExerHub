@@ -4,43 +4,77 @@ include 'php/session.php';
 require_once 'php/header.php';
 require_once 'php/db_connect.php';
 require_once 'php/db_query.php';
+$userId = $_SESSION['user_id'];  // Make sure this line exists before using $userId
 
-$logId = $_GET['log_id'];
-$userId = $_SESSION['user_id'];
-$is_admin = $_SESSION['is_admin'];
+$is_new_log = isset($_GET['new_log']) && $_GET['new_log'] === 'true';
 
-// Check if the user is authorized to view this log
-$authQuery = "SELECT user_id, start_time, end_time, workout_id FROM workout_logs WHERE id = $logId";
-$authResult = query($conn, $authQuery);
-$authRow = mysqli_fetch_assoc($authResult);
+if ($is_new_log) {
+  $logId = null;
+  // Structured query to get the workouts selected by the current user, joined with workout names
+  $workoutsQuery = "SELECT w.id, w.name FROM user_selected_workouts usw JOIN workouts w ON usw.workout_id = w.id WHERE usw.user_id = ?";
+  $workoutsResult = query($conn, $workoutsQuery, [$userId]);  // Pass $userId as a parameter
 
-if ($authRow['user_id'] !== $userId && !$is_admin) {
-  echo "You can only view logs for your own workouts.";
-  exit;
+  if (!$workoutsResult) {
+      die("Query failed: " . mysqli_error($conn));
+  }
+
+  $workouts = [];
+  while ($workoutRow = mysqli_fetch_assoc($workoutsResult)) {
+      $workouts[] = ['id' => $workoutRow['id'], 'name' => $workoutRow['name']];
+  }
+
+  $workoutName = isset($workouts[0]['name']) ? $workouts[0]['name'] : "";
+    
+  // Default start and end time to current time
+  $startTime = date('Y-m-d\TH:i:s');
+  $endTime = date('Y-m-d\TH:i:s');
+  $duration = strtotime($endTime) - strtotime($startTime);
+  $length = gmdate("H:i:s", $duration);
+} else {
+  $logId = $_GET['log_id'];
+  $userId = $_SESSION['user_id'];
+  $is_admin = $_SESSION['is_admin'];
+
+  // Check if the user is authorized to view this log
+  $authQuery = "SELECT user_id, start_time, end_time, workout_id FROM workout_logs WHERE id = ?";
+  $authResult = query($conn, $authQuery, [$logId]);
+  $authRow = mysqli_fetch_assoc($authResult);
+
+  if ($authRow['user_id'] !== $userId && !$is_admin) {
+      echo "You can only view logs for your own workouts.";
+      exit;
+  }
+
+  // Fetch workout name
+  $workoutQuery = "SELECT name FROM workouts WHERE id = ?";
+  $workoutResult = query($conn, $workoutQuery, [$workoutId]);
+  $workoutRow = mysqli_fetch_assoc($workoutResult);
+  $workoutName = $workoutRow['name'];
+
+  // Fetch and format the start time and end time
+  $startTime = $authRow['start_time'];
+  $endTime = $authRow['end_time'];
+  $duration = strtotime($endTime) - strtotime($startTime);
+  $length = gmdate("H:i:s", $duration);
 }
-
-// Fetch workout name
-$workoutId = $authRow['workout_id'];
-$workoutQuery = "SELECT name FROM workouts WHERE id = $workoutId";
-$workoutResult = query($conn, $workoutQuery);
-$workoutRow = mysqli_fetch_assoc($workoutResult);
-$workoutName = $workoutRow['name'];
-
-// Fetch and format the start time and end time
-$startTime = $authRow['start_time'];
-$endTime = $authRow['end_time'];
-$duration = strtotime($endTime) - strtotime($startTime);
-$length = gmdate("H:i:s", $duration);
 ?>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
 
-
 <body class="dark">
   <main class="container">
-    <h4><?php echo $workoutName; ?></h4>
+  <?php if ($is_new_log): ?>
+      <!-- Dropdown for selecting workout -->
+      <select title="workout-select" id="workoutSelect">
+        <?php foreach ($workouts as $workout): ?>
+          <option value="<?php echo $workout['id']; ?>"><?php echo $workout['name']; ?></option>
+        <?php endforeach; ?>
+      </select>
+    <?php else: ?>
+    <h4 id="workoutNameDisplay"><?php echo $workoutName; ?></h4>
+    <?php endif; ?>
     <div style="display: flex; justify-content: space-between;">
       <p>Date: <?php echo date("Y-m-d", strtotime($startTime)); ?></p>
       <p>Time: <?php echo date("H:i:s", strtotime($startTime)); ?></p>
@@ -52,9 +86,10 @@ $length = gmdate("H:i:s", $duration);
     <?php
     include 'php/select_exercise_modal.php';
     
-    $logItemsQuery = "SELECT * FROM workout_log_items WHERE workout_log_id = $logId";
-    $logItemsResult = query($conn, $logItemsQuery);
-
+    // Fetch log items
+    $logItemsQuery = "SELECT * FROM workout_log_items WHERE workout_log_id = ?";
+    $logItemsResult = query($conn, $logItemsQuery, [$logId]);
+    
     $exerciseData = [];
     $exerciseTypeQuery = "SELECT DISTINCT type FROM exercises";
     $exerciseTypeResult = query($conn, $exerciseTypeQuery);
@@ -63,8 +98,9 @@ $length = gmdate("H:i:s", $duration);
         $type = $typeRow['type'];
         $exerciseData[$type] = [];
 
-        $exerciseQuery = "SELECT id, name FROM exercises WHERE type = '$type'";
-        $exerciseResult = query($conn, $exerciseQuery);
+        // Fetch exercises by type
+        $exerciseQuery = "SELECT id, name FROM exercises WHERE type = ?";
+        $exerciseResult = query($conn, $exerciseQuery, [$type]);
         while ($exerciseRow = mysqli_fetch_assoc($exerciseResult)) {
             $exerciseData[$type][] = $exerciseRow;
         }
@@ -118,9 +154,7 @@ $length = gmdate("H:i:s", $duration);
         echo "</div>";
         
         echo "</li>";
-      }
-      
-                                         
+      }                                   
     }
     echo "</ol>";
     ?>
@@ -135,17 +169,19 @@ $length = gmdate("H:i:s", $duration);
     </div>
     <div style='display: flex;'>
       <button id="openModalBtn" type="button" class="btn modal-trigger" data-target="addItemModal" style='margin-right: 5px !important;'>Add Item</button>
-      <input type='submit' value='Update Log' class='btn' style='margin-right: 5px !important;'>
+      <input type='submit' value='Save Log' class='btn' style='margin-right: 5px !important;'>
       <a href='logs.php' class='btn'>Cancel</a>
     </div>
     <i type="button" id="close-button" class="material-icons close-btn" style="margin-bottom: 5px;">close</i>
   </main>
   <script>
-      let editingItem = null;
+    let editingItem = null;
+    let selectedWorkoutId = null; // Initialize variable to hold selected workout ID
+
     const exerciseData = <?php echo json_encode($exerciseData); ?>;
-    const logId = <?php echo json_encode($logId); ?>;
+    const logId = <?php echo isset($logId) ? json_encode($logId) : 'null'; ?>;
     const userId = <?php echo json_encode($userId); ?>;
-    const workoutId = <?php echo json_encode($workoutId); ?>;
+    const workoutId = <?php echo isset($workoutId) ? json_encode($workoutId) : 'null'; ?>;
   </script>
 <script src="/js/edit_workout_log.js"></script>
 </body>
