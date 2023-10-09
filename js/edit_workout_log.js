@@ -169,18 +169,7 @@ $(document).ready(function() {
     cloneItem.insertAfter(currentItem);
     // updatetime
     updateDuration();
-  });
-
-  // Add event listener to update selectedWorkoutId
-  document.addEventListener("DOMContentLoaded", function() {
-    const workoutSelect = document.getElementById("workoutSelect");
-    if (workoutSelect) {
-      selectedWorkoutId = workoutSelect.value; // Set initial value
-      workoutSelect.addEventListener("change", function() {
-        selectedWorkoutId = this.value; // Update value when selection changes
-      });
-    }
-  });
+  });  
   
   // Convert ISO string to the database-expected format
   function convertToDbFormat(isoString) {

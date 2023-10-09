@@ -30,11 +30,12 @@ if ($is_new_log) {
   $endTime = date('Y-m-d\TH:i:s');
   $duration = strtotime($endTime) - strtotime($startTime);
   $length = gmdate("H:i:s", $duration);
+  $workoutId = isset($workouts[0]['id']) ? $workouts[0]['id'] : null;
 } else {
   $logId = $_GET['log_id'];
   $userId = $_SESSION['user_id'];
   $is_admin = $_SESSION['is_admin'];
-
+  
   // Check if the user is authorized to view this log
   $authQuery = "SELECT user_id, start_time, end_time, workout_id FROM workout_logs WHERE id = ?";
   $authResult = query($conn, $authQuery, [$logId]);
@@ -44,6 +45,9 @@ if ($is_new_log) {
       echo "You can only view logs for your own workouts.";
       exit;
   }
+
+  // Fetch workout id
+  $workoutId = $authRow['workout_id'];
 
   // Fetch workout name
   $workoutQuery = "SELECT name FROM workouts WHERE id = ?";
@@ -65,6 +69,7 @@ if ($is_new_log) {
 
 <body class="dark">
   <main class="container">
+  <form id="updateLogForm">
   <?php if ($is_new_log): ?>
       <!-- Dropdown for selecting workout -->
       <select title="workout-select" id="workoutSelect">
@@ -169,7 +174,8 @@ if ($is_new_log) {
     </div>
     <div style='display: flex;'>
       <button id="openModalBtn" type="button" class="btn modal-trigger" data-target="addItemModal" style='margin-right: 5px !important;'>Add Item</button>
-      <input type='submit' value='Save Log' class='btn' style='margin-right: 5px !important;'>
+      <input type="submit" value="Save Log" class="btn" style="margin-right: 5px !important;">
+      </form>
       <a href='logs.php' class='btn'>Cancel</a>
     </div>
     <i type="button" id="close-button" class="material-icons close-btn" style="margin-bottom: 5px;">close</i>
