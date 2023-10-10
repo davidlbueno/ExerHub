@@ -10,6 +10,14 @@ $is_new_log = isset($_GET['new_log']) && $_GET['new_log'] === 'true';
 
 if ($is_new_log) {
   $logId = null;
+
+  // Default start and end time to current time
+  $startTime = date('Y-m-d\TH:i:s');
+  $endTime = date('Y-m-d\TH:i:s');
+  $duration = strtotime($endTime) - strtotime($startTime);
+  $length = gmdate("H:i:s", $duration);
+  $workoutId = isset($workouts[0]['id']) ? $workouts[0]['id'] : null;
+
   // Structured query to get the workouts selected by the current user, joined with workout names
   $workoutsQuery = "SELECT w.id, w.name FROM user_selected_workouts usw JOIN workouts w ON usw.workout_id = w.id WHERE usw.user_id = ?";
   $workoutsResult = query($conn, $workoutsQuery, [$userId]);  // Pass $userId as a parameter
@@ -23,14 +31,8 @@ if ($is_new_log) {
       $workouts[] = ['id' => $workoutRow['id'], 'name' => $workoutRow['name']];
   }
 
-  $workoutName = isset($workouts[0]['name']) ? $workouts[0]['name'] : "";
-    
-  // Default start and end time to current time
-  $startTime = date('Y-m-d\TH:i:s');
-  $endTime = date('Y-m-d\TH:i:s');
-  $duration = strtotime($endTime) - strtotime($startTime);
-  $length = gmdate("H:i:s", $duration);
-  $workoutId = isset($workouts[0]['id']) ? $workouts[0]['id'] : null;
+  $workoutName = isset($workouts[0]['name']) ? $workouts[0]['name'] : "";  
+  
 } else {
   $logId = $_GET['log_id'];
   $userId = $_SESSION['user_id'];
