@@ -53,7 +53,7 @@ require_once 'php/db_query.php';
       $exerciseTime = $logItemRow['exercise_time'];
       $reps = $logItemRow['reps'];
       $warmup = $logItemRow['warmup'];
-
+      
       // Rest items handling
       if ($exerciseType === 'Rest') {
         $rowClass = 'rest';
@@ -62,8 +62,7 @@ require_once 'php/db_query.php';
         $difficulty = '-';
         $musclesIntensities = '-';
       } else {
-        $rowClass = ($warmup === '1') ? 'warmup' : '';
-
+        $rowClass = ((string)$warmup === '1') ? 'warmup' : '';
         $exerciseQuery = "SELECT name, type, difficulty FROM exercises WHERE id = $exerciseId";
         $exerciseResult = query($conn, $exerciseQuery);
         $exerciseRow = mysqli_fetch_assoc($exerciseResult);
