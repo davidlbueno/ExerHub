@@ -84,6 +84,7 @@ $('#modal-save-item').click(function() {
   const exerciseId = exerciseOption ? exerciseOption.val() : null;
   const seconds = $('input[name="seconds"]').val();
   const isWarmup = $('#warmup').is(':checked');
+  const isRest = type === "Rest";
   const reps = $('#reps-select').val();
   const sets = $('#sets-select').prop('disabled') ? 1 : parseInt($('#sets-select').val(), 10);
 
@@ -103,11 +104,17 @@ $('#modal-save-item').click(function() {
       editingItem.addClass('warmup');
     }
 
+    // update the rest class if needed
+    editingItem.removeClass('rest');
+    if (isRest) {
+      editingItem.addClass('rest');
+    }
+
     // Reset editingItem to null
     editingItem = null;
   } else {
     // Add the new item to the list
-    const newItem = `<li data-exercise-id='${exerciseId}' data-exercise-time='${seconds}' data-exercise-reps='${reps}' class='${isWarmup ? 'warmup' : ''}' style='white-space: nowrap;'><div style='display: inline-block; width: calc(100% - 80px); overflow: hidden; white-space: nowrap;'><strong>${type}</strong> - ${exercise} (${seconds}s, ${reps} reps)</div><div style='display: inline-block; width: 80px; z-index: 1;'><i class='material-icons edit-icon'>edit</i> <i class='material-icons copy-icon'>file_copy</i> <i class='material-icons delete-icon'>delete</i></div></li>`;
+    const newItem = `<li data-exercise-id='${exerciseId}' data-exercise-time='${seconds}' data-exercise-reps='${reps}' class='${isWarmup ? 'warmup' : ''} ${isRest ? 'rest' : ''}' style='white-space: nowrap;'><div style='display: inline-block; width: calc(100% - 80px); overflow: hidden; white-space: nowrap;'><strong>${type}</strong> - ${exercise} (${seconds}s, ${reps} reps)</div><div style='display: inline-block; width: 80px; z-index: 1;'><i class='material-icons edit-icon'>edit</i> <i class='material-icons copy-icon'>file_copy</i> <i class='material-icons delete-icon'>delete</i></div></li>`;
     $('ol').append(newItem);
   }
   var instance = M.Modal.getInstance(document.getElementById("addItemModal"));
