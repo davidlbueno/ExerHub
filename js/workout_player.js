@@ -276,7 +276,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     try {
       const workoutLogResponse = await createWorkoutLogEntry(userId, workoutId, workoutStartTime, workoutEndTime);
-      //workoutLogId = workoutLogResponse;
       let jsonResponse = JSON.parse(workoutLogResponse);
       let workoutLogId = jsonResponse.insert_id;
       console.log("Workout Log ID: " + workoutLogId);

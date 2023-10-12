@@ -10,6 +10,7 @@ $is_new_log = isset($_GET['new_log']) && $_GET['new_log'] === 'true';
 
 if ($is_new_log) {
   $logId = null;
+  $newLog = true;
 
   // Default start and end time to current time
   $startTime = date('Y-m-d\TH:i:s');
@@ -71,7 +72,6 @@ if ($is_new_log) {
 
 <body class="dark">
   <main class="container">
-  <form id="updateLogForm">
   <?php if ($is_new_log): ?>
       <!-- Dropdown for selecting workout -->
       <select title="workout-select" id="workoutSelect">
@@ -177,19 +177,19 @@ if ($is_new_log) {
     <div style='display: flex;'>
       <button id="openModalBtn" type="button" class="btn modal-trigger" data-target="addItemModal" style='margin-right: 5px !important;'>Add Item</button>
       <input type="submit" value="Save Log" class="btn" style="margin-right: 5px !important;">
-      </form>
       <a href='logs.php' class='btn'>Cancel</a>
     </div>
     <i type="button" id="close-button" class="material-icons close-btn" style="margin-bottom: 5px;">close</i>
   </main>
   <script>
+    const newLog = <?php echo $is_new_log ? 'true' : 'false'; ?>;
     let editingItem = null;
     let selectedWorkoutId = null; // Initialize variable to hold selected workout ID
 
     const exerciseData = <?php echo json_encode($exerciseData); ?>;
     const logId = <?php echo isset($logId) ? json_encode($logId) : 'null'; ?>;
     const userId = <?php echo json_encode($userId); ?>;
-    const workoutId = <?php echo isset($workoutId) ? json_encode($workoutId) : 'null'; ?>;
+    let workoutId = <?php echo isset($workoutId) ? json_encode($workoutId) : 'null'; ?>;
   </script>
 <script src="/js/edit_workout_log.js"></script>
 </body>
