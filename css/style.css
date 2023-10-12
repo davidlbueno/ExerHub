@@ -17,6 +17,7 @@ body.dark {
 .container {
   width: 96%;
   margin: 0 auto;
+  padding-bottom: 30px;
 }
 
 .player-content {
