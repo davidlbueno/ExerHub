@@ -259,20 +259,22 @@ $(document).ready(function() {
           // Generate each list item here
           const warmupClass = sequence.type === 'Warmup' ? 'warmup' : '';
           const restClass = sequence.type === 'Rest' ? 'rest' : '';
-          const listItem = `
-            <li class="exercise-list-item ${warmupClass} ${restClass}" data-exercise-id="${sequence.exercise_id}" data-exercise-time="${sequence.seconds}" data-exercise-reps="${sequence.reps}">
-              <div style="display: inline-block; width: 100%; overflow: hidden; white-space: nowrap;">
-                <strong>${sequence.type}</strong> - ${sequence.name} (<span class="displayed-seconds">${sequence.seconds}</span>s)
-                <div style="display: inline-block; float: right; width: 80px; z-index: 1;">
-                  <i class="material-icons edit-icon">edit</i> <i class="material-icons copy-icon">file_copy</i> <i class="material-icons delete-icon">delete</i>
-                </div>
+          const displayName = sequence.type === 'Rest' ? '' : ` - ${sequence.name}`;
+        
+        const listItem = `
+          <li class="exercise-list-item ${warmupClass} ${restClass}" data-exercise-id="${sequence.exercise_id}" data-exercise-time="${sequence.seconds}" data-exercise-reps="${sequence.reps}">
+            <div style="display: inline-block; width: 100%; overflow: hidden; white-space: nowrap;">
+              <strong>${sequence.type}</strong>${displayName} (<span class="displayed-seconds">${sequence.seconds}</span>s)
+              <div style="display: inline-block; float: right; width: 80px; z-index: 1;">
+                <i class="material-icons edit-icon">edit</i> <i class="material-icons copy-icon">file_copy</i> <i class="material-icons delete-icon">delete</i>
               </div>
-              <div class="exercise-details" style="top: 0px; display: block; position: relative;">
-                Actual Reps: <input type="number" id="repsInput" min="0" max="999" placeholder="0" style="width: 40px; height: 30px" value="${sequence.reps}">
-                Actual Seconds: <input type="number" id="secondsInput" max="999" step="5" placeholder="Seconds" style="width: 40px; height: 30px" value="${sequence.seconds}">
-              </div>
-            </li>
-          `;
+            </div>
+            <div class="exercise-details" style="top: 0px; display: block; position: relative;">
+              Actual Reps: <input type="number" id="repsInput" min="0" max="999" placeholder="0" style="width: 40px; height: 30px" value="${sequence.reps}">
+              Actual Seconds: <input type="number" id="secondsInput" max="999" step="5" placeholder="Seconds" style="width: 40px; height: 30px" value="${sequence.seconds}">
+            </div>
+          </li>
+        `;
           $('ol').append(listItem);
         });
   
