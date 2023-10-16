@@ -240,16 +240,14 @@ $(document).ready(function() {
     updateEndTime();
   });
 
-  // update the workout ID when the workout select changes
   $(document).on('change', '#workoutSelect', function() {
-    workoutId = $(this).val();
     // Clear existing list items
     $('ol').empty();
-
+  
     // Fetch new list items based on the selected workout
     const selectedWorkoutId = $(this).val();
     $.ajax({
-      url: 'php/get_workout_items.php',  // Replace with the actual path to your PHP file if different
+      url: 'php/get_workout_items.php',
       method: 'POST',
       data: {
         workout_id: selectedWorkoutId
@@ -259,13 +257,25 @@ $(document).ready(function() {
         const workoutSequences = JSON.parse(response);
         workoutSequences.forEach(sequence => {
           // Generate each list item here
-          // You can use the sequence object to populate the list item's attributes and content
-          const listItem = `<li data-exercise-time="${sequence.seconds}" data-exercise-id="${sequence.exercise_id}">
-                              <strong>${sequence.type}</strong> - ${sequence.seconds} seconds
-                            </li>`;
+          const warmupClass = sequence.type === 'Warmup' ? 'warmup' : '';
+          const restClass = sequence.type === 'Rest' ? 'rest' : '';
+          const listItem = `
+            <li class="exercise-list-item ${warmupClass} ${restClass}" data-exercise-id="${sequence.exercise_id}" data-exercise-time="${sequence.seconds}" data-exercise-reps="${sequence.reps}">
+              <div style="display: inline-block; width: 100%; overflow: hidden; white-space: nowrap;">
+                <strong>${sequence.type}</strong> - ${sequence.name} (<span class="displayed-seconds">${sequence.seconds}</span>s)
+                <div style="display: inline-block; float: right; width: 80px; z-index: 1;">
+                  <i class="material-icons edit-icon">edit</i> <i class="material-icons copy-icon">file_copy</i> <i class="material-icons delete-icon">delete</i>
+                </div>
+              </div>
+              <div class="exercise-details" style="top: 0px; display: block; position: relative;">
+                Actual Reps: <input type="number" id="repsInput" min="0" max="999" placeholder="0" style="width: 40px; height: 30px" value="${sequence.reps}">
+                Actual Seconds: <input type="number" id="secondsInput" max="999" step="5" placeholder="Seconds" style="width: 40px; height: 30px" value="${sequence.seconds}">
+              </div>
+            </li>
+          `;
           $('ol').append(listItem);
         });
-
+  
         // Update the workout log's duration and end time
         updateDuration();
         updateEndTime();
@@ -275,6 +285,7 @@ $(document).ready(function() {
       }
     });
   });
+  
 
   $(document).on('change', '#repsInput', function() {
     // Update the list item's displayed reps and data attribute
