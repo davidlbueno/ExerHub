@@ -243,6 +243,37 @@ $(document).ready(function() {
   // update the workout ID when the workout select changes
   $(document).on('change', '#workoutSelect', function() {
     workoutId = $(this).val();
+    // Clear existing list items
+    $('ol').empty();
+
+    // Fetch new list items based on the selected workout
+    const selectedWorkoutId = $(this).val();
+    $.ajax({
+      url: 'php/get_workout_items.php',  // Replace with the actual path to your PHP file if different
+      method: 'POST',
+      data: {
+        workout_id: selectedWorkoutId
+      },
+      success: function(response) {
+        // Assuming the server returns an array of workout sequences
+        const workoutSequences = JSON.parse(response);
+        workoutSequences.forEach(sequence => {
+          // Generate each list item here
+          // You can use the sequence object to populate the list item's attributes and content
+          const listItem = `<li data-exercise-time="${sequence.seconds}" data-exercise-id="${sequence.exercise_id}">
+                              <strong>${sequence.type}</strong> - ${sequence.seconds} seconds
+                            </li>`;
+          $('ol').append(listItem);
+        });
+
+        // Update the workout log's duration and end time
+        updateDuration();
+        updateEndTime();
+      },
+      error: function(error) {
+        console.error('Error fetching workout sequences:', error);
+      }
+    });
   });
 
   $(document).on('change', '#repsInput', function() {
