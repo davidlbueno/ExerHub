@@ -246,6 +246,7 @@ $(document).ready(function() {
   
     // Fetch new list items based on the selected workout
     const selectedWorkoutId = $(this).val();
+    workoutId = selectedWorkoutId;
     $.ajax({
       url: 'php/get_workout_items.php',
       method: 'POST',
