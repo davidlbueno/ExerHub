@@ -190,18 +190,30 @@ $(document).ready(function() {
         option.textContent = exercise.name;
         exerciseSelect.appendChild(option);
       });
-
+  
       // Set the exercise-select field to the correct exercise
       exerciseSelect.value = exerciseId;
       $('#exercise-select').prop('disabled', false);
       $('#sets-select').prop('disabled', true);
     }
     
+    // Add this block to disable or enable fields based on the type value
+    const selectedType = $('#type-select').val();
+    if (selectedType === 'Rest') {
+      $('#exercise-select').prop('disabled', true);
+      $('#reps-select').prop('disabled', true);
+      $('#warmup').prop('disabled', true);
+    } else {
+      $('#exercise-select').prop('disabled', false);
+      $('#reps-select').prop('disabled', false);
+      $('#warmup').prop('disabled', false);
+    }
+  
     // Open the modal
     var instance = M.Modal.getInstance($('#addItemModal'));
     instance.open();
   });
-
+  
   $(document).on('click', '.delete-icon', function(e) {
     e.stopPropagation(); // Prevent triggering the parent li click event
     $(this).closest('li').remove(); // Remove the parent list item

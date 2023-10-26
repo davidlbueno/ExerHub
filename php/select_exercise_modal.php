@@ -42,6 +42,8 @@
   const typeSelect = document.getElementById("type-select");
   const exerciseSelect = document.getElementById("exercise-select");
   const setsSelect = document.getElementById("sets-select");
+  const warmupCheckbox = document.getElementById("warmup");
+  const repsSelect = document.getElementById("reps-select");
 
 // Event listener for typeSelect change
 typeSelect.addEventListener("change", () => {
@@ -56,7 +58,9 @@ typeSelect.addEventListener("change", () => {
   exerciseSelect.innerHTML = 
     `<option value="" disabled selected>Exercise</option>
       ${exercises.map(exercise => `<option value="${exercise.id}">${exercise.name}</option>`).join('')}`;
-    exerciseSelect.disabled = selectedType === 'Rest';
+  exerciseSelect.disabled = selectedType === 'Rest';
+  repsSelect.disabled = selectedType === 'Rest';
+  warmupCheckbox.disabled = selectedType === 'Rest';
 
   if (callback) {
     callback();
