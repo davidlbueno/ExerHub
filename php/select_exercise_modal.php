@@ -58,9 +58,9 @@ typeSelect.addEventListener("change", () => {
   exerciseSelect.innerHTML = 
     `<option value="" disabled selected>Exercise</option>
       ${exercises.map(exercise => `<option value="${exercise.id}">${exercise.name}</option>`).join('')}`;
-  exerciseSelect.disabled = selectedType === 'Rest';
-  repsSelect.disabled = selectedType === 'Rest';
-  warmupCheckbox.disabled = selectedType === 'Rest';
+    exerciseSelect.disabled = selectedType === 'Rest';
+    repsSelect.disabled = selectedType === 'Rest';
+    warmupCheckbox.disabled = selectedType === 'Rest';
 
   if (callback) {
     callback();
@@ -114,6 +114,21 @@ $('#modal-save-item').click(function() {
       editingItem.addClass('rest');
     }
 
+    // Add the edit, copy, and delete icons
+    const iconsDiv = '<div style="display: inline-block; float: right; width: 80px; z-index: 1;"><i class="material-icons edit-icon">edit</i> <i class="material-icons copy-icon">file_copy</i> <i class="material-icons delete-icon">delete</i></div>';
+    editingItem.find('div:first').append(iconsDiv);
+
+    // Remove the exercise-details div if the type is "Rest"
+    if (isRest) {
+      editingItem.find('.exercise-details').remove();
+    } else {
+      // Ensure the exercise-details div exists if the type is not "Rest"
+      if (editingItem.find('.exercise-details').length === 0) {
+        const exerciseDetailsDiv = `<div class='exercise-details' style='top: 0px; display: block; position: relative;'>Actual Reps: <input type='number' id='repsInput' max='999' placeholder='Reps' style='width: 40px; height: 30px' value=${reps}>Actual Seconds: <input type='number' id='secondsInput' max='999' step='5' placeholder='Seconds' style='width: 40px; height: 30px' value=${seconds}></div>`;
+        editingItem.append(exerciseDetailsDiv);
+      }
+    }
+    
     // Reset editingItem to null
     editingItem = null;
   } else {
